@@ -26,6 +26,10 @@ class AuthRepository(
         private const val KEY_CURRENT_USER_EMAIL = "current_user_email"
         private const val KEY_CURRENT_USER_UID = "current_user_uid"
         
+        // 保存的登录凭据
+        private const val KEY_SAVED_EMAIL = "saved_email"
+        private const val KEY_SAVED_PASSWORD = "saved_password"
+        
         // 临时存储未验证用户信息的键
         private const val KEY_PENDING_EMAIL = "pending_email"
         private const val KEY_PENDING_PASSWORD_HASH = "pending_password_hash"
@@ -291,6 +295,9 @@ class AuthRepository(
                 putString(KEY_CURRENT_USER_UID, user.uid)
                 apply()
             }
+            
+            // 保存邮箱和密码（用于下次自动填充）
+            saveCredentials(emailLower, password)
         }
     }
     
@@ -459,8 +466,47 @@ class AuthRepository(
         prefs?.edit()?.apply {
             remove(KEY_CURRENT_USER_EMAIL)
             remove(KEY_CURRENT_USER_UID)
+            // 注意：登出时不删除保存的凭据，以便下次登录时自动填充
             apply()
         }
         Log.d(TAG, "用户已登出")
+    }
+    
+    /**
+     * 保存登录凭据（邮箱和密码）
+     */
+    fun saveCredentials(email: String, password: String) {
+        prefs?.edit()?.apply {
+            putString(KEY_SAVED_EMAIL, email.lowercase())
+            putString(KEY_SAVED_PASSWORD, password)
+            apply()
+        }
+        Log.d(TAG, "已保存登录凭据")
+    }
+    
+    /**
+     * 获取保存的邮箱
+     */
+    fun getSavedEmail(): String? {
+        return prefs?.getString(KEY_SAVED_EMAIL, null)
+    }
+    
+    /**
+     * 获取保存的密码
+     */
+    fun getSavedPassword(): String? {
+        return prefs?.getString(KEY_SAVED_PASSWORD, null)
+    }
+    
+    /**
+     * 清除保存的登录凭据
+     */
+    fun clearSavedCredentials() {
+        prefs?.edit()?.apply {
+            remove(KEY_SAVED_EMAIL)
+            remove(KEY_SAVED_PASSWORD)
+            apply()
+        }
+        Log.d(TAG, "已清除保存的登录凭据")
     }
 }

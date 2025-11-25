@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,10 +32,13 @@ fun ExchangeMatchesScreen(
 ) {
     val matches by viewModel.matches.collectAsState()
     val uiState by viewModel.state.collectAsState()
+    
+    var minScore by remember { mutableStateOf(30.0) }
+    var showFilters by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (matches.isEmpty()) {
-            viewModel.findMatches()
+            viewModel.findMatches(minScore = minScore)
         }
     }
 
@@ -52,11 +59,70 @@ fun ExchangeMatchesScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = { viewModel.findMatches() }) {
+                IconButton(onClick = { showFilters = !showFilters }) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "筛选"
+                    )
+                }
+                Button(onClick = { viewModel.findMatches(minScore = minScore) }) {
                     Text("刷新")
                 }
                 Button(onClick = onBack) {
                     Text("返回")
+                }
+            }
+        }
+
+        // 筛选面板
+        if (showFilters) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "筛选条件",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = "最低匹配分数: ${minScore.toInt()}%",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Slider(
+                        value = minScore.toFloat(),
+                        onValueChange = { minScore = it.toDouble() },
+                        valueRange = 0f..100f,
+                        steps = 19
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                minScore = 30.0
+                                viewModel.findMatches(minScore = minScore)
+                                showFilters = false
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("应用")
+                        }
+                        OutlinedButton(
+                            onClick = { showFilters = false },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("取消")
+                        }
+                    }
                 }
             }
         }
@@ -177,10 +243,25 @@ fun ExchangeMatchCard(
 
             Divider()
 
+            // 匹配类型标签
+            if (match.isReverseMatch) {
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.secondaryContainer
+                ) {
+                    Text(
+                        text = "🔄 反向匹配：有人想买你的商品",
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+
             // 愿望清单信息
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = "你想买：",
+                    text = if (match.isReverseMatch) "对方想买：" else "你想买：",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -188,12 +269,38 @@ fun ExchangeMatchCard(
                     text = match.wishlistItem.title,
                     style = MaterialTheme.typography.titleMedium
                 )
+                if (match.wishlistItem.description.isNotEmpty()) {
+                    Text(
+                        text = match.wishlistItem.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2
+                    )
+                }
+                // 显示价格区间（如果有）
+                if (match.wishlistItem.minPrice > 0 || match.wishlistItem.maxPrice > 0) {
+                    val priceRange = when {
+                        match.wishlistItem.minPrice > 0 && match.wishlistItem.maxPrice > 0 ->
+                            "¥${String.format("%.2f", match.wishlistItem.minPrice)} - ¥${String.format("%.2f", match.wishlistItem.maxPrice)}"
+                        match.wishlistItem.minPrice > 0 ->
+                            "≥ ¥${String.format("%.2f", match.wishlistItem.minPrice)}"
+                        else ->
+                            "≤ ¥${String.format("%.2f", match.wishlistItem.maxPrice)}"
+                    }
+                    Text(
+                        text = "期望价格: $priceRange",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
+
+            Divider()
 
             // 可交换商品信息
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = "可交换：",
+                    text = if (match.isReverseMatch) "你的商品：" else "可交换：",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -216,16 +323,43 @@ fun ExchangeMatchCard(
                             text = match.availableItem.title,
                             style = MaterialTheme.typography.titleMedium
                         )
+                        if (match.availableItem.description.isNotEmpty()) {
+                            Text(
+                                text = match.availableItem.description,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 2
+                            )
+                        }
                         Text(
                             text = "¥${String.format("%.2f", match.availableItem.price)}",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
                         )
-                        Text(
-                            text = "卖家: ${match.availableItem.ownerEmail}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = if (match.isReverseMatch) "买家: ${match.wishlistItem.userEmail}" else "卖家: ${match.availableItem.ownerEmail}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            if (match.availableItem.category.isNotEmpty()) {
+                                Surface(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = MaterialTheme.colorScheme.tertiaryContainer
+                                ) {
+                                    Text(
+                                        text = match.availableItem.category,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

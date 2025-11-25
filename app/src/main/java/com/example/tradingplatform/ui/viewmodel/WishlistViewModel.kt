@@ -49,6 +49,10 @@ class WishlistViewModel(
 
     private val _matches = MutableStateFlow<List<ExchangeMatch>>(emptyList())
     val matches: StateFlow<List<ExchangeMatch>> = _matches
+    
+    // 单个愿望清单项的匹配结果
+    private val _singleItemMatches = MutableStateFlow<List<ExchangeMatch>>(emptyList())
+    val singleItemMatches: StateFlow<List<ExchangeMatch>> = _singleItemMatches
 
     init {
         // 初始化时记录日志
@@ -122,15 +126,34 @@ class WishlistViewModel(
         }
     }
 
-    fun findMatches() {
+    fun findMatches(minScore: Double = 30.0, maxResults: Int = 50) {
         _state.value = WishlistUiState.Loading
         viewModelScope.launch {
             try {
-                val matchList = repo.findExchangeMatches()
+                val matchList = repo.findExchangeMatches(minScore, maxResults)
                 _matches.value = matchList
+                Log.d("WishlistViewModel", "找到 ${matchList.size} 个匹配结果")
                 _state.value = WishlistUiState.Success
             } catch (e: Exception) {
                 Log.e("WishlistViewModel", "查找匹配失败", e)
+                _state.value = WishlistUiState.Error("查找匹配失败: ${e.message ?: "未知错误"}")
+            }
+        }
+    }
+
+    /**
+     * 查找单个愿望清单项的匹配结果
+     */
+    fun findMatchesForItem(wishlistItemId: String, minScore: Double = 30.0, maxResults: Int = 20) {
+        _state.value = WishlistUiState.Loading
+        viewModelScope.launch {
+            try {
+                val matchList = repo.findMatchesForWishlistItem(wishlistItemId, minScore, maxResults)
+                _singleItemMatches.value = matchList
+                Log.d("WishlistViewModel", "找到 ${matchList.size} 个匹配结果（针对单个愿望清单项）")
+                _state.value = WishlistUiState.Success
+            } catch (e: Exception) {
+                Log.e("WishlistViewModel", "查找单个愿望清单项匹配失败", e)
                 _state.value = WishlistUiState.Error("查找匹配失败: ${e.message ?: "未知错误"}")
             }
         }

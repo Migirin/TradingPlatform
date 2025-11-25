@@ -14,3 +14,4 @@ COMMENT ON COLUMN items.category IS '商品类别，例如：电子产品、服�
 
 
 
+

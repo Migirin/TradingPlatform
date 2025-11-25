@@ -29,7 +29,8 @@ data class ExchangeMatch(
     val wishlistItem: WishlistItem, // 用户的愿望清单项
     val availableItem: com.example.tradingplatform.data.items.Item, // 可交换的商品
     val matchScore: Double, // 匹配分数（0-100）
-    val matchReasons: List<String> // 匹配原因
+    val matchReasons: List<String>, // 匹配原因
+    val isReverseMatch: Boolean = false // 是否为反向匹配（其他用户想买我的商品）
 )
 
 

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.ui.viewmodel.AuthUiState
 import com.example.tradingplatform.ui.viewmodel.AuthViewModel
 
@@ -34,12 +35,27 @@ enum class AuthMode {
 
 @Composable
 fun AuthScreen(onAuthenticated: () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val authRepo = remember { AuthRepository(context) }
+    
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
     val verificationCodeState = remember { mutableStateOf("") }
     val authMode = remember { mutableStateOf(AuthMode.LOGIN) }
     val vm: AuthViewModel = viewModel()
     val uiState by vm.state.collectAsState()
+    
+    // 在启动时加载保存的邮箱和密码
+    LaunchedEffect(Unit) {
+        val savedEmail = authRepo.getSavedEmail()
+        val savedPassword = authRepo.getSavedPassword()
+        if (savedEmail != null) {
+            emailState.value = savedEmail
+        }
+        if (savedPassword != null) {
+            passwordState.value = savedPassword
+        }
+    }
 
     // 当登录成功时触发导航
     LaunchedEffect(uiState) {

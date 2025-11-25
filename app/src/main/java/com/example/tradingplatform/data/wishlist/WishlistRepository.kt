@@ -233,8 +233,14 @@ class WishlistRepository(
     /**
      * 智能匹配交换机会
      * 根据用户的愿望清单，匹配可交换的商品
+     * 
+     * @param minScore 最低匹配分数（默认30）
+     * @param maxResults 最大返回结果数（默认50，0表示不限制）
      */
-    suspend fun findExchangeMatches(): List<ExchangeMatch> = withContext(Dispatchers.IO) {
+    suspend fun findExchangeMatches(
+        minScore: Double = 30.0,
+        maxResults: Int = 50
+    ): List<ExchangeMatch> = withContext(Dispatchers.IO) {
         val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user"
         
         // 获取当前用户的愿望清单
@@ -246,47 +252,108 @@ class WishlistRepository(
 
         // 获取当前用户发布的商品（用于交换）
         val myItems = itemRepository?.listItems()?.filter { it.ownerUid == currentUid } ?: emptyList()
-        if (myItems.isEmpty()) {
-            Log.d(TAG, "用户没有发布的商品，无法匹配")
-            return@withContext emptyList()
-        }
 
         // 获取所有其他用户的愿望清单
         val allWishlist = getAllWishlistItems().filter { it.userId != currentUid }
-        if (allWishlist.isEmpty()) {
-            Log.d(TAG, "没有其他用户的愿望清单")
+
+        // 获取所有其他用户发布的商品
+        val allItems = itemRepository?.listItems()?.filter { it.ownerUid != currentUid } ?: emptyList()
+
+        if (allItems.isEmpty() && myItems.isEmpty()) {
+            Log.d(TAG, "没有可匹配的商品")
+            return@withContext emptyList()
+        }
+
+        val matches = mutableListOf<ExchangeMatch>()
+
+        // 匹配逻辑1：我的愿望清单 vs 其他用户的商品（正向匹配）
+        for (wish in wishlist) {
+            for (item in allItems) {
+                val score = calculateMatchScore(wish, item)
+                if (score >= minScore) {
+                    val reasons = getMatchReasons(wish, item, score)
+                    matches.add(ExchangeMatch(wish, item, score, reasons, isReverseMatch = false))
+                }
+            }
+        }
+
+        // 匹配逻辑2：其他用户的愿望清单 vs 我的商品（反向匹配）
+        // 只有在用户有发布的商品时才进行反向匹配
+        if (myItems.isNotEmpty()) {
+            for (wish in allWishlist) {
+                for (item in myItems) {
+                    val score = calculateMatchScore(wish, item)
+                    if (score >= minScore) {
+                        val reasons = getMatchReasons(wish, item, score)
+                        matches.add(ExchangeMatch(wish, item, score, reasons, isReverseMatch = true))
+                    }
+                }
+            }
+        }
+
+        // 按匹配分数排序
+        val sortedMatches = matches.sortedByDescending { it.matchScore }
+        
+        // 限制返回结果数
+        if (maxResults > 0 && sortedMatches.size > maxResults) {
+            return@withContext sortedMatches.take(maxResults)
+        }
+        
+        return@withContext sortedMatches
+    }
+
+    /**
+     * 匹配单个愿望清单项
+     * 只匹配该愿望清单项与其他用户发布的商品
+     * 
+     * @param wishlistItemId 愿望清单项ID
+     * @param minScore 最低匹配分数（默认30）
+     * @param maxResults 最大返回结果数（默认20，0表示不限制）
+     */
+    suspend fun findMatchesForWishlistItem(
+        wishlistItemId: String,
+        minScore: Double = 30.0,
+        maxResults: Int = 20
+    ): List<ExchangeMatch> = withContext(Dispatchers.IO) {
+        val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user"
+        
+        // 获取指定的愿望清单项
+        val wishlist = getWishlistSync()
+        val targetWish = wishlist.firstOrNull { it.id == wishlistItemId }
+        
+        if (targetWish == null) {
+            Log.d(TAG, "未找到愿望清单项: $wishlistItemId")
             return@withContext emptyList()
         }
 
         // 获取所有其他用户发布的商品
         val allItems = itemRepository?.listItems()?.filter { it.ownerUid != currentUid } ?: emptyList()
 
-        val matches = mutableListOf<ExchangeMatch>()
-
-        // 匹配逻辑：我的愿望清单 vs 其他用户的商品
-        for (wish in wishlist) {
-            for (item in allItems) {
-                val score = calculateMatchScore(wish, item)
-                if (score > 30) { // 只返回匹配分数大于30的
-                    val reasons = getMatchReasons(wish, item, score)
-                    matches.add(ExchangeMatch(wish, item, score, reasons))
-                }
-            }
+        if (allItems.isEmpty()) {
+            Log.d(TAG, "没有可匹配的商品")
+            return@withContext emptyList()
         }
 
-        // 匹配逻辑：其他用户的愿望清单 vs 我的商品（反向匹配）
-        for (wish in allWishlist) {
-            for (item in myItems) {
-                val score = calculateMatchScore(wish, item)
-                if (score > 30) {
-                    val reasons = getMatchReasons(wish, item, score)
-                    matches.add(ExchangeMatch(wish, item, score, reasons))
-                }
+        val matches = mutableListOf<ExchangeMatch>()
+
+        // 只进行正向匹配：该愿望清单项 vs 其他用户的商品
+        for (item in allItems) {
+            val score = calculateMatchScore(targetWish, item)
+            if (score >= minScore) {
+                val reasons = getMatchReasons(targetWish, item, score)
+                matches.add(ExchangeMatch(targetWish, item, score, reasons, isReverseMatch = false))
             }
         }
 
         // 按匹配分数排序
-        matches.sortedByDescending { it.matchScore }
+        val sortedMatches = matches.sortedByDescending { it.matchScore }
+        
+        // 限制返回结果数
+        if (maxResults > 0 && sortedMatches.size > maxResults) {
+            return@withContext sortedMatches.take(maxResults)
+        }
+        
+        return@withContext sortedMatches
     }
 
     /**
@@ -329,24 +396,118 @@ class WishlistRepository(
 
     /**
      * 计算文本相似度（0-1）
+     * 使用改进的算法，支持中文分词
      */
     private fun calculateTextSimilarity(text1: String, text2: String): Double {
         if (text1.isEmpty() || text2.isEmpty()) return 0.0
 
-        // 简单的关键词匹配
-        val words1 = text1.split(" ").filter { it.length > 2 }
-        val words2 = text2.split(" ").filter { it.length > 2 }
+        // 支持中英文混合的关键词匹配
+        // 中文按字符分割，英文按空格分割
+        val words1 = extractKeywords(text1)
+        val words2 = extractKeywords(text2)
 
         if (words1.isEmpty() || words2.isEmpty()) return 0.0
 
+        // 计算交集
         var matches = 0
-        for (word in words1) {
-            if (words2.any { it.contains(word) || word.contains(it) }) {
-                matches++
+        val matchedWords = mutableSetOf<String>()
+        
+        for (word1 in words1) {
+            for (word2 in words2) {
+                if (word1 == word2 || 
+                    word1.contains(word2) || 
+                    word2.contains(word1) ||
+                    calculateLevenshteinSimilarity(word1, word2) > 0.7) {
+                    if (word1 !in matchedWords) {
+                        matches++
+                        matchedWords.add(word1)
+                    }
+                    break
+                }
             }
         }
 
-        return (matches.toDouble() / words1.size).coerceIn(0.0, 1.0)
+        // 计算并集相似度（Jaccard相似度）
+        val union = (words1 + words2).distinct().size
+        val jaccard = if (union > 0) matches.toDouble() / union else 0.0
+        
+        // 计算交集与较小集合的比例
+        val minSize = minOf(words1.size, words2.size)
+        val intersectionRatio = if (minSize > 0) matches.toDouble() / minSize else 0.0
+        
+        // 综合两种相似度
+        return ((jaccard * 0.4 + intersectionRatio * 0.6)).coerceIn(0.0, 1.0)
+    }
+    
+    /**
+     * 提取关键词（支持中英文）
+     */
+    private fun extractKeywords(text: String): List<String> {
+        val keywords = mutableListOf<String>()
+        
+        // 移除标点符号和多余空格
+        val cleaned = text.replace(Regex("[，。！？、；：\"\"''（）【】《》\\s]+"), " ")
+        
+        // 按空格分割（英文单词）
+        val parts = cleaned.split(" ").filter { it.isNotBlank() }
+        
+        for (part in parts) {
+            // 如果是中文（长度>=2），按字符分割
+            if (part.length >= 2 && part.all { it.code >= 0x4E00 && it.code <= 0x9FFF }) {
+                // 中文：提取2-4字的词组
+                for (i in 0 until part.length - 1) {
+                    for (len in 2..minOf(4, part.length - i)) {
+                        if (i + len <= part.length) {
+                            keywords.add(part.substring(i, i + len))
+                        }
+                    }
+                }
+            } else {
+                // 英文：过滤掉太短的词
+                if (part.length >= 2) {
+                    keywords.add(part.lowercase())
+                }
+            }
+        }
+        
+        return keywords.distinct()
+    }
+    
+    /**
+     * 计算编辑距离相似度（Levenshtein距离）
+     */
+    private fun calculateLevenshteinSimilarity(s1: String, s2: String): Double {
+        if (s1 == s2) return 1.0
+        if (s1.isEmpty() || s2.isEmpty()) return 0.0
+        
+        val maxLen = maxOf(s1.length, s2.length)
+        val distance = levenshteinDistance(s1, s2)
+        return 1.0 - (distance.toDouble() / maxLen)
+    }
+    
+    /**
+     * 计算Levenshtein距离
+     */
+    private fun levenshteinDistance(s1: String, s2: String): Int {
+        val m = s1.length
+        val n = s2.length
+        val dp = Array(m + 1) { IntArray(n + 1) }
+        
+        for (i in 0..m) dp[i][0] = i
+        for (j in 0..n) dp[0][j] = j
+        
+        for (i in 1..m) {
+            for (j in 1..n) {
+                val cost = if (s1[i - 1] == s2[j - 1]) 0 else 1
+                dp[i][j] = minOf(
+                    dp[i - 1][j] + 1,      // 删除
+                    dp[i][j - 1] + 1,      // 插入
+                    dp[i - 1][j - 1] + cost // 替换
+                )
+            }
+        }
+        
+        return dp[m][n]
     }
 
     /**

@@ -37,7 +37,7 @@ fun ItemListScreen(
     onPostClick: () -> Unit,
     onChatClick: () -> Unit,
     onWishlistClick: () -> Unit,
-    onAchievementsClick: () -> Unit = {},
+    onMyClick: () -> Unit = {},
     onCameraClick: () -> Unit = {},
     onItemClick: (Item) -> Unit,
     viewModel: ItemViewModel = viewModel()
@@ -70,10 +70,10 @@ fun ItemListScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedButton(
-                onClick = onAchievementsClick,
+                onClick = onMyClick,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("我的成就")
+                Text("我的")
             }
             OutlinedButton(
                 onClick = onCameraClick,

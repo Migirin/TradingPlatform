@@ -19,27 +19,16 @@ import com.example.tradingplatform.ui.viewmodel.WishlistViewModel
 fun WishlistScreen(
     onBack: () -> Unit,
     onFindMatches: () -> Unit,
+    onFindMatchesForItem: (String) -> Unit = {},
     onAchievementsClick: () -> Unit = {},
     viewModel: WishlistViewModel = viewModel()
 ) {
-    // 使用 try-catch 包装 collectAsState 以防止崩溃
-    val wishlist = try {
-        viewModel.wishlist.collectAsState().value
-    } catch (e: Exception) {
-        android.util.Log.e("WishlistScreen", "获取愿望清单失败", e)
-        emptyList()
-    }
-    
-    val uiState = try {
-        viewModel.state.collectAsState().value
-    } catch (e: Exception) {
-        android.util.Log.e("WishlistScreen", "获取状态失败", e)
-        com.example.tradingplatform.ui.viewmodel.WishlistUiState.Idle
-    }
+    val wishlist by viewModel.wishlist.collectAsState()
+    val uiState by viewModel.state.collectAsState()
     
     // 调试日志
     LaunchedEffect(wishlist.size) {
-        android.util.Log.d("WishlistScreen", "愿望清单数量: ${wishlist.size}, 状态: $uiState")
+        android.util.Log.d("WishlistScreen", "愿望清单数量: ${wishlist.size}")
     }
     
     // 显示错误状态
@@ -139,7 +128,8 @@ fun WishlistScreen(
                 items(wishlist, key = { it.id }) { item ->
                     WishlistItemCard(
                         item = item,
-                        onDelete = { viewModel.deleteWishlistItem(item.id) }
+                        onDelete = { viewModel.deleteWishlistItem(item.id) },
+                        onFindMatches = { onFindMatchesForItem(item.id) }
                     )
                 }
             }
@@ -150,7 +140,8 @@ fun WishlistScreen(
 @Composable
 fun WishlistItemCard(
     item: WishlistItem,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onFindMatches: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier.fillMaxWidth()
@@ -221,6 +212,19 @@ fun WishlistItemCard(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+
+            // 匹配按钮
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onFindMatches,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("匹配此商品")
+                }
             }
         }
     }

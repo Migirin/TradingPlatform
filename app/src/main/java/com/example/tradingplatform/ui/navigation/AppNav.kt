@@ -37,7 +37,9 @@ import com.example.tradingplatform.ui.screens.ItemListScreen
 import com.example.tradingplatform.ui.screens.PostItemScreen
 import com.example.tradingplatform.ui.screens.WishlistScreen
 import com.example.tradingplatform.ui.screens.ExchangeMatchesScreen
+import com.example.tradingplatform.ui.screens.SingleItemMatchesScreen
 import com.example.tradingplatform.ui.screens.AddItemToWishlistScreen
+import com.example.tradingplatform.ui.screens.MyScreen
 import com.example.tradingplatform.ui.screens.AchievementScreen
 import com.example.tradingplatform.ui.screens.CameraScreen
 import com.example.tradingplatform.ui.screens.RecognitionResultScreen
@@ -57,10 +59,12 @@ object Routes {
     const val ITEM_DETAIL = "item_detail/{itemId}"
     const val WISHLIST = "wishlist"
     const val EXCHANGE_MATCHES = "exchange_matches"
+    const val SINGLE_ITEM_MATCHES = "single_item_matches/{wishlistItemId}"
     const val ADD_ITEM_TO_WISHLIST = "add_item_to_wishlist/{itemId}"
     const val ACHIEVEMENTS = "achievements"
     const val CAMERA = "camera"
     const val RECOGNITION_RESULT = "recognition_result"
+    const val MY = "my"
     
     fun addItemToWishlist(itemId: String) = "add_item_to_wishlist/$itemId"
     
@@ -102,7 +106,7 @@ fun AppNavHost(
                 onPostClick = { navController.navigate(Routes.POST) },
                 onChatClick = { navController.navigate(Routes.CHAT) },
                 onWishlistClick = { navController.navigate(Routes.WISHLIST) },
-                onAchievementsClick = { navController.navigate(Routes.ACHIEVEMENTS) },
+                onMyClick = { navController.navigate(Routes.MY) },
                 onCameraClick = { navController.navigate(Routes.CAMERA) },
                 onItemClick = { item ->
                     Log.d("AppNav", "点击商品，准备导航: ${item.id} - ${item.title}")
@@ -131,6 +135,9 @@ fun AppNavHost(
             WishlistScreen(
                 onBack = { navController.popBackStack() },
                 onFindMatches = { navController.navigate(Routes.EXCHANGE_MATCHES) },
+                onFindMatchesForItem = { wishlistItemId ->
+                    navController.navigate("single_item_matches/$wishlistItemId")
+                },
                 onAchievementsClick = { navController.navigate(Routes.ACHIEVEMENTS) }
             )
         }
@@ -232,6 +239,31 @@ fun AppNavHost(
                 onItemClick = { item ->
                     sharedViewModel.setSelectedItem(item)
                     navController.navigate(Routes.itemDetail(item.id))
+                }
+            )
+        }
+        
+        composable("single_item_matches/{wishlistItemId}") { backStackEntry ->
+            val wishlistItemId = backStackEntry.arguments?.getString("wishlistItemId") ?: ""
+            SingleItemMatchesScreen(
+                wishlistItemId = wishlistItemId,
+                onBack = { navController.popBackStack() },
+                onItemClick = { item ->
+                    sharedViewModel.setSelectedItem(item)
+                    navController.navigate(Routes.itemDetail(item.id))
+                }
+            )
+        }
+        
+        composable(Routes.MY) {
+            MyScreen(
+                onBack = { navController.popBackStack() },
+                onItemClick = { item ->
+                    sharedViewModel.setSelectedItem(item)
+                    navController.navigate(Routes.itemDetail(item.id))
+                },
+                onWishlistItemMatch = { wishlistItemId ->
+                    navController.navigate("single_item_matches/$wishlistItemId")
                 }
             )
         }
