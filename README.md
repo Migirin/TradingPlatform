@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TradingPlatform
 
 二手交易平台 Android 应用
@@ -144,3 +145,7 @@ TradingPlatform/
 
 **注意**：本项目仅用于学习和教育目的。
 
+=======
+# secondhand
+secondhand for bjut
+>>>>>>> 8178dc82488cb22e011becdf2314e37a52929f8f
