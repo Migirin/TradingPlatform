@@ -192,7 +192,9 @@ data class CreateUserRequest(
     @SerializedName("display_name")
     val displayName: String? = null,
     @SerializedName("email_verified")
-    val emailVerified: Boolean = false
+    val emailVerified: Boolean = false,
+    @SerializedName("password_hash")
+    val passwordHash: String? = null
 )
 
 /**
@@ -202,7 +204,9 @@ data class UpdateUserRequest(
     @SerializedName("email_verified")
     val emailVerified: Boolean? = null,
     @SerializedName("display_name")
-    val displayName: String? = null
+    val displayName: String? = null,
+    @SerializedName("password_hash")
+    val passwordHash: String? = null
 )
 
 /**
@@ -295,6 +299,8 @@ data class SupabaseUser(
     val displayName: String? = null,
     @SerializedName("email_verified")
     val emailVerified: Boolean = false,
+    @SerializedName("password_hash")
+    val passwordHash: String? = null,
     @SerializedName("created_at")
     val createdAt: String, // ISO 8601 格式
     @SerializedName("updated_at")
@@ -306,7 +312,8 @@ data class SupabaseUser(
                 email = user.email,
                 uid = user.uid,
                 displayName = user.displayName.ifEmpty { null },
-                emailVerified = user.emailVerified
+                emailVerified = user.emailVerified,
+                passwordHash = user.passwordHash
             )
         }
     }

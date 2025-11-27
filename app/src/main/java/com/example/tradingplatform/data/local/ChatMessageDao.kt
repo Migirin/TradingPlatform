@@ -46,6 +46,26 @@ interface ChatMessageDao {
      */
     @Query("SELECT COUNT(*) FROM chat_messages WHERE senderUid = :uid OR receiverUid = :uid")
     suspend fun getMessageCountForUser(uid: String): Int
+    
+    /**
+     * 获取所有对话用户（去重，返回最后一条消息）
+     * 返回与当前用户有对话的所有其他用户，以及最后一条消息
+     */
+    @Query("""
+        SELECT * FROM chat_messages 
+        WHERE id IN (
+            SELECT MAX(id) 
+            FROM chat_messages 
+            WHERE senderUid = :currentUid OR receiverUid = :currentUid
+            GROUP BY 
+                CASE 
+                    WHEN senderUid = :currentUid THEN receiverUid 
+                    ELSE senderUid 
+                END
+        )
+        ORDER BY timestamp DESC
+    """)
+    fun getConversations(currentUid: String): Flow<List<ChatMessageEntity>>
 }
 
 

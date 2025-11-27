@@ -35,8 +35,6 @@ import com.example.tradingplatform.ui.viewmodel.ItemViewModel
 @Composable
 fun ItemListScreen(
     onPostClick: () -> Unit,
-    onChatClick: () -> Unit,
-    onWishlistClick: () -> Unit,
     onMyClick: () -> Unit = {},
     onCameraClick: () -> Unit = {},
     onItemClick: (Item) -> Unit,
@@ -56,12 +54,6 @@ fun ItemListScreen(
         ) {
             Button(onClick = onPostClick, modifier = Modifier.weight(1f)) {
                 Text("发布物品")
-            }
-            Button(onClick = onChatClick, modifier = Modifier.weight(1f)) {
-                Text("我的消息")
-            }
-            Button(onClick = onWishlistClick, modifier = Modifier.weight(1f)) {
-                Text("愿望清单")
             }
         }
         

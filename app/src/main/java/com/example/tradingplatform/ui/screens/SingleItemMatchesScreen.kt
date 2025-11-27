@@ -40,9 +40,9 @@ fun SingleItemMatchesScreen(
     var showFilters by remember { mutableStateOf(false) }
 
     LaunchedEffect(wishlistItemId) {
-        if (matches.isEmpty() || matches.firstOrNull()?.wishlistItem?.id != wishlistItemId) {
-            viewModel.findMatchesForItem(wishlistItemId, minScore = minScore)
-        }
+        // 注意：findMatchesForWishlistItem 已废弃，现在只匹配商品
+        // 此功能暂时保留但不会返回结果
+        viewModel.findMatchesForItem(wishlistItemId, minScore = minScore)
     }
 
     Column(
@@ -188,7 +188,7 @@ fun SingleItemMatchesScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "尝试调整筛选条件或等待更多商品发布",
+                                text = "注意：现在只匹配商品，不再使用愿望清单匹配",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -247,10 +247,11 @@ fun SingleItemMatchesScreen(
                     )
                     
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        items(matches, key = { "${it.wishlistItem.id}_${it.availableItem.id}" }) { match ->
+                        items(matches, key = { "${it.myItem.id}_${it.otherItem.id}" }) { match ->
                             ExchangeMatchCard(
                                 match = match,
-                                onItemClick = { onItemClick(match.availableItem) }
+                                onMyItemClick = { onItemClick(match.myItem) },
+                                onOtherItemClick = { onItemClick(match.otherItem) }
                             )
                         }
                     }

@@ -509,4 +509,86 @@ class AuthRepository(
         }
         Log.d(TAG, "已清除保存的登录凭据")
     }
+    
+    /**
+     * 更改密码
+     * @param currentPassword 当前密码
+     * @param newPassword 新密码
+     */
+    suspend fun changePassword(
+        currentPassword: String,
+        newPassword: String
+    ): Result<Unit> = runCatching {
+        Log.d(TAG, "开始更改密码")
+        
+        if (userDao == null) {
+            throw IllegalStateException("数据库未初始化")
+        }
+        
+        withContext(Dispatchers.IO) {
+            val currentEmail = getCurrentUserEmail()
+            if (currentEmail == null) {
+                throw IllegalArgumentException("请先登录")
+            }
+            
+            val emailLower = currentEmail.lowercase()
+            
+            // 验证新密码长度
+            if (newPassword.length < 6) {
+                throw IllegalArgumentException("新密码至少需要6个字符")
+            }
+            
+            // 获取当前用户
+            val user = userDao.getUserByEmail(emailLower)
+            if (user == null) {
+                throw IllegalArgumentException("用户不存在")
+            }
+            
+            // 验证当前密码
+            val currentPasswordHash = hashPassword(currentPassword)
+            if (user.passwordHash != currentPasswordHash) {
+                throw IllegalArgumentException("当前密码错误")
+            }
+            
+            // 检查新密码是否与当前密码相同
+            val newPasswordHash = hashPassword(newPassword)
+            if (user.passwordHash == newPasswordHash) {
+                throw IllegalArgumentException("新密码不能与当前密码相同")
+            }
+            
+            // 更新本地数据库
+            val updatedUser = user.copy(
+                passwordHash = newPasswordHash,
+                updatedAt = System.currentTimeMillis()
+            )
+            userDao.updateUser(updatedUser)
+            Log.d(TAG, "本地密码已更新: $emailLower")
+            
+            // 同步到 Supabase
+            try {
+                val updateRequest = com.example.tradingplatform.data.supabase.UpdateUserRequest(
+                    passwordHash = newPasswordHash
+                )
+                val response = supabaseApi?.updateUser("eq.$emailLower", updateRequest)
+                if (response?.isSuccessful == true) {
+                    Log.d(TAG, "Supabase 密码已更新: $emailLower")
+                } else {
+                    val errorBody = response?.errorBody()?.string()
+                    Log.w(TAG, "Supabase 密码更新失败: HTTP ${response?.code()} - $errorBody")
+                    // 即使 Supabase 失败，本地密码仍然更新
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Supabase 密码更新失败（本地密码已更新）", e)
+                // 即使 Supabase 失败，本地密码仍然更新
+            }
+            
+            // 更新保存的凭据（如果存在）
+            val savedEmail = getSavedEmail()
+            if (savedEmail?.lowercase() == emailLower) {
+                saveCredentials(emailLower, newPassword)
+            }
+            
+            Log.d(TAG, "密码更改成功: $emailLower")
+        }
+    }
 }

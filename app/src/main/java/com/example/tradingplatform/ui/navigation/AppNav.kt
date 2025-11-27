@@ -19,6 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -34,6 +36,7 @@ import com.example.tradingplatform.ui.screens.AuthScreen
 import com.example.tradingplatform.ui.screens.ChatScreen
 import com.example.tradingplatform.ui.screens.ItemDetailScreen
 import com.example.tradingplatform.ui.screens.ItemListScreen
+import com.example.tradingplatform.ui.screens.MainScreen
 import com.example.tradingplatform.ui.screens.PostItemScreen
 import com.example.tradingplatform.ui.screens.WishlistScreen
 import com.example.tradingplatform.ui.screens.ExchangeMatchesScreen
@@ -42,6 +45,7 @@ import com.example.tradingplatform.ui.screens.AddItemToWishlistScreen
 import com.example.tradingplatform.ui.screens.MyScreen
 import com.example.tradingplatform.ui.screens.AchievementScreen
 import com.example.tradingplatform.ui.screens.CameraScreen
+import com.example.tradingplatform.ui.screens.ChangePasswordScreen
 import com.example.tradingplatform.ui.screens.RecognitionResultScreen
 import com.example.tradingplatform.data.vision.ApiConfig
 import android.graphics.Bitmap
@@ -56,6 +60,7 @@ object Routes {
     const val ITEMS = "items"
     const val POST = "post"
     const val CHAT = "chat"
+    const val CHAT_WITH_USER = "chat/{receiverUid}/{receiverEmail}/{itemId}/{itemTitle}"
     const val ITEM_DETAIL = "item_detail/{itemId}"
     const val WISHLIST = "wishlist"
     const val EXCHANGE_MATCHES = "exchange_matches"
@@ -65,8 +70,12 @@ object Routes {
     const val CAMERA = "camera"
     const val RECOGNITION_RESULT = "recognition_result"
     const val MY = "my"
+    const val MY_SOLD = "my_sold"
+    const val CHANGE_PASSWORD = "change_password"
     
     fun addItemToWishlist(itemId: String) = "add_item_to_wishlist/$itemId"
+    fun chatWithUser(receiverUid: String, receiverEmail: String, itemId: String = "", itemTitle: String = "") = 
+        "chat/$receiverUid/$receiverEmail/$itemId/$itemTitle"
     
     fun itemDetail(itemId: String) = "item_detail/$itemId"
 }
@@ -101,13 +110,8 @@ fun AppNavHost(
             }) 
         }
         composable(Routes.ITEMS) { 
-            ItemListScreen(
+            MainScreen(
                 viewModel = sharedViewModel,
-                onPostClick = { navController.navigate(Routes.POST) },
-                onChatClick = { navController.navigate(Routes.CHAT) },
-                onWishlistClick = { navController.navigate(Routes.WISHLIST) },
-                onMyClick = { navController.navigate(Routes.MY) },
-                onCameraClick = { navController.navigate(Routes.CAMERA) },
                 onItemClick = { item ->
                     Log.d("AppNav", "点击商品，准备导航: ${item.id} - ${item.title}")
                     sharedViewModel.setSelectedItem(item) // 保存选中的商品
@@ -119,22 +123,79 @@ fun AppNavHost(
                     } catch (e: Exception) {
                         Log.e("AppNav", "导航失败", e)
                     }
-                }
+                },
+                onNavigateToMy = { navController.navigate(Routes.MY) },
+                onNavigateToPost = { navController.navigate(Routes.POST) },
+                onNavigateToCamera = { navController.navigate(Routes.CAMERA) }
             )
         }
         composable(Routes.POST) { 
+            val coroutineScope = rememberCoroutineScope()
             PostItemScreen(
                 viewModel = sharedViewModel,
-                onDone = { navController.popBackStack() }
+                onDone = { 
+                    // 发布成功后，导航到"我的"界面的"我出售的"标签页
+                    Log.d("AppNav", "发布成功，准备导航到 MY_SOLD")
+                    // 先刷新商品列表
+                    sharedViewModel.loadItems()
+                    // 在协程中执行导航，确保在正确的上下文中
+                    coroutineScope.launch {
+                        kotlinx.coroutines.delay(100) // 稍微延迟确保状态更新完成
+                        try {
+                            navController.navigate(Routes.MY_SOLD) {
+                                // 清除返回栈直到主界面（不包括主界面）
+                                popUpTo(Routes.ITEMS) { inclusive = false }
+                                // 避免重复添加相同的目标
+                                launchSingleTop = true
+                            }
+                            Log.d("AppNav", "导航到 MY_SOLD 完成")
+                        } catch (e: Exception) {
+                            Log.e("AppNav", "导航失败", e)
+                            // 如果导航失败，至少返回到主界面
+                            navController.popBackStack(Routes.ITEMS, inclusive = false)
+                        }
+                    }
+                },
+                onCancel = {
+                    // 点击取消时，返回到首页
+                    Log.d("AppNav", "取消发布，返回到首页")
+                    navController.popBackStack(Routes.ITEMS, inclusive = false)
+                }
             ) 
         }
         composable(Routes.CHAT) { 
-            ChatScreen(onBack = { navController.popBackStack() }) 
+            ChatScreen(
+                onBack = { navController.popBackStack() },
+                onConversationClick = { receiverUid, receiverEmail, itemId, itemTitle ->
+                    navController.navigate(Routes.chatWithUser(receiverUid, receiverEmail, itemId, itemTitle))
+                }
+            ) 
+        }
+        composable(
+            route = Routes.CHAT_WITH_USER,
+            arguments = listOf(
+                navArgument("receiverUid") { type = NavType.StringType },
+                navArgument("receiverEmail") { type = NavType.StringType },
+                navArgument("itemId") { type = NavType.StringType },
+                navArgument("itemTitle") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val receiverUid = backStackEntry.arguments?.getString("receiverUid") ?: ""
+            val receiverEmail = backStackEntry.arguments?.getString("receiverEmail") ?: ""
+            val itemId = backStackEntry.arguments?.getString("itemId") ?: ""
+            val itemTitle = backStackEntry.arguments?.getString("itemTitle") ?: ""
+            ChatScreen(
+                onBack = { navController.popBackStack() },
+                receiverUid = receiverUid.ifEmpty { null },
+                receiverEmail = receiverEmail.ifEmpty { null },
+                itemId = itemId.ifEmpty { null },
+                itemTitle = itemTitle.ifEmpty { null }
+            )
         }
         composable(Routes.WISHLIST) {
             WishlistScreen(
                 onBack = { navController.popBackStack() },
-                onFindMatches = { navController.navigate(Routes.EXCHANGE_MATCHES) },
+                onFindMatches = {}, // 已移除，不再使用
                 onFindMatchesForItem = { wishlistItemId ->
                     navController.navigate("single_item_matches/$wishlistItemId")
                 },
@@ -262,9 +323,38 @@ fun AppNavHost(
                     sharedViewModel.setSelectedItem(item)
                     navController.navigate(Routes.itemDetail(item.id))
                 },
+                onExchangeMatch = { navController.navigate(Routes.EXCHANGE_MATCHES) },
                 onWishlistItemMatch = { wishlistItemId ->
                     navController.navigate("single_item_matches/$wishlistItemId")
-                }
+                },
+                onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
+                onChatWithUser = { receiverUid, receiverEmail, itemId, itemTitle ->
+                    navController.navigate(Routes.chatWithUser(receiverUid, receiverEmail, itemId, itemTitle))
+                },
+                initialTab = com.example.tradingplatform.ui.screens.MyScreenTab.MY_SOLD
+            )
+        }
+        composable(Routes.MY_SOLD) {
+            MyScreen(
+                onBack = { navController.popBackStack() },
+                onItemClick = { item ->
+                    sharedViewModel.setSelectedItem(item)
+                    navController.navigate(Routes.itemDetail(item.id))
+                },
+                onExchangeMatch = { navController.navigate(Routes.EXCHANGE_MATCHES) },
+                onWishlistItemMatch = { wishlistItemId ->
+                    navController.navigate("single_item_matches/$wishlistItemId")
+                },
+                onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
+                onChatWithUser = { receiverUid, receiverEmail, itemId, itemTitle ->
+                    navController.navigate(Routes.chatWithUser(receiverUid, receiverEmail, itemId, itemTitle))
+                },
+                initialTab = com.example.tradingplatform.ui.screens.MyScreenTab.MY_SOLD
+            )
+        }
+        composable(Routes.CHANGE_PASSWORD) {
+            ChangePasswordScreen(
+                onBack = { navController.popBackStack() }
             )
         }
         composable(
@@ -315,18 +405,40 @@ fun AppNavHost(
                 Text("正在返回...")
                     } else {
                         Log.d("AppNav", "显示商品详情: ${item.id} - ${item.title}")
+                        // 检查商品是否属于当前用户
+                        var currentUid by remember { mutableStateOf<String?>(null) }
+                        var currentEmail by remember { mutableStateOf<String?>(null) }
+                        
+                        LaunchedEffect(Unit) {
+                            currentUid = authRepo.getCurrentUserUid()
+                            currentEmail = authRepo.getCurrentUserEmail()
+                        }
+                        
+                        val isOwnItem = remember(item, currentUid, currentEmail) {
+                            val uidMatch = currentUid?.let { item.ownerUid == it } ?: false
+                            val emailMatch = currentEmail?.let { 
+                                item.ownerEmail.equals(it, ignoreCase = true) 
+                            } ?: false
+                            uidMatch || emailMatch
+                        }
+                        
                         ItemDetailScreen(
                             item = item,
                             onBack = { navController.popBackStack() },
-                            onContact = { navController.navigate(Routes.CHAT) },
-                            onExchangeMatch = { navController.navigate(Routes.EXCHANGE_MATCHES) },
+                            onContact = { 
+                                // 传递卖家信息到聊天界面
+                                val sellerUid = item.ownerUid.ifEmpty { "unknown" }
+                                val sellerEmail = item.ownerEmail.ifEmpty { "unknown@example.com" }
+                                navController.navigate(Routes.chatWithUser(sellerUid, sellerEmail, item.id, item.title))
+                            },
                             onAddToWishlist = { navController.navigate(Routes.addItemToWishlist(item.id)) },
                             onDelete = {
                                 // 开发者模式可以删除
                                 sharedViewModel.deleteItem(item.id)
                                 navController.popBackStack()
                             },
-                            isDevMode = isDevMode
+                            isDevMode = isDevMode,
+                            isOwnItem = isOwnItem
                         )
                     }
         }

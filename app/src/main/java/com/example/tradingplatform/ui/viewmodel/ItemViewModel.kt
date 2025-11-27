@@ -94,15 +94,34 @@ class ItemViewModel(
                     story = story,
                     phoneNumber = phoneNumber
                 )
+                Log.d("ItemViewModel", "开始发布商品: ${item.title}")
                 repo.addItem(item, imageUri)
+                Log.d("ItemViewModel", "商品发布成功，设置状态为 Success")
                 _state.value = ItemUiState.Success
-                // 重新加载列表
-                loadItems()
+                // 重新加载列表（不重置状态）
+                loadItemsWithoutStateReset()
                 // 检查成就
                 achievementRepo.checkAndGrantAchievements()
+                Log.d("ItemViewModel", "发布流程完成，状态: ${_state.value}")
             } catch (e: Exception) {
                 Log.e("ItemViewModel", "发布商品失败", e)
                 _state.value = ItemUiState.Error("发布失败: ${e.message ?: "未知错误"}")
+            }
+        }
+    }
+    
+    /**
+     * 加载商品列表但不重置状态（用于发布成功后刷新列表）
+     */
+    private fun loadItemsWithoutStateReset() {
+        viewModelScope.launch {
+            try {
+                val itemsList = repo.listItems()
+                _items.value = itemsList
+                Log.d("ItemViewModel", "商品列表已刷新，共 ${itemsList.size} 个商品")
+            } catch (e: Exception) {
+                Log.e("ItemViewModel", "刷新商品列表失败", e)
+                // 不改变当前状态
             }
         }
     }

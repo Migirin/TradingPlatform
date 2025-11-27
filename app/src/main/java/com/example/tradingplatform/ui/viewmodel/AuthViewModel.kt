@@ -116,6 +116,26 @@ class AuthViewModel(
             }
         }
     }
+    
+    /**
+     * 更改密码
+     */
+    fun changePassword(currentPassword: String, newPassword: String) {
+        if (newPassword.length < 6) {
+            _state.value = AuthUiState.Error("新密码至少需要6个字符")
+            return
+        }
+        _state.value = AuthUiState.Loading
+        viewModelScope.launch {
+            val result = repo.changePassword(currentPassword, newPassword)
+            result.onSuccess {
+                _state.value = AuthUiState.Success
+            }.onFailure { exception ->
+                val errorMessage = exception.message ?: "更改密码失败"
+                _state.value = AuthUiState.Error(errorMessage)
+            }
+        }
+    }
 }
 
 

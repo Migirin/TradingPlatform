@@ -232,7 +232,7 @@ class WishlistRepository(
 
     /**
      * 智能匹配交换机会
-     * 根据用户的愿望清单，匹配可交换的商品
+     * 只匹配"我正在卖的商品"与"别人正在卖的商品"
      * 
      * @param minScore 最低匹配分数（默认30）
      * @param maxResults 最大返回结果数（默认50，0表示不限制）
@@ -242,51 +242,47 @@ class WishlistRepository(
         maxResults: Int = 50
     ): List<ExchangeMatch> = withContext(Dispatchers.IO) {
         val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user"
+        val currentEmail = authRepo?.getCurrentUserEmail()?.lowercase()
         
-        // 获取当前用户的愿望清单
-        val wishlist = getWishlistSync()
-        if (wishlist.isEmpty()) {
-            Log.d(TAG, "愿望清单为空，无法匹配")
+        // 获取当前用户发布的商品（我正在卖的商品）
+        val allItems = itemRepository?.listItems() ?: emptyList()
+        val myItems = allItems.filter { item ->
+            // 同时匹配 ownerUid 和 ownerEmail
+            val uidMatch = item.ownerUid == currentUid
+            val emailMatch = currentEmail?.let { 
+                item.ownerEmail.equals(it, ignoreCase = true) 
+            } ?: false
+            uidMatch || emailMatch
+        }
+
+        if (myItems.isEmpty()) {
+            Log.d(TAG, "您没有正在出售的商品，无法进行交换匹配")
             return@withContext emptyList()
         }
 
-        // 获取当前用户发布的商品（用于交换）
-        val myItems = itemRepository?.listItems()?.filter { it.ownerUid == currentUid } ?: emptyList()
+        // 获取所有其他用户发布的商品（别人正在卖的商品）
+        val otherItems = allItems.filter { item ->
+            val uidNotMatch = item.ownerUid != currentUid
+            val emailNotMatch = currentEmail?.let { 
+                !item.ownerEmail.equals(it, ignoreCase = true) 
+            } ?: true
+            uidNotMatch && emailNotMatch
+        }
 
-        // 获取所有其他用户的愿望清单
-        val allWishlist = getAllWishlistItems().filter { it.userId != currentUid }
-
-        // 获取所有其他用户发布的商品
-        val allItems = itemRepository?.listItems()?.filter { it.ownerUid != currentUid } ?: emptyList()
-
-        if (allItems.isEmpty() && myItems.isEmpty()) {
-            Log.d(TAG, "没有可匹配的商品")
+        if (otherItems.isEmpty()) {
+            Log.d(TAG, "没有其他用户正在出售的商品")
             return@withContext emptyList()
         }
 
         val matches = mutableListOf<ExchangeMatch>()
 
-        // 匹配逻辑1：我的愿望清单 vs 其他用户的商品（正向匹配）
-        for (wish in wishlist) {
-            for (item in allItems) {
-                val score = calculateMatchScore(wish, item)
+        // 匹配逻辑：我的商品 vs 其他用户的商品
+        for (myItem in myItems) {
+            for (otherItem in otherItems) {
+                val score = calculateItemMatchScore(myItem, otherItem)
                 if (score >= minScore) {
-                    val reasons = getMatchReasons(wish, item, score)
-                    matches.add(ExchangeMatch(wish, item, score, reasons, isReverseMatch = false))
-                }
-            }
-        }
-
-        // 匹配逻辑2：其他用户的愿望清单 vs 我的商品（反向匹配）
-        // 只有在用户有发布的商品时才进行反向匹配
-        if (myItems.isNotEmpty()) {
-            for (wish in allWishlist) {
-                for (item in myItems) {
-                    val score = calculateMatchScore(wish, item)
-                    if (score >= minScore) {
-                        val reasons = getMatchReasons(wish, item, score)
-                        matches.add(ExchangeMatch(wish, item, score, reasons, isReverseMatch = true))
-                    }
+                    val reasons = getItemMatchReasons(myItem, otherItem, score)
+                    matches.add(ExchangeMatch(myItem, otherItem, score, reasons))
                 }
             }
         }
@@ -303,95 +299,87 @@ class WishlistRepository(
     }
 
     /**
-     * 匹配单个愿望清单项
-     * 只匹配该愿望清单项与其他用户发布的商品
+     * 匹配单个愿望清单项（已废弃，现在只匹配商品）
+     * 保留此方法以保持向后兼容，但返回空列表
      * 
      * @param wishlistItemId 愿望清单项ID
      * @param minScore 最低匹配分数（默认30）
      * @param maxResults 最大返回结果数（默认20，0表示不限制）
      */
+    @Deprecated("现在只匹配商品，不再使用愿望清单匹配")
     suspend fun findMatchesForWishlistItem(
         wishlistItemId: String,
         minScore: Double = 30.0,
         maxResults: Int = 20
     ): List<ExchangeMatch> = withContext(Dispatchers.IO) {
-        val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user"
-        
-        // 获取指定的愿望清单项
-        val wishlist = getWishlistSync()
-        val targetWish = wishlist.firstOrNull { it.id == wishlistItemId }
-        
-        if (targetWish == null) {
-            Log.d(TAG, "未找到愿望清单项: $wishlistItemId")
-            return@withContext emptyList()
-        }
-
-        // 获取所有其他用户发布的商品
-        val allItems = itemRepository?.listItems()?.filter { it.ownerUid != currentUid } ?: emptyList()
-
-        if (allItems.isEmpty()) {
-            Log.d(TAG, "没有可匹配的商品")
-            return@withContext emptyList()
-        }
-
-        val matches = mutableListOf<ExchangeMatch>()
-
-        // 只进行正向匹配：该愿望清单项 vs 其他用户的商品
-        for (item in allItems) {
-            val score = calculateMatchScore(targetWish, item)
-            if (score >= minScore) {
-                val reasons = getMatchReasons(targetWish, item, score)
-                matches.add(ExchangeMatch(targetWish, item, score, reasons, isReverseMatch = false))
-            }
-        }
-
-        // 按匹配分数排序
-        val sortedMatches = matches.sortedByDescending { it.matchScore }
-        
-        // 限制返回结果数
-        if (maxResults > 0 && sortedMatches.size > maxResults) {
-            return@withContext sortedMatches.take(maxResults)
-        }
-        
-        return@withContext sortedMatches
+        Log.d(TAG, "findMatchesForWishlistItem已废弃，现在只匹配商品")
+        return@withContext emptyList()
     }
 
     /**
-     * 计算匹配分数（0-100）
+     * 计算两个商品的匹配分数（0-100）
+     * 用于交换匹配：我的商品 vs 其他用户的商品
      */
-    private fun calculateMatchScore(wish: WishlistItem, item: Item): Double {
+    private fun calculateItemMatchScore(myItem: Item, otherItem: Item): Double {
         var score = 0.0
 
         // 1. 标题关键词匹配（40分）
-        val titleMatch = calculateTextSimilarity(wish.title.lowercase(), item.title.lowercase())
+        val titleMatch = calculateTextSimilarity(myItem.title.lowercase(), otherItem.title.lowercase())
         score += titleMatch * 40
 
         // 2. 描述匹配（20分）
         val descMatch = calculateTextSimilarity(
-            wish.description.lowercase(),
-            item.description.lowercase()
+            myItem.description.lowercase(),
+            otherItem.description.lowercase()
         )
         score += descMatch * 20
 
         // 3. 价格匹配（30分）
-        val priceScore = calculatePriceMatch(wish, item)
+        val priceScore = calculateItemPriceMatch(myItem, otherItem)
         score += priceScore * 30
 
         // 4. 类别匹配（10分，如果有类别）
-        if (wish.category.isNotEmpty()) {
+        if (myItem.category.isNotEmpty() && otherItem.category.isNotEmpty()) {
             val categoryMatch = when {
-                item.category.isNotEmpty() && item.category == wish.category -> 1.0 // 完全匹配
-                item.category.isNotEmpty() && item.category.contains(wish.category) -> 0.7 // 包含匹配
-                item.title.lowercase().contains(wish.category.lowercase()) ||
-                item.description.lowercase().contains(wish.category.lowercase()) -> 0.5 // 文本匹配
+                myItem.category == otherItem.category -> 1.0 // 完全匹配
+                myItem.category.contains(otherItem.category) || 
+                otherItem.category.contains(myItem.category) -> 0.7 // 包含匹配
+                myItem.title.lowercase().contains(otherItem.category.lowercase()) ||
+                otherItem.title.lowercase().contains(myItem.category.lowercase()) -> 0.5 // 文本匹配
                 else -> 0.0
             }
             score += categoryMatch * 10
         } else {
-            score += 10 // 如果没有类别，给满分
+            score += 10 // 如果都没有类别，给满分
         }
 
         return score.coerceIn(0.0, 100.0)
+    }
+    
+    /**
+     * 计算两个商品的价格匹配分数（0-1）
+     */
+    private fun calculateItemPriceMatch(item1: Item, item2: Item): Double {
+        val price1 = item1.price
+        val price2 = item2.price
+        
+        if (price1 <= 0 || price2 <= 0) {
+            return 0.5 // 如果价格无效，给中等分数
+        }
+        
+        // 计算价格差异百分比
+        val priceDiff = kotlin.math.abs(price1 - price2)
+        val avgPrice = (price1 + price2) / 2.0
+        val diffRatio = if (avgPrice > 0) priceDiff / avgPrice else 1.0
+        
+        // 价格越接近，分数越高
+        return when {
+            diffRatio <= 0.1 -> 1.0  // 价格差异在10%以内，满分
+            diffRatio <= 0.2 -> 0.8  // 价格差异在20%以内
+            diffRatio <= 0.3 -> 0.6  // 价格差异在30%以内
+            diffRatio <= 0.5 -> 0.4  // 价格差异在50%以内
+            else -> 0.2              // 价格差异超过50%
+        }
     }
 
     /**
@@ -565,7 +553,45 @@ class WishlistRepository(
     }
 
     /**
-     * 获取匹配原因
+     * 获取商品匹配原因
+     */
+    private fun getItemMatchReasons(myItem: Item, otherItem: Item, score: Double): List<String> {
+        val reasons = mutableListOf<String>()
+
+        if (score > 70) {
+            reasons.add("高度匹配")
+        } else if (score > 50) {
+            reasons.add("良好匹配")
+        } else {
+            reasons.add("可能匹配")
+        }
+
+        // 价格匹配
+        val priceMatch = calculateItemPriceMatch(myItem, otherItem)
+        if (priceMatch > 0.7) {
+            reasons.add("价格相近")
+        }
+
+        // 标题匹配
+        val titleMatch = calculateTextSimilarity(myItem.title.lowercase(), otherItem.title.lowercase())
+        if (titleMatch > 0.5) {
+            reasons.add("商品类型相似")
+        }
+
+        // 类别匹配
+        if (myItem.category.isNotEmpty() && otherItem.category.isNotEmpty()) {
+            if (otherItem.category == myItem.category) {
+                reasons.add("类别完全匹配")
+            } else if (otherItem.category.contains(myItem.category) || myItem.category.contains(otherItem.category)) {
+                reasons.add("类别相关")
+            }
+        }
+
+        return reasons
+    }
+    
+    /**
+     * 获取匹配原因（保留用于向后兼容，但不再使用）
      */
     private fun getMatchReasons(wish: WishlistItem, item: Item, score: Double): List<String> {
         val reasons = mutableListOf<String>()

@@ -28,6 +28,7 @@ import com.example.tradingplatform.ui.viewmodel.WishlistViewModel
 fun ExchangeMatchesScreen(
     onBack: () -> Unit,
     onItemClick: (com.example.tradingplatform.data.items.Item) -> Unit,
+    onSendMessage: (String, String, String, String) -> Unit = { _, _, _, _ -> },
     viewModel: WishlistViewModel = viewModel()
 ) {
     val matches by viewModel.matches.collectAsState()
@@ -177,7 +178,7 @@ fun ExchangeMatchesScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "尝试添加更多愿望清单或发布更多商品",
+                                text = "尝试发布更多商品以进行交换匹配",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -185,10 +186,17 @@ fun ExchangeMatchesScreen(
                     }
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        items(matches, key = { "${it.wishlistItem.id}_${it.availableItem.id}" }) { match ->
+                        items(matches, key = { "${it.myItem.id}_${it.otherItem.id}" }) { match ->
                             ExchangeMatchCard(
                                 match = match,
-                                onItemClick = { onItemClick(match.availableItem) }
+                                onMyItemClick = { onItemClick(match.myItem) },
+                                onOtherItemClick = { onItemClick(match.otherItem) },
+                                onSendMessage = {
+                                    // 导航到聊天界面，传递对方用户信息
+                                    val receiverUid = match.otherItem.ownerUid.ifEmpty { "unknown" }
+                                    val receiverEmail = match.otherItem.ownerEmail.ifEmpty { "unknown@example.com" }
+                                    onSendMessage(receiverUid, receiverEmail, match.otherItem.id, match.otherItem.title)
+                                }
                             )
                         }
                     }
@@ -201,11 +209,12 @@ fun ExchangeMatchesScreen(
 @Composable
 fun ExchangeMatchCard(
     match: ExchangeMatch,
-    onItemClick: () -> Unit
+    onMyItemClick: () -> Unit,
+    onOtherItemClick: () -> Unit,
+    onSendMessage: () -> Unit = {}
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onItemClick
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
@@ -243,120 +252,154 @@ fun ExchangeMatchCard(
 
             Divider()
 
-            // 匹配类型标签
-            if (match.isReverseMatch) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.secondaryContainer
-                ) {
-                    Text(
-                        text = "🔄 反向匹配：有人想买你的商品",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                }
-            }
-
-            // 愿望清单信息
+            // 我的商品信息
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = if (match.isReverseMatch) "对方想买：" else "你想买：",
+                    text = "我正在卖：",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Text(
-                    text = match.wishlistItem.title,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                if (match.wishlistItem.description.isNotEmpty()) {
-                    Text(
-                        text = match.wishlistItem.description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2
-                    )
-                }
-                // 显示价格区间（如果有）
-                if (match.wishlistItem.minPrice > 0 || match.wishlistItem.maxPrice > 0) {
-                    val priceRange = when {
-                        match.wishlistItem.minPrice > 0 && match.wishlistItem.maxPrice > 0 ->
-                            "¥${String.format("%.2f", match.wishlistItem.minPrice)} - ¥${String.format("%.2f", match.wishlistItem.maxPrice)}"
-                        match.wishlistItem.minPrice > 0 ->
-                            "≥ ¥${String.format("%.2f", match.wishlistItem.minPrice)}"
-                        else ->
-                            "≤ ¥${String.format("%.2f", match.wishlistItem.maxPrice)}"
-                    }
-                    Text(
-                        text = "期望价格: $priceRange",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-
-            Divider()
-
-            // 可交换商品信息
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = if (match.isReverseMatch) "你的商品：" else "可交换：",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                Card(
+                    onClick = onMyItemClick,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    if (match.availableItem.imageUrl.isNotEmpty()) {
-                        Image(
-                            painter = rememberAsyncImagePainter(match.availableItem.imageUrl),
-                            contentDescription = match.availableItem.title,
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = match.availableItem.title,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        if (match.availableItem.description.isNotEmpty()) {
-                            Text(
-                                text = match.availableItem.description,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 2
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        if (match.myItem.imageUrl.isNotEmpty()) {
+                            Image(
+                                painter = rememberAsyncImagePainter(match.myItem.imageUrl),
+                                contentDescription = match.myItem.title,
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
                             )
                         }
-                        Text(
-                            text = "¥${String.format("%.2f", match.availableItem.price)}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = if (match.isReverseMatch) "买家: ${match.wishlistItem.userEmail}" else "卖家: ${match.availableItem.ownerEmail}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                text = match.myItem.title,
+                                style = MaterialTheme.typography.titleMedium
                             )
-                            if (match.availableItem.category.isNotEmpty()) {
+                            if (match.myItem.description.isNotEmpty()) {
+                                Text(
+                                    text = match.myItem.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 2
+                                )
+                            }
+                            Text(
+                                text = "¥${String.format("%.2f", match.myItem.price)}",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            if (match.myItem.category.isNotEmpty()) {
                                 Surface(
                                     shape = RoundedCornerShape(4.dp),
                                     color = MaterialTheme.colorScheme.tertiaryContainer
                                 ) {
                                     Text(
-                                        text = match.availableItem.category,
+                                        text = match.myItem.category,
                                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onTertiaryContainer
                                     )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Divider()
+
+            // 交换箭头
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "⇄ 可交换 ⇄",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Divider()
+
+            // 其他用户的商品信息
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = "别人正在卖：",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Card(
+                    onClick = onOtherItemClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        if (match.otherItem.imageUrl.isNotEmpty()) {
+                            Image(
+                                painter = rememberAsyncImagePainter(match.otherItem.imageUrl),
+                                contentDescription = match.otherItem.title,
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = match.otherItem.title,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            if (match.otherItem.description.isNotEmpty()) {
+                                Text(
+                                    text = match.otherItem.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 2
+                                )
+                            }
+                            Text(
+                                text = "¥${String.format("%.2f", match.otherItem.price)}",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "卖家: ${match.otherItem.ownerEmail}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                if (match.otherItem.category.isNotEmpty()) {
+                                    Surface(
+                                        shape = RoundedCornerShape(4.dp),
+                                        color = MaterialTheme.colorScheme.tertiaryContainer
+                                    ) {
+                                        Text(
+                                            text = match.otherItem.category,
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onTertiaryContainer
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -384,6 +427,14 @@ fun ExchangeMatchCard(
                         }
                     }
                 }
+            }
+            
+            // 发消息按钮
+            Button(
+                onClick = onSendMessage,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("发消息")
             }
         }
     }

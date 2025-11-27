@@ -22,20 +22,30 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.data.wishlist.WishlistItem
+import com.example.tradingplatform.data.chat.ChatConversation
 import com.example.tradingplatform.ui.viewmodel.ItemViewModel
 import com.example.tradingplatform.ui.viewmodel.WishlistViewModel
+import com.example.tradingplatform.ui.viewmodel.ChatViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 enum class MyScreenTab {
     MY_SOLD,    // 我出售的
     MY_BOUGHT,  // 我买到的
-    WISHLIST    // 我的愿望清单
+    WISHLIST,   // 我的愿望清单
+    MY_MESSAGES, // 我的消息
+    SETTINGS    // 设置
 }
 
 @Composable
 fun MyScreen(
     onBack: () -> Unit = {},
     onItemClick: (Item) -> Unit,
+    onExchangeMatch: () -> Unit = {},
     onWishlistItemMatch: (String) -> Unit = {},
+    onChangePassword: () -> Unit = {},
+    onChatWithUser: (String, String, String, String) -> Unit = { _, _, _, _ -> },
+    initialTab: MyScreenTab = MyScreenTab.MY_SOLD,
     itemViewModel: ItemViewModel = viewModel(),
     wishlistViewModel: WishlistViewModel = viewModel()
 ) {
@@ -72,7 +82,7 @@ fun MyScreen(
         emptyList<Item>()
     }
     
-    var selectedTab by remember { mutableStateOf(MyScreenTab.MY_SOLD) }
+    var selectedTab by remember { mutableStateOf(initialTab) }
     
     Column(
         modifier = Modifier.fillMaxSize()
@@ -129,6 +139,16 @@ fun MyScreen(
                 onClick = { selectedTab = MyScreenTab.WISHLIST },
                 text = { Text("我的愿望清单 (${wishlist.size})") }
             )
+            Tab(
+                selected = selectedTab == MyScreenTab.MY_MESSAGES,
+                onClick = { selectedTab = MyScreenTab.MY_MESSAGES },
+                text = { Text("我的消息") }
+            )
+            Tab(
+                selected = selectedTab == MyScreenTab.SETTINGS,
+                onClick = { selectedTab = MyScreenTab.SETTINGS },
+                text = { Text("设置") }
+            )
         }
         
         // 内容区域
@@ -136,7 +156,8 @@ fun MyScreen(
             MyScreenTab.MY_SOLD -> {
                 MySoldItemsTab(
                     items = mySoldItems,
-                    onItemClick = onItemClick
+                    onItemClick = onItemClick,
+                    onExchangeMatch = onExchangeMatch
                 )
             }
             MyScreenTab.MY_BOUGHT -> {
@@ -151,6 +172,35 @@ fun MyScreen(
                     onDelete = { wishlistViewModel.deleteWishlistItem(it) }
                 )
             }
+            MyScreenTab.MY_MESSAGES -> {
+                MyMessagesTab(
+                    onChatWithUser = onChatWithUser
+                )
+            }
+            MyScreenTab.SETTINGS -> {
+                MySettingsTab(
+                    onChangePassword = onChangePassword
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MySettingsTab(
+    onChangePassword: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Button(
+            onClick = onChangePassword,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("更改密码")
         }
     }
 }
@@ -158,7 +208,8 @@ fun MyScreen(
 @Composable
 fun MySoldItemsTab(
     items: List<Item>,
-    onItemClick: (Item) -> Unit
+    onItemClick: (Item) -> Unit,
+    onExchangeMatch: () -> Unit
 ) {
     if (items.isEmpty()) {
         Box(
@@ -184,16 +235,31 @@ fun MySoldItemsTab(
             }
         }
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            items(items, key = { it.id }) { item ->
-                ItemCard(
-                    item = item,
-                    onClick = { onItemClick(item) }
-                )
+            // 交换匹配按钮
+            Button(
+                onClick = onExchangeMatch,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                enabled = items.isNotEmpty()
+            ) {
+                Text("交换匹配")
+            }
+            
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(items, key = { it.id }) { item ->
+                    ItemCard(
+                        item = item,
+                        onClick = { onItemClick(item) }
+                    )
+                }
             }
         }
     }
@@ -273,3 +339,112 @@ fun MyWishlistTab(
     }
 }
 
+@Composable
+fun MyMessagesTab(
+    onChatWithUser: (String, String, String, String) -> Unit,
+    chatViewModel: ChatViewModel = viewModel()
+) {
+    val conversations by chatViewModel.conversations.collectAsState()
+    
+    LaunchedEffect(Unit) {
+        chatViewModel.loadConversations()
+    }
+    
+    // 对话列表（不显示顶部栏，因为已经在标签页中）
+    if (conversations.isEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "暂无对话",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = "在商品详情页可以联系卖家",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(conversations, key = { it.otherUserUid }) { conversation ->
+                MyConversationCard(
+                    conversation = conversation,
+                    onClick = {
+                        onChatWithUser(
+                            conversation.otherUserUid,
+                            conversation.otherUserEmail,
+                            conversation.itemId ?: "",
+                            conversation.itemTitle ?: ""
+                        )
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MyConversationCard(
+    conversation: ChatConversation,
+    onClick: () -> Unit
+) {
+    val dateFormat = SimpleDateFormat("MM-dd HH:mm", Locale.getDefault())
+    
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = conversation.otherUserEmail,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                if (conversation.itemTitle != null && conversation.itemTitle!!.isNotEmpty()) {
+                    Text(
+                        text = "关于: ${conversation.itemTitle}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+                if (conversation.lastMessage != null && conversation.lastMessage!!.isNotEmpty()) {
+                    Text(
+                        text = conversation.lastMessage!!.take(50) + if (conversation.lastMessage!!.length > 50) "..." else "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+            if (conversation.lastMessageTime != null) {
+                Text(
+                    text = dateFormat.format(java.util.Date(conversation.lastMessageTime)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}

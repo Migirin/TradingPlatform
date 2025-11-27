@@ -47,7 +47,8 @@ fun ItemDetailScreen(
     onExchangeMatch: () -> Unit = {},
     onAddToWishlist: () -> Unit = {},
     onDelete: (() -> Unit)? = null,
-    isDevMode: Boolean = false
+    isDevMode: Boolean = false,
+    isOwnItem: Boolean = false
 ) {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
@@ -280,22 +281,19 @@ fun ItemDetailScreen(
                 ) {
                     Button(
                         onClick = onContact,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("联系卖家")
                     }
-                    OutlinedButton(
-                        onClick = onExchangeMatch,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("交换匹配")
-                    }
                 }
-                OutlinedButton(
-                    onClick = onAddToWishlist,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("加入愿望清单")
+                // 只有不是自己的商品才能加入愿望清单
+                if (!isOwnItem) {
+                    OutlinedButton(
+                        onClick = onAddToWishlist,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("加入愿望清单")
+                    }
                 }
                 // 开发者模式显示删除按钮
                 if (isDevMode && onDelete != null) {

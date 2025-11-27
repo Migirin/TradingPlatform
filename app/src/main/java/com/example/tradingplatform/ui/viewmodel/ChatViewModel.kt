@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tradingplatform.data.achievement.AchievementRepository
 import com.example.tradingplatform.data.chat.ChatMessage
 import com.example.tradingplatform.data.chat.ChatRepository
+import com.example.tradingplatform.data.chat.ChatConversation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -30,14 +31,37 @@ class ChatViewModel(
 
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages: StateFlow<List<ChatMessage>> = _messages
+    
+    private val _conversations = MutableStateFlow<List<ChatConversation>>(emptyList())
+    val conversations: StateFlow<List<ChatConversation>> = _conversations
 
     init {
-        loadMessages()
+        loadConversations()
+    }
+    
+    fun loadConversations() {
+        _state.value = ChatUiState.Loading
+        repo.getConversationsFlow()
+            .onEach { conversations ->
+                _conversations.value = conversations
+                _state.value = ChatUiState.Idle
+            }
+            .launchIn(viewModelScope)
     }
 
     fun loadMessages() {
         _state.value = ChatUiState.Loading
         repo.getMessagesFlow()
+            .onEach { messages ->
+                _messages.value = messages
+                _state.value = ChatUiState.Idle
+            }
+            .launchIn(viewModelScope)
+    }
+    
+    fun loadMessagesWithUser(otherUserUid: String) {
+        _state.value = ChatUiState.Loading
+        repo.getChatWithUserFlow(otherUserUid)
             .onEach { messages ->
                 _messages.value = messages
                 _state.value = ChatUiState.Idle

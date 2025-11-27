@@ -105,4 +105,59 @@ class ChatRepository(
             )
         }
     }
+    
+    /**
+     * 获取所有对话列表（按最后消息时间排序）
+     */
+    fun getConversationsFlow(): Flow<List<ChatConversation>> {
+        if (chatMessageDao == null) {
+            return flowOf(emptyList())
+        }
+
+        return flow {
+            val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user"
+            val currentEmail = authRepo?.getCurrentUserEmail() ?: ""
+            
+            emitAll(
+                chatMessageDao.getConversations(currentUid)
+                    .map { entities ->
+                        entities.map { entity ->
+                            val message = entity.toChatMessage()
+                            // 确定对方用户信息
+                            val otherUid = if (message.senderUid == currentUid) {
+                                message.receiverUid
+                            } else {
+                                message.senderUid
+                            }
+                            val otherEmail = if (message.senderUid == currentUid) {
+                                message.receiverEmail
+                            } else {
+                                message.senderEmail
+                            }
+                            
+                            ChatConversation(
+                                otherUserUid = otherUid,
+                                otherUserEmail = otherEmail,
+                                lastMessage = message.content,
+                                lastMessageTime = message.timestamp,
+                                itemId = message.itemId,
+                                itemTitle = message.itemTitle
+                            )
+                        }
+                    }
+            )
+        }
+    }
 }
+
+/**
+ * 对话列表项
+ */
+data class ChatConversation(
+    val otherUserUid: String,
+    val otherUserEmail: String,
+    val lastMessage: String,
+    val lastMessageTime: Long,
+    val itemId: String = "",
+    val itemTitle: String = ""
+)

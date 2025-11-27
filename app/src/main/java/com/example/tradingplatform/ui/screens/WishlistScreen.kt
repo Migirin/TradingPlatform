@@ -76,18 +76,6 @@ fun WishlistScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Button(
-                    onClick = onFindMatches,
-                    modifier = Modifier.weight(1f),
-                    enabled = wishlist.isNotEmpty()
-                ) {
-                    Text("查找匹配")
-                }
-            }
             OutlinedButton(
                 onClick = onAchievementsClick,
                 modifier = Modifier.fillMaxWidth()

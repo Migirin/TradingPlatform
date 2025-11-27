@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -40,6 +41,7 @@ import com.example.tradingplatform.ui.viewmodel.ItemViewModel
 @Composable
 fun PostItemScreen(
     onDone: () -> Unit,
+    onCancel: () -> Unit = onDone,
     viewModel: ItemViewModel = viewModel()
 ) {
     val title = remember { mutableStateOf("") }
@@ -60,10 +62,15 @@ fun PostItemScreen(
     }
 
     // 发布成功后返回
-    LaunchedEffect(uiState is ItemUiState.Success) {
-        if (uiState is ItemUiState.Success) {
+    var hasNavigated by remember { mutableStateOf(false) }
+    LaunchedEffect(uiState) {
+        android.util.Log.d("PostItemScreen", "uiState changed: $uiState, hasNavigated: $hasNavigated")
+        if (uiState is ItemUiState.Success && !hasNavigated) {
+            hasNavigated = true
+            android.util.Log.d("PostItemScreen", "发布成功，准备导航")
             // 延迟一下，让用户看到成功提示
-            kotlinx.coroutines.delay(500)
+            kotlinx.coroutines.delay(800)
+            android.util.Log.d("PostItemScreen", "调用 onDone()")
             vm.resetState() // 先重置状态
             onDone() // 然后导航返回
         }
@@ -192,7 +199,7 @@ fun PostItemScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedButton(
-                onClick = onDone,
+                onClick = onCancel,
                 modifier = Modifier.weight(1f),
                 enabled = uiState !is ItemUiState.Loading
             ) {
