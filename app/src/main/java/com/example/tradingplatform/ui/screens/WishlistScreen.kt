@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingplatform.data.wishlist.WishlistItem
+import com.example.tradingplatform.ui.i18n.AppLanguage
+import com.example.tradingplatform.ui.i18n.LocalAppLanguage
 import com.example.tradingplatform.ui.viewmodel.WishlistViewModel
 
 @Composable
@@ -25,6 +27,8 @@ fun WishlistScreen(
 ) {
     val wishlist by viewModel.wishlist.collectAsState()
     val uiState by viewModel.state.collectAsState()
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
     
     // 调试日志
     LaunchedEffect(wishlist.size) {
@@ -43,7 +47,7 @@ fun WishlistScreen(
             )
         ) {
             Text(
-                text = "错误: $errorMessage",
+                text = if (isEnglish) "Error: $errorMessage" else "错误: $errorMessage",
                 modifier = Modifier.padding(16.dp),
                 color = MaterialTheme.colorScheme.onErrorContainer
             )
@@ -63,11 +67,11 @@ fun WishlistScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "我的愿望清单",
+                text = if (isEnglish) "My wishlist" else "我的愿望清单",
                 style = MaterialTheme.typography.headlineMedium
             )
             Button(onClick = onBack) {
-                Text("返回")
+                Text(if (isEnglish) "Back" else "返回")
             }
         }
 
@@ -80,7 +84,7 @@ fun WishlistScreen(
                 onClick = onAchievementsClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("我的成就")
+                Text(if (isEnglish) "My achievements" else "我的成就")
             }
         }
 
@@ -100,12 +104,15 @@ fun WishlistScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "愿望清单为空",
+                        text = if (isEnglish) "Wishlist is empty" else "愿望清单为空",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "在商品详情页点击「加入愿望清单」添加你想买的商品",
+                        text = if (isEnglish)
+                            "Tap \"Add to wishlist\" on item detail page to save what you want"
+                        else
+                            "在商品详情页点击「加入愿望清单」添加你想买的商品",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -131,6 +138,8 @@ fun WishlistItemCard(
     onDelete: () -> Unit,
     onFindMatches: () -> Unit = {}
 ) {
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -153,7 +162,7 @@ fun WishlistItemCard(
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "删除",
+                        contentDescription = if (isEnglish) "Delete" else "删除",
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
@@ -161,7 +170,7 @@ fun WishlistItemCard(
 
             if (item.category.isNotEmpty()) {
                 Text(
-                    text = "类别: ${item.category}",
+                    text = (if (isEnglish) "Category: " else "类别: ") + item.category,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -170,11 +179,11 @@ fun WishlistItemCard(
             if (item.minPrice > 0 || item.maxPrice > 0) {
                 val priceRange = when {
                     item.minPrice > 0 && item.maxPrice > 0 -> "¥${item.minPrice} - ¥${item.maxPrice}"
-                    item.minPrice > 0 -> "¥${item.minPrice} 以上"
-                    else -> "¥${item.maxPrice} 以下"
+                    item.minPrice > 0 -> if (isEnglish) "¥${item.minPrice} and above" else "¥${item.minPrice} 以上"
+                    else -> if (isEnglish) "Up to ¥${item.maxPrice}" else "¥${item.maxPrice} 以下"
                 }
                 Text(
-                    text = "价格: $priceRange",
+                    text = (if (isEnglish) "Price: " else "价格: ") + priceRange,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -186,7 +195,10 @@ fun WishlistItemCard(
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Text(
-                        text = "降价提醒: 目标价格 ¥${String.format("%.2f", item.targetPrice)}",
+                        text = if (isEnglish)
+                            "Price alert: target ¥${String.format("%.2f", item.targetPrice)}"
+                        else
+                            "降价提醒: 目标价格 ¥${String.format("%.2f", item.targetPrice)}",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -211,7 +223,7 @@ fun WishlistItemCard(
                     onClick = onFindMatches,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("匹配此商品")
+                    Text(if (isEnglish) "Find matches" else "匹配此商品")
                 }
             }
         }

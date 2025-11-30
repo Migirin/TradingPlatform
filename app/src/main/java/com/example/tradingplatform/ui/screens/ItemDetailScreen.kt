@@ -36,6 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.tradingplatform.data.items.Item
+import com.example.tradingplatform.ui.i18n.AppLanguage
+import com.example.tradingplatform.ui.i18n.LocalAppLanguage
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -51,6 +53,8 @@ fun ItemDetailScreen(
     isOwnItem: Boolean = false
 ) {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
 
     Column(
         modifier = Modifier
@@ -66,11 +70,11 @@ fun ItemDetailScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "商品详情",
+                text = if (isEnglish) "Item details" else "商品详情",
                 style = MaterialTheme.typography.titleLarge
             )
             Button(onClick = onBack) {
-                Text("返回")
+                Text(if (isEnglish) "Back" else "返回")
             }
         }
 
@@ -99,7 +103,7 @@ fun ItemDetailScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "无图片",
+                        text = if (isEnglish) "No image" else "无图片",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -144,7 +148,7 @@ fun ItemDetailScreen(
             if (item.description.isNotEmpty()) {
                 Column {
                     Text(
-                        text = "商品描述",
+                        text = if (isEnglish) "Description" else "商品描述",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -190,12 +194,12 @@ fun ItemDetailScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Info,
-                                    contentDescription = "商品故事",
+                                    contentDescription = if (isEnglish) "Item story" else "商品故事",
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Text(
-                                    text = "商品故事",
+                                    text = if (isEnglish) "Item story" else "商品故事",
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
@@ -230,7 +234,7 @@ fun ItemDetailScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "发布者",
+                            text = if (isEnglish) "Seller" else "发布者",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -244,12 +248,12 @@ fun ItemDetailScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "联系电话",
+                            text = if (isEnglish) "Phone" else "联系电话",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = item.phoneNumber.ifEmpty { "未提供" },
+                            text = item.phoneNumber.ifEmpty { if (isEnglish) "Not provided" else "未提供" },
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -258,7 +262,7 @@ fun ItemDetailScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "发布时间",
+                            text = if (isEnglish) "Posted at" else "发布时间",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -283,7 +287,7 @@ fun ItemDetailScreen(
                         onClick = onContact,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("联系卖家")
+                        Text(if (isEnglish) "Contact seller" else "联系卖家")
                     }
                 }
                 // 只有不是自己的商品才能加入愿望清单
@@ -292,7 +296,7 @@ fun ItemDetailScreen(
                         onClick = onAddToWishlist,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("加入愿望清单")
+                        Text(if (isEnglish) "Add to wishlist" else "加入愿望清单")
                     }
                 }
                 // 开发者模式显示删除按钮
@@ -304,7 +308,7 @@ fun ItemDetailScreen(
                             containerColor = MaterialTheme.colorScheme.error
                         )
                     ) {
-                        Text("删除")
+                        Text(if (isEnglish) "Delete" else "删除")
                     }
                 }
             }

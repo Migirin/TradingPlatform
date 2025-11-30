@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.chat.ChatMessage
+import com.example.tradingplatform.ui.i18n.LocalAppStrings
 import com.example.tradingplatform.ui.viewmodel.ChatViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -113,6 +114,7 @@ fun ChatListScreen(
     uiState: com.example.tradingplatform.ui.viewmodel.ChatUiState,
     onConversationClick: (String, String, String, String) -> Unit
 ) {
+    val strings = LocalAppStrings.current
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -125,11 +127,11 @@ fun ChatListScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "我的消息",
+                text = strings.myTabMessages,
                 style = MaterialTheme.typography.titleLarge
             )
             Button(onClick = onBack) {
-                Text("返回")
+                Text(strings.myBack)
             }
         }
         
@@ -143,12 +145,12 @@ fun ChatListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "暂无对话",
+                    text = strings.myMessagesEmptyTitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "在商品详情页可以联系卖家",
+                    text = strings.myMessagesEmptySubtitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp)
@@ -183,6 +185,7 @@ fun ConversationCard(
     conversation: com.example.tradingplatform.data.chat.ChatConversation,
     onClick: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     val dateFormat = java.text.SimpleDateFormat("MM-dd HH:mm", java.util.Locale.getDefault())
     
     Card(
@@ -211,7 +214,7 @@ fun ConversationCard(
                 )
                 if (conversation.itemTitle.isNotEmpty()) {
                     Text(
-                        text = "关于: ${conversation.itemTitle}",
+                        text = strings.myConversationAboutPrefix + conversation.itemTitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -240,6 +243,7 @@ fun ChatDetailScreen(
     currentUserUid: String?,
     listState: androidx.compose.foundation.lazy.LazyListState
 ) {
+    val strings = LocalAppStrings.current
     // 自动滚动到底部
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
@@ -260,19 +264,19 @@ fun ChatDetailScreen(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "与 $receiverEmail 的对话",
+                    text = strings.chatDetailTitlePattern.format(receiverEmail),
                     style = MaterialTheme.typography.titleLarge
                 )
                 if (itemTitle != null) {
                     Text(
-                        text = "关于: $itemTitle",
+                        text = strings.myConversationAboutPrefix + itemTitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
             Button(onClick = onBack) {
-                Text("返回")
+                Text(strings.myBack)
             }
         }
 
@@ -286,12 +290,12 @@ fun ChatDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "暂无消息",
+                    text = strings.chatDetailEmptyTitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "开始与 $receiverEmail 的对话",
+                    text = strings.chatDetailEmptySubtitlePattern.format(receiverEmail),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp)
@@ -320,7 +324,7 @@ fun ChatDetailScreen(
             OutlinedTextField(
                 value = messageText.value,
                 onValueChange = { messageText.value = it },
-                label = { Text("输入消息") },
+                label = { Text(strings.chatInputLabel) },
                 modifier = Modifier.weight(1f),
                 enabled = uiState !is com.example.tradingplatform.ui.viewmodel.ChatUiState.Sending
             )
@@ -341,7 +345,7 @@ fun ChatDetailScreen(
                         && receiverUid.isNotBlank()
                         && uiState !is com.example.tradingplatform.ui.viewmodel.ChatUiState.Sending
             ) {
-                Text("发送")
+                Text(strings.chatSendButtonLabel)
             }
         }
     }

@@ -9,6 +9,7 @@ import com.example.tradingplatform.data.achievement.AchievementRepository
 import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.data.items.ItemRepository
 import com.example.tradingplatform.data.auth.AuthRepository
+import com.example.tradingplatform.data.timetable.TextbookRecommendationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,6 +27,7 @@ class ItemViewModel(
     private val repo = ItemRepository(application)
     private val authRepo = AuthRepository(application)
     private val achievementRepo = AchievementRepository(application)
+    private val recommendationRepo = TextbookRecommendationRepository(application)
     private val _state = MutableStateFlow<ItemUiState>(ItemUiState.Idle)
     val state: StateFlow<ItemUiState> = _state
     
@@ -36,6 +38,9 @@ class ItemViewModel(
 
     private val _items = MutableStateFlow<List<Item>>(emptyList())
     val items: StateFlow<List<Item>> = _items
+    
+    private val _recommendedItems = MutableStateFlow<List<Item>>(emptyList())
+    val recommendedItems: StateFlow<List<Item>> = _recommendedItems
     
     // 当前选中的商品（用于详情页）
     private val _selectedItem = MutableStateFlow<Item?>(null)
@@ -151,6 +156,32 @@ class ItemViewModel(
             } catch (e: Exception) {
                 Log.e("ItemViewModel", "删除商品失败", e)
                 _state.value = ItemUiState.Error("删除失败: ${e.message ?: "未知错误"}")
+            }
+        }
+    }
+
+    fun loadRecommendedItemsForCurrentStudent() {
+        viewModelScope.launch {
+            try {
+                val rawId = authRepo.getCurrentStudentId()
+                if (rawId.isNullOrBlank()) {
+                    Log.w("ItemViewModel", "当前用户未设置 BJUT 学号，跳过推荐加载")
+                    _recommendedItems.value = emptyList()
+                    return@launch
+                }
+
+                val normalized = rawId.filter { it.isDigit() }
+                if (normalized.length != 8) {
+                    Log.w("ItemViewModel", "BJUT 学号格式不正确: $rawId")
+                    _recommendedItems.value = emptyList()
+                    return@launch
+                }
+
+                val results = recommendationRepo.getRecommendedItemsForStudent(normalized)
+                _recommendedItems.value = results
+            } catch (e: Exception) {
+                Log.e("ItemViewModel", "加载推荐商品失败", e)
+                _recommendedItems.value = emptyList()
             }
         }
     }

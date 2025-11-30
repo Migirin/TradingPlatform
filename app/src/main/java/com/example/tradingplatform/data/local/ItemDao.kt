@@ -60,6 +60,12 @@ interface ItemDao {
      */
     @Query("DELETE FROM items")
     suspend fun deleteAllItems()
+
+    /**
+     * Get total count of items in the table.
+     */
+    @Query("SELECT COUNT(*) FROM items")
+    suspend fun getItemCount(): Int
 }
 
 

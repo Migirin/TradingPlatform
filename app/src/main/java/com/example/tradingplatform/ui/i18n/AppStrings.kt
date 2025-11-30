@@ -1,0 +1,279 @@
+package com.example.tradingplatform.ui.i18n
+
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.staticCompositionLocalOf
+
+/**
+ * Supported UI languages in the app.
+ */
+enum class AppLanguage {
+    ZH,
+    EN
+}
+
+/**
+ * Container for all user-facing strings for a given language.
+ * More fields can be added gradually as screens are migrated.
+ */
+data class AppStrings(
+    val appDisplayName: String,
+    val languageToggleLabel: String,
+    // Auth screen titles and tabs
+    val authLoginTitle: String,
+    val authRegisterTitle: String,
+    val authVerifyEmailTitle: String,
+    val authLoginTab: String,
+    val authRegisterTab: String,
+    // Auth form labels and buttons
+    val authEmailLabel: String,
+    val authPasswordLabel: String,
+    val authRegisterPasswordLabel: String,
+    val authLoginButton: String,
+    val authRegisterButton: String,
+    // Auth dev mode section
+    val authDevModeTitle: String,
+    val authDevSkipButton: String,
+    // Auth verify email texts
+    val authVerificationSentPrefix: String,
+    val authVerificationHintCheckEmail: String,
+    val authVerificationHintExpire: String,
+    val authEmailReadonlyLabel: String,
+    val authVerificationCodeLabel: String,
+    val authVerifyButton: String,
+    val authResendCodeButton: String,
+    val authDeleteAndReregisterButton: String,
+    // My screen
+    val myTitle: String,
+    val myBack: String,
+    val myNotLoggedIn: String,
+    val myTabSold: String,
+    val myTabBought: String,
+    val myTabWishlist: String,
+    val myTabMessages: String,
+    val myTabSettings: String,
+    val myChangePasswordButton: String,
+    val mySoldEmptyTitle: String,
+    val mySoldEmptySubtitle: String,
+    val myExchangeMatchButton: String,
+    val myBoughtEmptyTitle: String,
+    val myBoughtEmptySubtitle: String,
+    val myWishlistEmptyTitle: String,
+    val myWishlistEmptySubtitle: String,
+    val myMessagesEmptyTitle: String,
+    val myMessagesEmptySubtitle: String,
+    val myConversationAboutPrefix: String,
+    // Settings screen
+    val settingsStudentIdLabel: String,
+    val settingsStudentIdSaveButton: String,
+    val settingsDevSectionTitle: String,
+    val settingsDevSimulatedMonthLabel: String,
+    val settingsDevSimulatedMonthFollowSystem: String,
+    val settingsDevSimulatedMonthApplyButton: String,
+    val settingsStudentIdSavedMessage: String,
+    val settingsDevSimulatedMonthAppliedMessage: String,
+    // Home screen & bottom navigation
+    val bottomHomeLabel: String,
+    val bottomPostLabel: String,
+    val bottomMyLabel: String,
+    val bottomCameraLabel: String,
+    val homeRecommendedSectionTitle: String,
+    val homeLoadingText: String,
+    val homeEmptyTip: String,
+    // Achievements screen
+    val achievementsTitle: String,
+    val achievementsUnlockedCountLabel: String,
+    val achievementsUnlockedBadge: String,
+    val achievementsLockedBadge: String,
+    // Chat screens
+    val chatDetailTitlePattern: String,
+    val chatDetailEmptyTitle: String,
+    val chatDetailEmptySubtitlePattern: String,
+    val chatInputLabel: String,
+    val chatSendButtonLabel: String,
+    // Recognition screen
+    val recognitionTitle: String,
+    val recognitionLoadingText: String,
+    val recognitionResultSectionTitle: String,
+    val recognitionRecommendedTitle: String,
+    val recognitionNoRecommendations: String,
+    val recognitionCapturedImageContentDescription: String,
+    val recognitionNoImageLabel: String,
+    val recognitionScoreSuffix: String
+)
+
+/**
+ * Chinese string set.
+ */
+val zhStrings = AppStrings(
+    appDisplayName = "BDIC 二手平台",
+    languageToggleLabel = "中文 / English",
+    authLoginTitle = "登录",
+    authRegisterTitle = "注册",
+    authVerifyEmailTitle = "验证邮箱",
+    authLoginTab = "登录",
+    authRegisterTab = "注册",
+    authEmailLabel = "校内邮箱 @ucdconnect.ie",
+    authPasswordLabel = "密码",
+    authRegisterPasswordLabel = "密码（至少6个字符）",
+    authLoginButton = "登录",
+    authRegisterButton = "注册",
+    authDevModeTitle = "开发模式（临时跳过认证）",
+    authDevSkipButton = "进入应用（跳过登录）",
+    authVerificationSentPrefix = "验证邮件已发送到：",
+    authVerificationHintCheckEmail = "请检查您的邮箱（包括垃圾邮件文件夹）并输入验证码",
+    authVerificationHintExpire = "验证码有效期为 30 分钟",
+    authEmailReadonlyLabel = "邮箱",
+    authVerificationCodeLabel = "验证码",
+    authVerifyButton = "验证",
+    authResendCodeButton = "重新发送验证码",
+    authDeleteAndReregisterButton = "删除该用户并重新注册",
+    myTitle = "我的",
+    myBack = "返回",
+    myNotLoggedIn = "未登录",
+    myTabSold = "我出售的",
+    myTabBought = "我买到的",
+    myTabWishlist = "我的愿望清单",
+    myTabMessages = "我的消息",
+    myTabSettings = "设置",
+    myChangePasswordButton = "更改密码",
+    mySoldEmptyTitle = "暂无出售的商品",
+    mySoldEmptySubtitle = "去发布你的第一个商品吧！",
+    myExchangeMatchButton = "交换匹配",
+    myBoughtEmptyTitle = "暂无购买记录",
+    myBoughtEmptySubtitle = "购买功能即将上线",
+    myWishlistEmptyTitle = "愿望清单为空",
+    myWishlistEmptySubtitle = "在商品详情页添加愿望清单",
+    myMessagesEmptyTitle = "暂无对话",
+    myMessagesEmptySubtitle = "在商品详情页可以联系卖家",
+    myConversationAboutPrefix = "关于: ",
+    // Settings screen
+    settingsStudentIdLabel = "BJUT 学号（8位）",
+    settingsStudentIdSaveButton = "保存学号",
+    settingsDevSectionTitle = "开发者设置",
+    settingsDevSimulatedMonthLabel = "模拟当前月份（1-12，留空则跟随真实时间）",
+    settingsDevSimulatedMonthFollowSystem = "跟随真实时间",
+    settingsDevSimulatedMonthApplyButton = "应用模拟月份",
+    settingsStudentIdSavedMessage = "学号已保存",
+    settingsDevSimulatedMonthAppliedMessage = "模拟月份已应用",
+    bottomHomeLabel = "首页",
+    bottomPostLabel = "发布商品",
+    bottomMyLabel = "我的",
+    bottomCameraLabel = "拍照识别",
+    homeRecommendedSectionTitle = "本学期为你推荐的课本",
+    homeLoadingText = "加载中...",
+    homeEmptyTip = "暂无商品，点击下方按钮发布第一个商品吧！",
+    achievementsTitle = "我的成就",
+    achievementsUnlockedCountLabel = "已解锁成就",
+    achievementsUnlockedBadge = "已解锁",
+    achievementsLockedBadge = "未解锁",
+    chatDetailTitlePattern = "与 %s 的对话",
+    chatDetailEmptyTitle = "暂无消息",
+    chatDetailEmptySubtitlePattern = "开始与 %s 的对话",
+    chatInputLabel = "输入消息",
+    chatSendButtonLabel = "发送",
+    recognitionTitle = "识别结果",
+    recognitionLoadingText = "正在识别中...",
+    recognitionResultSectionTitle = "识别结果",
+    recognitionRecommendedTitle = "推荐商品",
+    recognitionNoRecommendations = "暂无相关商品推荐",
+    recognitionCapturedImageContentDescription = "拍摄的图片",
+    recognitionNoImageLabel = "无图片",
+    recognitionScoreSuffix = "分"
+)
+
+/**
+ * English string set.
+ */
+val enStrings = AppStrings(
+    appDisplayName = "BDIC Trading Platform",
+    languageToggleLabel = "English / 中文",
+    authLoginTitle = "Login",
+    authRegisterTitle = "Sign up",
+    authVerifyEmailTitle = "Verify Email",
+    authLoginTab = "Login",
+    authRegisterTab = "Sign up",
+    authEmailLabel = "School email @ucdconnect.ie",
+    authPasswordLabel = "Password",
+    authRegisterPasswordLabel = "Password (at least 6 characters)",
+    authLoginButton = "Login",
+    authRegisterButton = "Sign up",
+    authDevModeTitle = "Developer mode (skip authentication temporarily)",
+    authDevSkipButton = "Enter app (skip login)",
+    authVerificationSentPrefix = "Verification email sent to: ",
+    authVerificationHintCheckEmail = "Please check your inbox (including spam) and enter the code.",
+    authVerificationHintExpire = "The verification code is valid for 30 minutes.",
+    authEmailReadonlyLabel = "Email",
+    authVerificationCodeLabel = "Verification code",
+    authVerifyButton = "Verify",
+    authResendCodeButton = "Resend verification email",
+    authDeleteAndReregisterButton = "Delete this account and re-register",
+    myTitle = "Me",
+    myBack = "Back",
+    myNotLoggedIn = "Not logged in",
+    myTabSold = "My listings",
+    myTabBought = "My purchases",
+    myTabWishlist = "My wishlist",
+    myTabMessages = "My messages",
+    myTabSettings = "Settings",
+    myChangePasswordButton = "Change password",
+    mySoldEmptyTitle = "No items sold yet",
+    mySoldEmptySubtitle = "Post your first item!",
+    myExchangeMatchButton = "Exchange matches",
+    myBoughtEmptyTitle = "No purchase records",
+    myBoughtEmptySubtitle = "Purchasing feature coming soon",
+    myWishlistEmptyTitle = "Wishlist is empty",
+    myWishlistEmptySubtitle = "Add items to wishlist from the item detail page",
+    myMessagesEmptyTitle = "No conversations",
+    myMessagesEmptySubtitle = "You can contact sellers from the item detail page",
+    myConversationAboutPrefix = "About: ",
+    // Settings screen
+    settingsStudentIdLabel = "BJUT student ID (8 digits)",
+    settingsStudentIdSaveButton = "Save ID",
+    settingsDevSectionTitle = "Developer settings",
+    settingsDevSimulatedMonthLabel = "Simulated month (1-12, empty = real time)",
+    settingsDevSimulatedMonthFollowSystem = "Use real time",
+    settingsDevSimulatedMonthApplyButton = "Apply simulated month",
+    settingsStudentIdSavedMessage = "Student ID saved",
+    settingsDevSimulatedMonthAppliedMessage = "Simulated month applied",
+    bottomHomeLabel = "Home",
+    bottomPostLabel = "Post",
+    bottomMyLabel = "Me",
+    bottomCameraLabel = "Camera AI",
+    homeRecommendedSectionTitle = "Recommended textbooks this term",
+    homeLoadingText = "Loading...",
+    homeEmptyTip = "No items yet. Use the button below to post the first item!",
+    achievementsTitle = "My achievements",
+    achievementsUnlockedCountLabel = "Unlocked achievements",
+    achievementsUnlockedBadge = "Unlocked",
+    achievementsLockedBadge = "Locked",
+    chatDetailTitlePattern = "Chat with %s",
+    chatDetailEmptyTitle = "No messages yet",
+    chatDetailEmptySubtitlePattern = "Start chatting with %s",
+    chatInputLabel = "Type a message",
+    chatSendButtonLabel = "Send",
+    recognitionTitle = "Recognition result",
+    recognitionLoadingText = "Recognizing...",
+    recognitionResultSectionTitle = "Recognition result",
+    recognitionRecommendedTitle = "Recommended items",
+    recognitionNoRecommendations = "No related items found",
+    recognitionCapturedImageContentDescription = "Captured image",
+    recognitionNoImageLabel = "No image",
+    recognitionScoreSuffix = " pts"
+)
+
+/**
+ * Current app language value.
+ */
+val LocalAppLanguage = staticCompositionLocalOf { AppLanguage.ZH }
+
+/**
+ * Mutable state for the current language, used for toggling.
+ */
+val LocalAppLanguageState = staticCompositionLocalOf<MutableState<AppLanguage>> {
+    error("LocalAppLanguageState not provided")
+}
+
+/**
+ * Current language string resources.
+ */
+val LocalAppStrings = staticCompositionLocalOf { zhStrings }

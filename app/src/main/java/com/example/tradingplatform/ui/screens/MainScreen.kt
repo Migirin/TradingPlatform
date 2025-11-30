@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.items.Item
+import com.example.tradingplatform.ui.i18n.LocalAppStrings
 import com.example.tradingplatform.ui.viewmodel.ItemViewModel
 
 enum class MainScreenTab {
@@ -33,6 +34,7 @@ fun MainScreen(
     viewModel: ItemViewModel = viewModel()
 ) {
     var selectedTab by remember { mutableStateOf(MainScreenTab.HOME) }
+    val strings = LocalAppStrings.current
     
     Column(
         modifier = Modifier.fillMaxSize()
@@ -48,14 +50,14 @@ fun MainScreen(
         // 底部导航栏
         NavigationBar {
             NavigationBarItem(
-                icon = { Icon(Icons.Default.Home, contentDescription = "首页") },
-                label = { Text("首页") },
+                icon = { Icon(Icons.Default.Home, contentDescription = strings.bottomHomeLabel) },
+                label = { Text(strings.bottomHomeLabel) },
                 selected = selectedTab == MainScreenTab.HOME,
                 onClick = { selectedTab = MainScreenTab.HOME }
             )
             NavigationBarItem(
-                icon = { Icon(Icons.Default.Add, contentDescription = "发布商品") },
-                label = { Text("发布商品") },
+                icon = { Icon(Icons.Default.Add, contentDescription = strings.bottomPostLabel) },
+                label = { Text(strings.bottomPostLabel) },
                 selected = false,
                 onClick = {
                     // 直接导航，不改变 selectedTab
@@ -63,8 +65,8 @@ fun MainScreen(
                 }
             )
             NavigationBarItem(
-                icon = { Icon(Icons.Default.Person, contentDescription = "我的") },
-                label = { Text("我的") },
+                icon = { Icon(Icons.Default.Person, contentDescription = strings.bottomMyLabel) },
+                label = { Text(strings.bottomMyLabel) },
                 selected = false,
                 onClick = {
                     // 直接导航，不改变 selectedTab
@@ -72,8 +74,8 @@ fun MainScreen(
                 }
             )
             NavigationBarItem(
-                icon = { Icon(Icons.Default.Settings, contentDescription = "拍照识别") },
-                label = { Text("拍照识别") },
+                icon = { Icon(Icons.Default.Settings, contentDescription = strings.bottomCameraLabel) },
+                label = { Text(strings.bottomCameraLabel) },
                 selected = false,
                 onClick = {
                     // 直接导航，不改变 selectedTab
@@ -91,9 +93,11 @@ fun HomeTab(
 ) {
     val items by viewModel.items.collectAsState()
     val uiState by viewModel.state.collectAsState()
+    val recommendedItems by viewModel.recommendedItems.collectAsState()
     
     val context = LocalContext.current
     val authRepo = remember { AuthRepository(context) }
+    val strings = LocalAppStrings.current
     
     var currentUid by remember { mutableStateOf<String?>(null) }
     var currentEmail by remember { mutableStateOf<String?>(null) }
@@ -121,6 +125,28 @@ fun HomeTab(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Load timetable-based recommendations once when Home tab is composed
+        LaunchedEffect(Unit) {
+            viewModel.loadRecommendedItemsForCurrentStudent()
+        }
+
+        // Recommended textbooks section (local demo)
+        if (recommendedItems.isNotEmpty()) {
+            Text(
+                text = strings.homeRecommendedSectionTitle,
+                style = MaterialTheme.typography.titleMedium
+            )
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth().heightIn(max = 240.dp)
+            ) {
+                items(recommendedItems, key = { it.id }) { item ->
+                    ItemCard(item = item, onClick = { onItemClick(item) })
+                }
+            }
+            Divider()
+        }
+
         when (val state = uiState) {
             is com.example.tradingplatform.ui.viewmodel.ItemUiState.Loading -> {
                 Row(
@@ -128,7 +154,7 @@ fun HomeTab(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CircularProgressIndicator()
-                    Text("加载中...", modifier = Modifier.padding(start = 8.dp))
+                    Text(strings.homeLoadingText, modifier = Modifier.padding(start = 8.dp))
                 }
             }
             is com.example.tradingplatform.ui.viewmodel.ItemUiState.Error -> {
@@ -140,7 +166,7 @@ fun HomeTab(
             else -> {
                 if (filteredItems.isEmpty()) {
                     Text(
-                        text = "暂无商品，点击下方按钮发布第一个商品吧！",
+                        text = strings.homeEmptyTip,
                         modifier = Modifier.padding(16.dp),
                         style = MaterialTheme.typography.bodyMedium
                     )

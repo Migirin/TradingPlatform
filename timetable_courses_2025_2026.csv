@@ -1,0 +1,276 @@
+academic_year,term,major,grade_level,course_code,course_name_cn,course_name_en
+2025-2026,1,EIE,1,0006794,心理课,
+2025-2026,1,EIE,1,0009287-1,形势与政策1,
+2025-2026,1,EIE,1,0010931,国家安全教育,National Security Education
+2025-2026,1,EIE,1,BDIC1001J,中国近现代史纲要,Essentials of Chinese Modern History
+2025-2026,1,EIE,1,BDIC1002J,思想道德与法治,Ideological and Moral Cultivation and Rule of Law
+2025-2026,1,EIE,1,BDIC1014J,线性代数,Linear Algebra (Engineering)
+2025-2026,1,EIE,1,BDIC1029J,高等数学（工）1,Maths (Engineering) 1
+2025-2026,1,EIE,1,BDIC1030J,高等数学（工）2,Maths (Engineering) 2
+2025-2026,1,EIE,1,BDIC1034J,学术英语-口语,College English 1
+2025-2026,1,EIE,1,BDIC1035J,学术英语-听力,College English 2
+2025-2026,1,EIE,1,BDIC1036J,学术英语-阅读,College English 3
+2025-2026,1,EIE,1,BDIC1037J,学术英语-写作,College English 4
+2025-2026,1,EIE,1,COMP1001J,程序设计1,Intro to Programming 1
+2025-2026,1,FIN,1,0006794,心理课,
+2025-2026,1,FIN,1,0009287-1,形势与政策1,
+2025-2026,1,FIN,1,0010929,人工智能导论,B Introduction to Artificial Intelligence B
+2025-2026,1,FIN,1,0010931,国家安全教育,National Security Education
+2025-2026,1,FIN,1,BDIC1001J,中国近现代史纲要,Essentials of Chinese Modern History
+2025-2026,1,FIN,1,BDIC1002J,思想道德与法治,Ideological and Moral Cultivation and Rule of Law
+2025-2026,1,FIN,1,BDIC1034J,学术英语-口语,College English 1
+2025-2026,1,FIN,1,BDIC1035J,学术英语-听力,College English 2
+2025-2026,1,FIN,1,BDIC1036J,学术英语-阅读,College English 3
+2025-2026,1,FIN,1,BDIC1037J,学术英语-写作,College English 4
+2025-2026,1,FIN,1,BDIC1040J,高等数学1,Maths1
+2025-2026,1,FIN,1,BDIC1041J,高等数学2,Maths 2
+2025-2026,1,FIN,1,BDIC1044J,线性代数,Linear Algebra
+2025-2026,1,FIN,1,BDIC1045J,经济学导论,Introduction to Economics
+2025-2026,1,IOT,1,0006794,心理课,
+2025-2026,1,IOT,1,0009287-1,形势与政策1,
+2025-2026,1,IOT,1,0010931,国家安全教育,National Security Education
+2025-2026,1,IOT,1,BDIC1001J,中国近现代史纲要,Essentials of Chinese Modern History
+2025-2026,1,IOT,1,BDIC1002J,思想道德与法治,Ideological and Moral Cultivation and Rule of Law
+2025-2026,1,IOT,1,BDIC1014J,线性代数,Linear Algebra (Engineering)
+2025-2026,1,IOT,1,BDIC1029J,高等数学（工）1,Maths (Engineering) 1
+2025-2026,1,IOT,1,BDIC1030J,高等数学（工）2,Maths (Engineering) 2
+2025-2026,1,IOT,1,BDIC1034J,学术英语-口语,College English 1
+2025-2026,1,IOT,1,BDIC1035J,学术英语-听力,College English 2
+2025-2026,1,IOT,1,BDIC1036J,学术英语-阅读,College English 3
+2025-2026,1,IOT,1,BDIC1037J,学术英语-写作,College English 4
+2025-2026,1,IOT,1,COMP1001J,程序设计1,Intro to Programming 1
+2025-2026,1,SE,1,0006794,心理课,
+2025-2026,1,SE,1,0009287-1,形势与政策1,
+2025-2026,1,SE,1,0010931,国家安全教育,National Security Education
+2025-2026,1,SE,1,BDIC1001J,中国近现代史纲要,Essentials of Chinese Modern History
+2025-2026,1,SE,1,BDIC1002J,思想道德与法治,Ideological and Moral Cultivation and Rule of Law
+2025-2026,1,SE,1,BDIC1014J,线性代数,Linear Algebra (Engineering)
+2025-2026,1,SE,1,BDIC1029J,高等数学（工）1,Maths (Engineering) 1
+2025-2026,1,SE,1,BDIC1030J,高等数学（工）2,Maths (Engineering) 2
+2025-2026,1,SE,1,BDIC1034J,学术英语-口语,College English 1
+2025-2026,1,SE,1,BDIC1035J,学术英语-听力,College English 2
+2025-2026,1,SE,1,BDIC1036J,学术英语-阅读,College English 3
+2025-2026,1,SE,1,BDIC1037J,学术英语-写作,College English 4
+2025-2026,1,SE,1,COMP1004J,程序设计概论1,Intro to Prog Construction 1
+2025-2026,1,EIE,2,0009287-3,形势与政策3,
+2025-2026,1,EIE,2,BDIC1016J,马克思主义基本原理,The Basic Principles of Marxism
+2025-2026,1,EIE,2,BDIC2005J,概率论与数理统计,Probability and Statistics
+2025-2026,1,EIE,2,BDIC2008J,大学物理Ⅰ-2,University Physics 2
+2025-2026,1,EIE,2,BDIC2015J,学术写作与沟通技巧,Academic Writing and Communication Skills
+2025-2026,1,EIE,2,COMP2002J,数据结构与算法,I Data Struc and Algorithms 1
+2025-2026,1,EIE,2,COMP2005J,面向对象编程,Object-oriented programming
+2025-2026,1,EIE,2,EEEN2005J,电路与系统,Circuits and Systems
+2025-2026,1,FIN,2,0009287-3,形势与政策3,
+2025-2026,1,FIN,2,BDIC1016J,马克思主义基本原理,The Basic Principles of Marxism
+2025-2026,1,FIN,2,BDIC1039J,财务会计学导论,Introduction to Financial Accounting
+2025-2026,1,FIN,2,BDIC2005J,概率论与数理统计,Probability and Statistics
+2025-2026,1,FIN,2,BDIC2015J,学术写作与沟通技巧,Academic Writing and Communication Skills
+2025-2026,1,FIN,2,BDIC2020J,中级微观经济学1,Intermediate Microeconomics 1
+2025-2026,1,FIN,2,BDIC2026J,金融数据学,Data Science For Finance
+2025-2026,1,FIN,2,ECON1001J,宏观经济学原理,Principles of Macroeconomics
+2025-2026,1,IOT,2,0009287-3,形势与政策3,
+2025-2026,1,IOT,2,BDIC1016J,马克思主义基本原理,The Basic Principles of Marxism
+2025-2026,1,IOT,2,BDIC2005J,概率论与数理统计,Probability and Statistics
+2025-2026,1,IOT,2,BDIC2008J,大学物理Ⅰ-2,University Physics 2
+2025-2026,1,IOT,2,BDIC2015J,学术写作与沟通技巧,Academic Writing and Communication Skills
+2025-2026,1,IOT,2,COMP2002J,数据结构与算法,I Data Struc and Algorithms 1
+2025-2026,1,IOT,2,COMP2005J,面向对象编程,Object-oriented programming
+2025-2026,1,IOT,2,EEEN2005J,电路与系统,Circuits and Systems
+2025-2026,1,SE,2,0009287-3,形势与政策3,
+2025-2026,1,SE,2,BDIC1016J,马克思主义基本原理,The Basic Principles of Marxism
+2025-2026,1,SE,2,BDIC2005J,概率论与数理统计,Probability and Statistics
+2025-2026,1,SE,2,BDIC2008J,大学物理Ⅰ-2,University Physics 2
+2025-2026,1,SE,2,BDIC2015J,学术写作与沟通技巧,Academic Writing and Communication Skills
+2025-2026,1,SE,2,COMP2010J,数据结构与算法,I Data Structures & Algs I (S/E)
+2025-2026,1,SE,2,COMP2011J,面向对象编程,Object Oriented Prog (S/E)
+2025-2026,1,SE,2,COMP2012J,操作系统,Operating Systems (S/E)
+2025-2026,1,EIE,3,0009287-5,形势与政策5,
+2025-2026,1,EIE,3,BDIC3004J,数字系统设计,Digital System Design
+2025-2026,1,EIE,3,BDIC3018J,电磁学2,Electromagnetics 2
+2025-2026,1,EIE,3,COMP2006J,操作系统,Operating Systems
+2025-2026,1,EIE,3,EEEN3002J,微控制器,Microcontrollers
+2025-2026,1,EIE,3,EEEN3003J,信号与系统,Signals and Systems
+2025-2026,1,EIE,3,EEEN3016J,电子线路与原理,Electronics circuits & theory
+2025-2026,1,FIN,3,0009287-5,形势与政策5,
+2025-2026,1,FIN,3,ECON2004J,博弈论,Game Theory
+2025-2026,1,FIN,3,ECON3001J,国际货币银行学,International Money and Banking
+2025-2026,1,FIN,3,ECON3004J,企业金融经济,Economics of Corporate Finance
+2025-2026,1,FIN,3,ECON3006J,金融经济学：资产定价,Financial Economics: Asset Pricing
+2025-2026,1,FIN,3,STAT2004J,线性建模,Linear Modelling
+2025-2026,1,FIN,3,STAT2005J,预测分析,Predictive Analytics
+2025-2026,1,IOT,3,0009287-5,形势与政策5,
+2025-2026,1,IOT,3,BDIC3002J,智能信息处理,Intelligent Information Process
+2025-2026,1,IOT,3,BDIC3004J,数字系统设计,Digital System Design
+2025-2026,1,IOT,3,COMP2006J,操作系统,Operating Systems
+2025-2026,1,IOT,3,EEEN3001J,电子传感器,Electronics for Sensors
+2025-2026,1,IOT,3,EEEN3002J,微控制器,Microcontrollers
+2025-2026,1,IOT,3,EEEN3003J,信号与系统,Signals and Systems
+2025-2026,1,SE,3,0009287-5,形势与政策5,
+2025-2026,1,SE,3,BDIC3023J,软件工程方法学,Software Methodology
+2025-2026,1,SE,3,COMP3008J,分布式系统,Distributed Systems
+2025-2026,1,SE,3,COMP3011J,移动计算,Mobile Computing
+2025-2026,1,SE,3,COMP3019J,,Web应用开发 Web Application Develop Web
+2025-2026,1,SE,3,COMP3033J,计算机图形学,Computer Graphics
+2025-2026,1,SE,3,COMP3038J,多范式编程,
+2025-2026,1,EIE,4,0009287-7,形势与政策7,
+2025-2026,1,EIE,4,BDIC3017J,数字信号处理技术,DSP Technology
+2025-2026,1,EIE,4,EEEN3008J,无线通信,Wireless Communications
+2025-2026,1,EIE,4,EEEN3015J,控制原理,Control Theory
+2025-2026,1,EIE,4,EEEN3017J,信息论与编码,Information Theory and Coding
+2025-2026,1,EIE,4,EEEN3019J,射频电子学,RF Electronics
+2025-2026,1,FIN,4,0009287-7,形势与政策7,
+2025-2026,1,FIN,4,BDIC3009J,国际金融管理,International Financial Management
+2025-2026,1,FIN,4,BDIC3016J,行为金融学,Behavioral Finance
+2025-2026,1,FIN,4,ECON3020J,金融危机：历史与经济原理,History and Economics of Financial Crises
+2025-2026,1,FIN,4,ECON3022J,产业经济学,Economics of Industrial Organization
+2025-2026,1,FIN,4,ECON3028J,发展经济学,Development Economics
+2025-2026,1,FIN,4,STAT3007J,时间序列,Time Series
+2025-2026,1,IOT,4,0009287-7,形势与政策7,
+2025-2026,1,IOT,4,BDIC3005J,分布式系统,Distributed Systems
+2025-2026,1,IOT,4,BDIC3011J,并行计算,Parallel Computing (BDIC)
+2025-2026,1,IOT,4,COMP3020J,物联网信息安全,Info Security for the IoT
+2025-2026,1,IOT,4,COMP3023J,无线传感器系统,Wireless Sensor Networks
+2025-2026,1,IOT,4,EEEN3008J,无线通信,Wireless Communications
+2025-2026,1,IOT,4,EEEN3009J,数字通信,Digital Communications
+2025-2026,1,SE,4,0009287-7,形势与政策7,
+2025-2026,1,SE,4,BDIC3024J,设计模式,Design Patterns
+2025-2026,1,SE,4,BDIC3025J,安全与隐私,Security & Privacy
+2025-2026,1,SE,4,COMP3010J,机器学习,Machine Learning
+2025-2026,1,SE,4,COMP3014J,计算机系统性能,Performance of Comp Systems
+2025-2026,1,SE,4,COMP3025J,增强虚拟现实,Augmented and Vir'l Reality
+2025-2026,1,SE,4,COMP3039J,高级软件技术 1,
+2025-2026,2,EIE,1,0009287-2,形势与政策2,
+2025-2026,2,EIE,1,0009919,习近平新时代中国特色社会主义思想概论,
+2025-2026,2,EIE,1,ARCH1001J,爱尔兰文化,Irl LandscapeHeritage&Culture
+2025-2026,2,EIE,1,BDIC1007J,体育-2,Physical Education 2
+2025-2026,2,EIE,1,BDIC1015J,大学物理Ⅰ-1,University Physics 1
+2025-2026,2,EIE,1,BDIC1031J,高等数学（工）3,Maths (Engineering) 3
+2025-2026,2,EIE,1,BDIC1032J,高等数学（工）4,Maths (Engineering) 4
+2025-2026,2,EIE,1,BDIC1034J,学术英语-口语,College English 1
+2025-2026,2,EIE,1,BDIC1035J,学术英语-听力,College English 2
+2025-2026,2,EIE,1,BDIC1036J,学术英语-阅读,College English 3
+2025-2026,2,EIE,1,BDIC1037J,学术英语-写作,College English 4
+2025-2026,2,EIE,1,COMP1002J,程序设计2,Intro to Programming 2
+2025-2026,2,EIE,1,EEEN1002J,电子系统导论,Introduction to Electronic Sys
+2025-2026,2,FIN,1,0009287-2,形势与政策2,
+2025-2026,2,FIN,1,0009919,习近平新时代中国特色社会主义思想概论,
+2025-2026,2,FIN,1,ARCH1001J,爱尔兰文化,Irl LandscapeHeritage&Culture
+2025-2026,2,FIN,1,BDIC1007J,体育-2,Physical Education 2
+2025-2026,2,FIN,1,BDIC1034J,学术英语-口语,College English 1
+2025-2026,2,FIN,1,BDIC1035J,学术英语-听力,College English 2
+2025-2026,2,FIN,1,BDIC1036J,学术英语-阅读,College English 3
+2025-2026,2,FIN,1,BDIC1037J,学术英语-写作,College English 4
+2025-2026,2,FIN,1,BDIC1038J,微观经济学原理,Principles of Microeconomics
+2025-2026,2,FIN,1,BDIC1042J,高等数学3,Maths3
+2025-2026,2,FIN,1,BDIC1043J,高等数学4,Maths4
+2025-2026,2,FIN,1,ECON1046J,经济与社会,Economics and Society
+2025-2026,2,FIN,1,MATH1002J,分析导论,Introduction to Analysis
+2025-2026,2,IOT,1,0009287-2,形势与政策2,
+2025-2026,2,IOT,1,0009919,习近平新时代中国特色社会主义思想概论,
+2025-2026,2,IOT,1,ARCH1001J,爱尔兰文化,Irl LandscapeHeritage&Culture
+2025-2026,2,IOT,1,BDIC1007J,体育-2,Physical Education 2
+2025-2026,2,IOT,1,BDIC1015J,大学物理Ⅰ-1,University Physics 1
+2025-2026,2,IOT,1,BDIC1031J,高等数学（工）3,Maths (Engineering) 3
+2025-2026,2,IOT,1,BDIC1032J,高等数学（工）4,Maths (Engineering) 4
+2025-2026,2,IOT,1,BDIC1034J,学术英语-口语,College English 1
+2025-2026,2,IOT,1,BDIC1035J,学术英语-听力,College English 2
+2025-2026,2,IOT,1,BDIC1036J,学术英语-阅读,College English 3
+2025-2026,2,IOT,1,BDIC1037J,学术英语-写作,College English 4
+2025-2026,2,IOT,1,COMP1002J,程序设计2,Intro to Programming 2
+2025-2026,2,IOT,1,EEEN1002J,电子系统导论,Introduction to Electronic Sys
+2025-2026,2,SE,1,0009287-2,形势与政策2,
+2025-2026,2,SE,1,0009919,习近平新时代中国特色社会主义思想概论,
+2025-2026,2,SE,1,ARCH1001J,爱尔兰文化,Irl LandscapeHeritage&Culture
+2025-2026,2,SE,1,BDIC1007J,体育-2,Physical Education 2
+2025-2026,2,SE,1,BDIC1015J,大学物理Ⅰ-1,University Physics 1
+2025-2026,2,SE,1,BDIC1031J,高等数学（工）3,Maths (Engineering) 3
+2025-2026,2,SE,1,BDIC1032J,高等数学（工）4,Maths (Engineering) 4
+2025-2026,2,SE,1,BDIC1034J,学术英语-口语,College English 1
+2025-2026,2,SE,1,BDIC1035J,学术英语-听力,College English 2
+2025-2026,2,SE,1,BDIC1036J,学术英语-阅读,College English 3
+2025-2026,2,SE,1,BDIC1037J,学术英语-写作,College English 4
+2025-2026,2,SE,1,COMP1003J,软件工程导论,Introduction to Software (B)
+2025-2026,2,SE,1,COMP1005J,程序设计概论2,Intro to Prog Construction 2
+2025-2026,2,EIE,2,0009287-4,形势与政策4,
+2025-2026,2,EIE,2,BDIC1004J,毛泽东思想和中国特色社会主义理论体系概论,
+2025-2026,2,EIE,2,BDIC2006J,体育-4,Physical Education 4
+2025-2026,2,EIE,2,BDIC2007J,特殊用途英语,English for Spec Acad Purposes
+2025-2026,2,EIE,2,BDIC2021J,电磁学1,Electromagnetics 1
+2025-2026,2,EIE,2,COMP2003J,数据结构与算法,II Data Struc and Algorithms 2
+2025-2026,2,EIE,2,EEEN2002J,电子电路,Electronic Circuits
+2025-2026,2,EIE,2,EEEN2003J,数字电路,Digital Electronics
+2025-2026,2,EIE,2,EEEN2004J,固体电子学,Solid State Electronics
+2025-2026,2,FIN,2,0009287-4,形势与政策4,
+2025-2026,2,FIN,2,BDIC1004J,毛泽东思想和中国特色社会主义理论体系概论,
+2025-2026,2,FIN,2,BDIC2006J,体育-4,Physical Education 4
+2025-2026,2,FIN,2,BDIC2007J,特殊用途英语,English for Spec Acad Purposes
+2025-2026,2,FIN,2,BDIC2016J,中级微观经济学 2,Intermediate Microeconomics 2
+2025-2026,2,FIN,2,BDIC2019J,金融经济学导论,Introduction to Financial Economics
+2025-2026,2,FIN,2,ECON2002J,中级宏观经济学,Intermediate Macroeconomics
+2025-2026,2,FIN,2,ECON2021J,欧洲经济,European Economy
+2025-2026,2,FIN,2,MATH1004J,金融数学基础,Foundations for Financial
+2025-2026,2,IOT,2,0009287-4,形势与政策4,
+2025-2026,2,IOT,2,BDIC1004J,毛泽东思想和中国特色社会主义理论体系概论,
+2025-2026,2,IOT,2,BDIC2006J,体育-4,Physical Education 4
+2025-2026,2,IOT,2,BDIC2007J,特殊用途英语,English for Spec Acad Purposes
+2025-2026,2,IOT,2,BDIC2025J,离散数学,Discrete Mathematics
+2025-2026,2,IOT,2,COMP2003J,数据结构与算法,II Data Struc and Algorithms 2
+2025-2026,2,IOT,2,COMP2007J,计算机组成原理,Principles of Computer Organization
+2025-2026,2,IOT,2,EEEN2002J,电子电路,Electronic Circuits
+2025-2026,2,IOT,2,EEEN2003J,数字电路,Digital Electronics
+2025-2026,2,SE,2,0009287-4,形势与政策4,
+2025-2026,2,SE,2,BDIC2002J,离散数学,Discrete Mathematics
+2025-2026,2,SE,2,BDIC2006J,体育-4,Physical Education 4
+2025-2026,2,SE,2,BDIC2007J,特殊用途英语,English for Spec Acad Purposes
+2025-2026,2,SE,2,COMP2008J,软件工程课设1,Software EngProject 1 (B)
+2025-2026,2,SE,2,COMP2009J,计算机网络,Computer Networks (S/E)
+2025-2026,2,SE,2,COMP2013J,数据库和信息系统,Databases and Info Sys (S/E)
+2025-2026,2,SE,2,COMP2014J,数据结构与算法,II Data Structs & Algs II (S/E)
+2025-2026,2,EIE,3,0009287-6,形势与政策6,
+2025-2026,2,EIE,3,BDIC3001J,计算机架构,Computer Architectures
+2025-2026,2,EIE,3,EEEN3004J,数字信号处理,Digital Signal Processing
+2025-2026,2,EIE,3,EEEN3005J,通信原理,Communication Theory
+2025-2026,2,EIE,3,EEEN3006J,无线系统,Wireless Systems
+2025-2026,2,EIE,3,EEEN3013J,高等电子学,Advanced Electronics
+2025-2026,2,EIE,3,EEEN3018J,数值分析与优化,Numerical methods/optimization
+2025-2026,2,FIN,3,0009287-6,形势与政策6,
+2025-2026,2,FIN,3,BDIC3010J,投资组合管理,Financial Economics: Portfolio Management
+2025-2026,2,FIN,3,BDIC3022J,商务策略,Business Strategy
+2025-2026,2,FIN,3,ECON3002J,,Lab-应用计量经济学 Applied Econometrics
+2025-2026,2,FIN,3,ECON3005J,财务与风险管理,Financial Economics: Derivatives and Risk Management
+2025-2026,2,FIN,3,ECON3029J,国际金融学,Economics of International Finance
+2025-2026,2,FIN,3,MATH2003J,经济优化学,Optimization in Economics
+2025-2026,2,IOT,3,0009287-6,形势与政策6,
+2025-2026,2,IOT,3,BDIC3001J,计算机架构,Computer Architectures
+2025-2026,2,IOT,3,COMP2001J,计算机网络,Computer Networks
+2025-2026,2,IOT,3,COMP2004J,数据库和信息系统,Databases and Info Systems
+2025-2026,2,IOT,3,EEEN3004J,数字信号处理,Digital Signal Processing
+2025-2026,2,IOT,3,EEEN3005J,通信原理,Communication Theory
+2025-2026,2,IOT,3,EEEN3006J,无线系统,Wireless Systems
+2025-2026,2,SE,3,0009287-6,形势与政策6,
+2025-2026,2,SE,3,BDIC3026J,软件项目管理,Software Proj Management
+2025-2026,2,SE,3,BDIC3027J,软件体系架构,Software Systems Architecture
+2025-2026,2,SE,3,COMP3009J,信息获取,Information Retrieval
+2025-2026,2,SE,3,COMP3018J,系统设计与验证,System Des & Verification
+2025-2026,2,SE,3,COMP3030J,软件工程课设2,Software Engineering Project
+2025-2026,2,EIE,4,0009287-8,形势与政策8,
+2025-2026,2,EIE,4,BDIC3019J,数字图像处理,Digital Image Processing
+2025-2026,2,EIE,4,COMP3006J,云计算,Cloud Computing
+2025-2026,2,EIE,4,COMP3027J,数据挖掘与机器学习,Data Mining & Mach Learning
+2025-2026,2,EIE,4,EEEN3007J,,Lab-嵌入式系统 Embedded Systems
+2025-2026,2,FIN,4,0009287-8,形势与政策8,
+2025-2026,2,FIN,4,ECON3007J,金融计量经济学,Financial Econometrics
+2025-2026,2,FIN,4,ECON3017J,国际贸易经济学,International Trade Economics
+2025-2026,2,FIN,4,ECON3018J,高级经济计量学,Advanced Econometrics
+2025-2026,2,FIN,4,ECON3023J,高级微观经济学,Advanced Microeconomics
+2025-2026,2,FIN,4,ECON3027J,高级宏观经济学,Advanced Macroeconomics
+2025-2026,2,FIN,4,MATH3026J,经济与金融数学,Topics in Mathematics for Economics and Finance
+2025-2026,2,IOT,4,0009287-8,形势与政策8,
+2025-2026,2,IOT,4,COMP3006J,云计算,Cloud Computing
+2025-2026,2,IOT,4,COMP3027J,数据挖掘与机器学习,Data Mining & Mach Learning
+2025-2026,2,IOT,4,EEEN3012J,,Lab-嵌入式系统与软件 Embedded Systems and Software
+2025-2026,2,SE,4,0009287-8,形势与政策8,
+2025-2026,2,SE,4,COMP3006J,云计算,Cloud Computing
+2025-2026,2,SE,4,COMP3032J,毕业设计（论文）,Degree Project
+2025-2026,2,SE,4,COMP3035J,高级程序建构,Advanced Program Construction
+2025-2026,2,SE,4,COMP3036J,并行与机群计算,Parallel & Cluster Computing

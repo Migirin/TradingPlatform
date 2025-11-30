@@ -25,6 +25,8 @@ class AuthRepository(
         private const val PREFS_NAME = "auth_prefs"
         private const val KEY_CURRENT_USER_EMAIL = "current_user_email"
         private const val KEY_CURRENT_USER_UID = "current_user_uid"
+        private const val KEY_CURRENT_STUDENT_ID = "current_student_id"
+        private const val KEY_DEV_SIMULATED_MONTH = "dev_simulated_month"
         
         // 保存的登录凭据
         private const val KEY_SAVED_EMAIL = "saved_email"
@@ -428,6 +430,49 @@ class AuthRepository(
     }
     
     /**
+     * 保存当前登录用户对应的 BJUT 学号（8 位）
+     */
+    fun setCurrentStudentId(studentId: String) {
+        val normalized = studentId.filter { it.isDigit() }
+        prefs?.edit()?.apply {
+            putString(KEY_CURRENT_STUDENT_ID, normalized)
+            apply()
+        }
+        Log.d(TAG, "已保存当前学生学号: $normalized")
+    }
+    
+    /**
+     * 获取当前登录用户对应的 BJUT 学号（如果尚未设置则为 null）
+     */
+    fun getCurrentStudentId(): String? {
+        return prefs?.getString(KEY_CURRENT_STUDENT_ID, null)
+    }
+    
+    /**
+     * 设置用于开发调试的模拟月份。
+     * month 为 1-12 表示覆盖当前月份，为 null 或非法值表示跟随真实时间。
+     */
+    fun setSimulatedMonth(month: Int?) {
+        prefs?.edit()?.apply {
+            if (month != null && month in 1..12) {
+                putInt(KEY_DEV_SIMULATED_MONTH, month)
+            } else {
+                remove(KEY_DEV_SIMULATED_MONTH)
+            }
+            apply()
+        }
+        Log.d(TAG, "设置模拟月份: ${month ?: "real-time"}")
+    }
+
+    /**
+     * 获取当前设置的模拟月份（1-12），如果为 null 则表示跟随真实时间。
+     */
+    fun getSimulatedMonth(): Int? {
+        val value = prefs?.getInt(KEY_DEV_SIMULATED_MONTH, -1) ?: -1
+        return if (value in 1..12) value else null
+    }
+    
+    /**
      * 删除用户（用于测试/清理数据）
      */
     suspend fun deleteUser(email: String): Result<Unit> = runCatching {
@@ -454,6 +499,7 @@ class AuthRepository(
                 prefs?.edit()?.apply {
                     remove(KEY_CURRENT_USER_EMAIL)
                     remove(KEY_CURRENT_USER_UID)
+                    remove(KEY_CURRENT_STUDENT_ID)
                     apply()
                 }
             }
@@ -466,6 +512,7 @@ class AuthRepository(
         prefs?.edit()?.apply {
             remove(KEY_CURRENT_USER_EMAIL)
             remove(KEY_CURRENT_USER_UID)
+            remove(KEY_CURRENT_STUDENT_ID)
             // 注意：登出时不删除保存的凭据，以便下次登录时自动填充
             apply()
         }

@@ -9,8 +9,15 @@ import androidx.room.RoomDatabase
  * 应用数据库
  */
 @Database(
-    entities = [User::class, ItemEntity::class, ChatMessageEntity::class, WishlistEntity::class, UserAchievementEntity::class],
-    version = 8, // 版本升级：添加用户成就表
+    entities = [
+        User::class,
+        ItemEntity::class,
+        ChatMessageEntity::class,
+        WishlistEntity::class,
+        UserAchievementEntity::class,
+        TimetableCourseEntity::class
+    ],
+    version = 9, // 版本升级：添加课表课程表
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -19,6 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun chatMessageDao(): ChatMessageDao
     abstract fun wishlistDao(): WishlistDao
     abstract fun userAchievementDao(): UserAchievementDao
+    abstract fun timetableCourseDao(): TimetableCourseDao
 
     companion object {
         @Volatile

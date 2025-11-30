@@ -35,6 +35,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.tradingplatform.ui.i18n.AppLanguage
+import com.example.tradingplatform.ui.i18n.LocalAppLanguage
 import com.example.tradingplatform.ui.viewmodel.ItemUiState
 import com.example.tradingplatform.ui.viewmodel.ItemViewModel
 
@@ -53,6 +55,8 @@ fun PostItemScreen(
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val vm = viewModel
     val uiState by vm.state.collectAsState()
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
 
     // 图片选择器
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -84,7 +88,7 @@ fun PostItemScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "发布物品",
+            text = if (isEnglish) "Post item" else "发布物品",
             style = MaterialTheme.typography.headlineSmall
         )
 
@@ -103,14 +107,14 @@ fun PostItemScreen(
                 onClick = { imagePickerLauncher.launch("image/*") },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("选择图片（可选）")
+                Text(if (isEnglish) "Select image (optional)" else "选择图片（可选）")
             }
         }
 
         OutlinedTextField(
             value = title.value,
             onValueChange = { title.value = it },
-            label = { Text("标题*") },
+            label = { Text(if (isEnglish) "Title*" else "标题*") },
             modifier = Modifier.fillMaxWidth(),
             enabled = uiState !is ItemUiState.Loading
         )
@@ -118,7 +122,7 @@ fun PostItemScreen(
         OutlinedTextField(
             value = price.value,
             onValueChange = { price.value = it },
-            label = { Text("价格*（数字）") },
+            label = { Text(if (isEnglish) "Price* (number)" else "价格*（数字）") },
             modifier = Modifier.fillMaxWidth(),
             enabled = uiState !is ItemUiState.Loading
         )
@@ -132,7 +136,7 @@ fun PostItemScreen(
         OutlinedTextField(
             value = desc.value,
             onValueChange = { desc.value = it },
-            label = { Text("描述") },
+            label = { Text(if (isEnglish) "Description" else "描述") },
             modifier = Modifier.fillMaxWidth(),
             enabled = uiState !is ItemUiState.Loading,
             minLines = 3
@@ -141,20 +145,27 @@ fun PostItemScreen(
         OutlinedTextField(
             value = story.value,
             onValueChange = { story.value = it },
-            label = { Text("商品故事（可选）") },
+            label = { Text(if (isEnglish) "Item story (optional)" else "商品故事（可选）") },
             modifier = Modifier.fillMaxWidth(),
             enabled = uiState !is ItemUiState.Loading,
             minLines = 4,
-            placeholder = { Text("分享这件商品背后的故事...\n例如：陪伴我大学四年的笔记本，见证了我的成长...") }
+            placeholder = {
+                Text(
+                    if (isEnglish)
+                        "Share the story behind this item...\nFor example: This laptop has been with me through four years of college..."
+                    else
+                        "分享这件商品背后的故事...\n例如：陪伴我大学四年的笔记本，见证了我的成长..."
+                )
+            }
         )
 
         OutlinedTextField(
             value = phoneNumber.value,
             onValueChange = { phoneNumber.value = it },
-            label = { Text("联系电话*") },
+            label = { Text(if (isEnglish) "Phone number*" else "联系电话*") },
             modifier = Modifier.fillMaxWidth(),
             enabled = uiState !is ItemUiState.Loading,
-            placeholder = { Text("例如：13800138000") }
+            placeholder = { Text(if (isEnglish) "e.g. 13800138000" else "例如：13800138000") }
         )
 
         when (val s = uiState) {
@@ -164,7 +175,7 @@ fun PostItemScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "发布失败",
+                        text = if (isEnglish) "Post failed" else "发布失败",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -181,12 +192,12 @@ fun PostItemScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                    Text("正在发布...", modifier = Modifier.padding(start = 8.dp))
+                    Text(if (isEnglish) "Posting..." else "正在发布...", modifier = Modifier.padding(start = 8.dp))
                 }
             }
             ItemUiState.Success -> {
                 Text(
-                    text = "发布成功！",
+                    text = if (isEnglish) "Posted successfully!" else "发布成功！",
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -203,7 +214,7 @@ fun PostItemScreen(
                 modifier = Modifier.weight(1f),
                 enabled = uiState !is ItemUiState.Loading
             ) {
-                Text("取消")
+                Text(if (isEnglish) "Cancel" else "取消")
             }
             Button(
                 onClick = {
@@ -219,7 +230,7 @@ fun PostItemScreen(
                         && phoneNumber.value.isNotBlank()
                         && uiState !is ItemUiState.Loading
             ) {
-                Text("发布")
+                Text(if (isEnglish) "Post" else "发布")
             }
         }
     }

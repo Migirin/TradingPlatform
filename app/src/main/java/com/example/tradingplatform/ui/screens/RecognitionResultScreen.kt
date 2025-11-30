@@ -21,6 +21,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.data.vision.RecognitionResult
 import com.example.tradingplatform.data.vision.RecommendedProduct
+import com.example.tradingplatform.ui.i18n.LocalAppStrings
 import com.example.tradingplatform.ui.viewmodel.ImageRecognitionViewModel
 
 @Composable
@@ -31,6 +32,7 @@ fun RecognitionResultScreen(
     viewModel: ImageRecognitionViewModel = viewModel()
 ) {
     val uiState by viewModel.state.collectAsState()
+    val strings = LocalAppStrings.current
 
     LaunchedEffect(capturedImage) {
         viewModel.recognizeAndRecommend(capturedImage)
@@ -49,11 +51,11 @@ fun RecognitionResultScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "识别结果",
+                text = strings.recognitionTitle,
                 style = MaterialTheme.typography.headlineMedium
             )
             Button(onClick = onBack) {
-                Text("返回")
+                Text(strings.myBack)
             }
         }
 
@@ -69,7 +71,7 @@ fun RecognitionResultScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         CircularProgressIndicator()
-                        Text("正在识别中...")
+                        Text(strings.recognitionLoadingText)
                     }
                 }
             }
@@ -81,7 +83,7 @@ fun RecognitionResultScreen(
                 ) {
                     Image(
                         bitmap = capturedImage.asImageBitmap(),
-                        contentDescription = "拍摄的图片",
+                        contentDescription = strings.recognitionCapturedImageContentDescription,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp),
@@ -99,7 +101,7 @@ fun RecognitionResultScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "识别结果",
+                                text = strings.recognitionResultSectionTitle,
                                 style = MaterialTheme.typography.titleLarge
                             )
                             state.recognitionResults.take(3).forEach { result ->
@@ -112,7 +114,7 @@ fun RecognitionResultScreen(
                 // 推荐商品
                 if (state.recommendedProducts.isNotEmpty()) {
                     Text(
-                        text = "推荐商品",
+                        text = strings.recognitionRecommendedTitle,
                         style = MaterialTheme.typography.titleLarge
                     )
                     LazyColumn(
@@ -133,7 +135,7 @@ fun RecognitionResultScreen(
                             modifier = Modifier.padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("暂无相关商品推荐")
+                            Text(strings.recognitionNoRecommendations)
                         }
                     }
                 }
@@ -155,7 +157,7 @@ fun RecognitionResultScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = onBack) {
-                            Text("返回")
+                            Text(strings.myBack)
                         }
                     }
                 }
@@ -195,6 +197,7 @@ fun RecommendedProductCard(
     recommended: RecommendedProduct,
     onClick: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -225,7 +228,7 @@ fun RecommendedProductCard(
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("无图片")
+                    Text(strings.recognitionNoImageLabel)
                 }
             }
 
@@ -266,7 +269,7 @@ fun RecommendedProductCard(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = "${recommended.score.toInt()}分",
+                    text = "${recommended.score.toInt()}${strings.recognitionScoreSuffix}",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )

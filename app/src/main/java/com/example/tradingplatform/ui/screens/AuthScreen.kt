@@ -26,6 +26,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingplatform.data.auth.AuthRepository
+import com.example.tradingplatform.ui.components.LanguageToggleButton
+import com.example.tradingplatform.ui.i18n.LocalAppStrings
 import com.example.tradingplatform.ui.viewmodel.AuthUiState
 import com.example.tradingplatform.ui.viewmodel.AuthViewModel
 
@@ -37,6 +39,7 @@ enum class AuthMode {
 fun AuthScreen(onAuthenticated: () -> Unit) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val authRepo = remember { AuthRepository(context) }
+    val strings = LocalAppStrings.current
     
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
@@ -79,14 +82,20 @@ fun AuthScreen(onAuthenticated: () -> Unit) {
         modifier = Modifier.fillMaxSize().padding(PaddingValues(24.dp)),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = when (authMode.value) {
-                AuthMode.LOGIN -> "登录"
-                AuthMode.REGISTER -> "注册"
-                AuthMode.VERIFY_EMAIL -> "验证邮箱"
-            },
-            style = MaterialTheme.typography.headlineSmall
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = when (authMode.value) {
+                    AuthMode.LOGIN -> strings.authLoginTitle
+                    AuthMode.REGISTER -> strings.authRegisterTitle
+                    AuthMode.VERIFY_EMAIL -> strings.authVerifyEmailTitle
+                },
+                style = MaterialTheme.typography.headlineSmall
+            )
+            LanguageToggleButton()
+        }
 
         // 模式切换按钮
         if (uiState !is AuthUiState.Loading) {
@@ -99,14 +108,14 @@ fun AuthScreen(onAuthenticated: () -> Unit) {
                     modifier = Modifier.weight(1f),
                     enabled = authMode.value != AuthMode.LOGIN
                 ) {
-                    Text("登录")
+                    Text(strings.authLoginTab)
                 }
                 OutlinedButton(
                     onClick = { authMode.value = AuthMode.REGISTER },
                     modifier = Modifier.weight(1f),
                     enabled = authMode.value != AuthMode.REGISTER
                 ) {
-                    Text("注册")
+                    Text(strings.authRegisterTab)
                 }
             }
         }
@@ -147,7 +156,7 @@ fun AuthScreen(onAuthenticated: () -> Unit) {
         // 开发模式：临时跳过认证
         Divider(modifier = Modifier.padding(vertical = 16.dp))
         Text(
-            text = "开发模式（临时跳过认证）",
+            text = strings.authDevModeTitle,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -156,7 +165,7 @@ fun AuthScreen(onAuthenticated: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             enabled = uiState !is AuthUiState.Loading
         ) {
-            Text("进入应用（跳过登录）")
+            Text(strings.authDevSkipButton)
         }
     }
 }
@@ -168,18 +177,19 @@ fun LoginForm(
     uiState: AuthUiState,
     onLogin: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         OutlinedTextField(
             value = emailState.value,
             onValueChange = { emailState.value = it },
-            label = { Text("校内邮箱 @ucdconnect.ie") },
+            label = { Text(strings.authEmailLabel) },
             enabled = uiState !is AuthUiState.Loading,
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = passwordState.value,
             onValueChange = { passwordState.value = it },
-            label = { Text("密码") },
+            label = { Text(strings.authPasswordLabel) },
             visualTransformation = PasswordVisualTransformation(),
             enabled = uiState !is AuthUiState.Loading,
             modifier = Modifier.fillMaxWidth()
@@ -194,7 +204,7 @@ fun LoginForm(
             if (uiState is AuthUiState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
             } else {
-                Text("登录")
+                Text(strings.authLoginButton)
             }
         }
         ErrorMessage(uiState = uiState)
@@ -209,6 +219,7 @@ fun RegisterForm(
     onRegister: () -> Unit,
     onDeleteUser: ((String) -> Unit)? = null
 ) {
+    val strings = LocalAppStrings.current
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         OutlinedTextField(
             value = emailState.value,
@@ -220,7 +231,7 @@ fun RegisterForm(
         OutlinedTextField(
             value = passwordState.value,
             onValueChange = { passwordState.value = it },
-            label = { Text("密码（至少6个字符）") },
+            label = { Text(strings.authRegisterPasswordLabel) },
             visualTransformation = PasswordVisualTransformation(),
             enabled = uiState !is AuthUiState.Loading,
             modifier = Modifier.fillMaxWidth()
@@ -235,7 +246,7 @@ fun RegisterForm(
             if (uiState is AuthUiState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
             } else {
-                Text("注册")
+                Text(strings.authRegisterButton)
             }
         }
         ErrorMessage(
@@ -254,22 +265,23 @@ fun VerifyEmailForm(
     onVerify: () -> Unit,
     onResend: () -> Unit
 ) {
+    val strings = LocalAppStrings.current
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         // 显示验证邮件已发送的信息
         if (uiState is AuthUiState.VerificationEmailSent) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = "验证邮件已发送到：${uiState.email}",
+                    text = strings.authVerificationSentPrefix + uiState.email,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "请检查您的邮箱（包括垃圾邮件文件夹）并输入验证码",
+                    text = strings.authVerificationHintCheckEmail,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "验证码有效期为 30 分钟",
+                    text = strings.authVerificationHintExpire,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -279,14 +291,14 @@ fun VerifyEmailForm(
         OutlinedTextField(
             value = emailState.value,
             onValueChange = { emailState.value = it },
-            label = { Text("邮箱") },
+            label = { Text(strings.authEmailReadonlyLabel) },
             enabled = false, // 验证时邮箱不可修改
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = verificationCodeState.value,
             onValueChange = { verificationCodeState.value = it },
-            label = { Text("验证码") },
+            label = { Text(strings.authVerificationCodeLabel) },
             enabled = uiState !is AuthUiState.Loading,
             modifier = Modifier.fillMaxWidth()
         )
@@ -299,7 +311,7 @@ fun VerifyEmailForm(
             if (uiState is AuthUiState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
             } else {
-                Text("验证")
+                Text(strings.authVerifyButton)
             }
         }
         OutlinedButton(
@@ -307,7 +319,7 @@ fun VerifyEmailForm(
             enabled = uiState !is AuthUiState.Loading,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("重新发送验证码")
+            Text(strings.authResendCodeButton)
         }
         ErrorMessage(uiState = uiState)
     }
@@ -319,6 +331,7 @@ fun ErrorMessage(
     email: String = "",
     onDeleteUser: ((String) -> Unit)? = null
 ) {
+    val strings = LocalAppStrings.current
     if (uiState is AuthUiState.Error) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
@@ -333,7 +346,7 @@ fun ErrorMessage(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = uiState !is AuthUiState.Loading
                 ) {
-                    Text("删除该用户并重新注册")
+                    Text(strings.authDeleteAndReregisterButton)
                 }
             }
         }
