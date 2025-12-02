@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.items.Item
+import com.example.tradingplatform.data.timetable.RecommendationReasonType
+import com.example.tradingplatform.data.timetable.RecommendedItem
 import com.example.tradingplatform.ui.i18n.LocalAppStrings
 import com.example.tradingplatform.ui.viewmodel.ItemViewModel
 
@@ -43,7 +45,8 @@ fun MainScreen(
         Box(modifier = Modifier.weight(1f)) {
             HomeTab(
                 onItemClick = onItemClick,
-                viewModel = viewModel
+                viewModel = viewModel,
+                onNavigateToMy = onNavigateToMy
             )
         }
         
@@ -89,7 +92,8 @@ fun MainScreen(
 @Composable
 fun HomeTab(
     onItemClick: (Item) -> Unit,
-    viewModel: ItemViewModel
+    viewModel: ItemViewModel,
+    onNavigateToMy: () -> Unit
 ) {
     val items by viewModel.items.collectAsState()
     val uiState by viewModel.state.collectAsState()
@@ -131,20 +135,156 @@ fun HomeTab(
         }
 
         // Recommended textbooks section (local demo)
-        if (recommendedItems.isNotEmpty()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = strings.homeRecommendedSectionTitle,
                 style = MaterialTheme.typography.titleMedium
             )
+            TextButton(onClick = { viewModel.loadRecommendedItemsForCurrentStudent() }) {
+                Text(strings.homeRefreshRecommendationsButton)
+            }
+        }
+
+        if (recommendedItems.isNotEmpty()) {
+            val currentTermItems = mutableListOf<RecommendedItem>()
+            val previewItems = mutableListOf<RecommendedItem>()
+            val cetItems = mutableListOf<RecommendedItem>()
+
+            for (rec in recommendedItems) {
+                val types = rec.reasons.map { it.type }.toSet()
+                val bucket = when {
+                    RecommendationReasonType.CET_SEASON in types -> 0
+                    RecommendationReasonType.CURRENT_TERM in types -> 1
+                    RecommendationReasonType.PREVIEW_TERM in types -> 2
+                    else -> null
+                }
+
+                when (bucket) {
+                    0 -> cetItems.add(rec)
+                    1 -> currentTermItems.add(rec)
+                    2 -> previewItems.add(rec)
+                }
+            }
+
+            val hasCurrent = currentTermItems.isNotEmpty()
+            val hasPreview = previewItems.isNotEmpty()
+            val hasCet = cetItems.isNotEmpty()
+
+            if (hasCurrent || hasPreview || hasCet) {
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = strings.homeStudySummaryTitle,
+                            style = MaterialTheme.typography.titleSmall
+                        )
+
+                        if (hasCurrent) {
+                            Text(
+                                text = strings.homeStudySummaryFocusCurrentTerm,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        if (hasPreview) {
+                            Text(
+                                text = strings.homeStudySummaryFocusPreview,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        if (hasCet) {
+                            Text(
+                                text = strings.homeStudySummaryFocusCet,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth().heightIn(max = 240.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 260.dp)
             ) {
-                items(recommendedItems, key = { it.id }) { item ->
-                    ItemCard(item = item, onClick = { onItemClick(item) })
+                if (currentTermItems.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = strings.homeReasonCurrentTerm,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+                        )
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(currentTermItems, key = { it.item.id }) { rec ->
+                                RecommendedItemWithReasons(
+                                    recommended = rec,
+                                    onItemClick = onItemClick,
+                                    strings = strings
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (previewItems.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = strings.homeReasonPreviewTerm,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+                        )
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(previewItems, key = { it.item.id }) { rec ->
+                                RecommendedItemWithReasons(
+                                    recommended = rec,
+                                    onItemClick = onItemClick,
+                                    strings = strings
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (cetItems.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = strings.homeReasonCetSeason,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+                        )
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(cetItems, key = { it.item.id }) { rec ->
+                                RecommendedItemWithReasons(
+                                    recommended = rec,
+                                    onItemClick = onItemClick,
+                                    strings = strings
+                                )
+                            }
+                        }
+                    }
                 }
             }
             Divider()
+        } else {
+            Text(
+                text = strings.homeNoRecommendationsHint,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+            )
+            OutlinedButton(onClick = { onNavigateToMy() }) {
+                Text(strings.homeGoToSettingsButton)
+            }
+            Divider(modifier = Modifier.padding(top = 8.dp))
         }
 
         when (val state = uiState) {
@@ -178,6 +318,37 @@ fun HomeTab(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun RecommendedItemWithReasons(
+    recommended: RecommendedItem,
+    onItemClick: (Item) -> Unit,
+    strings: com.example.tradingplatform.ui.i18n.AppStrings
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.widthIn(max = 320.dp)
+    ) {
+        ItemCard(item = recommended.item, onClick = { onItemClick(recommended.item) })
+
+        val reasonLabels = recommended.reasons.mapNotNull { reason ->
+            when (reason.type) {
+                RecommendationReasonType.CURRENT_TERM -> strings.homeReasonCurrentTerm
+                RecommendationReasonType.PREVIEW_TERM -> strings.homeReasonPreviewTerm
+                RecommendationReasonType.CET_SEASON -> strings.homeReasonCetSeason
+            }
+        }
+
+        if (reasonLabels.isNotEmpty()) {
+            Text(
+                text = reasonLabels.joinToString(" · "),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 2.dp)
+            )
         }
     }
 }

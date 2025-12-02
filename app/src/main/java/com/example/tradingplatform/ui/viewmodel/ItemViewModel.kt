@@ -9,6 +9,7 @@ import com.example.tradingplatform.data.achievement.AchievementRepository
 import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.data.items.ItemRepository
 import com.example.tradingplatform.data.auth.AuthRepository
+import com.example.tradingplatform.data.timetable.RecommendedItem
 import com.example.tradingplatform.data.timetable.TextbookRecommendationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,8 +40,8 @@ class ItemViewModel(
     private val _items = MutableStateFlow<List<Item>>(emptyList())
     val items: StateFlow<List<Item>> = _items
     
-    private val _recommendedItems = MutableStateFlow<List<Item>>(emptyList())
-    val recommendedItems: StateFlow<List<Item>> = _recommendedItems
+    private val _recommendedItems = MutableStateFlow<List<RecommendedItem>>(emptyList())
+    val recommendedItems: StateFlow<List<RecommendedItem>> = _recommendedItems
     
     // 当前选中的商品（用于详情页）
     private val _selectedItem = MutableStateFlow<Item?>(null)

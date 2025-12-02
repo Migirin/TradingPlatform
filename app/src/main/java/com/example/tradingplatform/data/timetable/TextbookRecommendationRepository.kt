@@ -5,9 +5,25 @@ import android.util.Log
 import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.data.items.ItemRepository
+import com.example.tradingplatform.data.wishlist.WishlistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+
+enum class RecommendationReasonType {
+    CURRENT_TERM,
+    PREVIEW_TERM,
+    CET_SEASON
+}
+
+data class RecommendationReason(
+    val type: RecommendationReasonType
+)
+
+data class RecommendedItem(
+    val item: Item,
+    val reasons: List<RecommendationReason>
+)
 
 /**
  * Local textbook recommendation repository based on timetable and posted items.
@@ -28,6 +44,7 @@ class TextbookRecommendationRepository(
     private val timetableRepository: TimetableRepository? = context?.let { TimetableRepository(it) }
     private val itemRepository: ItemRepository? = context?.let { ItemRepository(it) }
     private val authRepository: AuthRepository? = context?.let { AuthRepository(it) }
+    private val wishlistRepository: WishlistRepository? = context?.let { WishlistRepository(it) }
     private val cetKeywords: List<String> = listOf(
         // Chinese keywords
         "四级", "六级", "四六级", "英语四级", "英语六级", "真题", "词汇", "听力",
@@ -43,6 +60,12 @@ class TextbookRecommendationRepository(
         val term2Weight: Double
     )
 
+    private data class ScoredItem(
+        val item: Item,
+        val score: Double,
+        val reasons: List<RecommendationReason>
+    )
+
     /**
      * Get recommended items for a given student ID at a specific date.
      * This is intended for local demo and in-app recommendation.
@@ -50,7 +73,7 @@ class TextbookRecommendationRepository(
     suspend fun getRecommendedItemsForStudent(
         studentId: String,
         now: LocalDate = LocalDate.now()
-    ): List<Item> = withContext(Dispatchers.IO) {
+    ): List<RecommendedItem> = withContext(Dispatchers.IO) {
         if (timetableRepository == null || itemRepository == null) {
             Log.w(TAG, "Repositories not initialized, return empty list")
             return@withContext emptyList()
@@ -106,7 +129,30 @@ class TextbookRecommendationRepository(
                 return@withContext emptyList()
             }
 
-            // 5. Score items by simple keyword match with term-based weights
+            // 5. Load current user's wishlist for personalization
+            val wishlistItems = try {
+                wishlistRepository?.getWishlistSync().orEmpty()
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to load wishlist for personalization", e)
+                emptyList()
+            }
+
+            val wishlistItemIds = wishlistItems
+                .mapNotNull { it.itemId.takeIf { id -> id.isNotBlank() } }
+                .toSet()
+
+            val wishlistKeywords: List<String> = buildList {
+                for (wish in wishlistItems) {
+                    val title = wish.title.trim()
+                    if (title.length >= 2) add(title)
+                    val category = wish.category.trim()
+                    if (category.length >= 2) add(category)
+                    val desc = wish.description.trim()
+                    if (desc.length >= 2) add(desc)
+                }
+            }
+
+            // 6. Score items by timetable/CET keywords and wishlist personalization
             val weights = computeTermWeights(effectiveNow.monthValue)
             val scored = availableItems.map { item ->
                 val term1Score = if (term1Keywords.isNotEmpty()) {
@@ -121,20 +167,45 @@ class TextbookRecommendationRepository(
                     calculateMatchScore(item, cetKeywords)
                 } else 0.0
 
-                val finalScore = weights.term1Weight * term1Score +
+                val baseScore = weights.term1Weight * term1Score +
                         weights.term2Weight * term2Score +
                         cetScore
 
-                item to finalScore
-            }.filter { it.second > 0.0 }
+                val wishlistDirectBoost = if (wishlistItemIds.contains(item.id)) 0.5 else 0.0
+                val wishlistKeywordScore = if (wishlistKeywords.isNotEmpty()) {
+                    calculateMatchScore(item, wishlistKeywords)
+                } else 0.0
+
+                val personalizationBoost = wishlistDirectBoost + 0.5 * wishlistKeywordScore
+                val finalScore = baseScore + personalizationBoost
+
+                val reasons = buildReasonsForScores(
+                    term1Score = term1Score,
+                    term2Score = term2Score,
+                    cetScore = cetScore,
+                    weights = weights,
+                    cetSeason = cetSeason
+                )
+
+                ScoredItem(
+                    item = item,
+                    score = finalScore,
+                    reasons = reasons
+                )
+            }.filter { it.score > 0.0 }
 
             if (scored.isEmpty()) {
                 Log.d(TAG, "No items matched timetable keywords")
                 return@withContext emptyList()
             }
 
-            val sorted = scored.sortedByDescending { it.second }
-            val result = sorted.take(MAX_RESULTS).map { it.first }
+            val sorted = scored.sortedByDescending { it.score }
+            val result = sorted.take(MAX_RESULTS).map { scoredItem ->
+                RecommendedItem(
+                    item = scoredItem.item,
+                    reasons = scoredItem.reasons
+                )
+            }
             Log.d(TAG, "Recommended ${result.size} items for student $studentId")
             result
         } catch (e: Exception) {
@@ -188,6 +259,45 @@ class TextbookRecommendationRepository(
         }
 
         return TermWeights(term1Weight = term1Weight, term2Weight = term2Weight)
+    }
+
+    private fun buildReasonsForScores(
+        term1Score: Double,
+        term2Score: Double,
+        cetScore: Double,
+        weights: TermWeights,
+        cetSeason: Boolean
+    ): List<RecommendationReason> {
+        val reasons = mutableListOf<RecommendationReason>()
+        val term1Primary = weights.term1Weight > weights.term2Weight
+
+        if (term1Score > 0.0) {
+            val type = if (term1Primary) {
+                RecommendationReasonType.CURRENT_TERM
+            } else {
+                RecommendationReasonType.PREVIEW_TERM
+            }
+            reasons.add(RecommendationReason(type))
+        }
+
+        if (term2Score > 0.0) {
+            val type = if (!term1Primary) {
+                RecommendationReasonType.CURRENT_TERM
+            } else {
+                RecommendationReasonType.PREVIEW_TERM
+            }
+            if (reasons.none { it.type == type }) {
+                reasons.add(RecommendationReason(type))
+            }
+        }
+
+        if (cetSeason && cetScore > 0.0) {
+            if (reasons.none { it.type == RecommendationReasonType.CET_SEASON }) {
+                reasons.add(RecommendationReason(RecommendationReasonType.CET_SEASON))
+            }
+        }
+
+        return reasons
     }
 
     /**
