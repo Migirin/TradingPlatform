@@ -1,0 +1,2477 @@
+[
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "0006794",
+    "course_name_cn": "心理课",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "0009287-1",
+    "course_name_cn": "形势与政策1",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "0010931",
+    "course_name_cn": "国家安全教育",
+    "course_name_en": "National Security Education"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1001J",
+    "course_name_cn": "中国近现代史纲要",
+    "course_name_en": "Essentials of Chinese Modern History"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1002J",
+    "course_name_cn": "思想道德与法治",
+    "course_name_en": "Ideological and Moral Cultivation and Rule of Law"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1014J",
+    "course_name_cn": "线性代数",
+    "course_name_en": "Linear Algebra (Engineering)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1029J",
+    "course_name_cn": "高等数学（工）1",
+    "course_name_en": "Maths (Engineering) 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1030J",
+    "course_name_cn": "高等数学（工）2",
+    "course_name_en": "Maths (Engineering) 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1034J",
+    "course_name_cn": "学术英语-口语",
+    "course_name_en": "College English 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1035J",
+    "course_name_cn": "学术英语-听力",
+    "course_name_en": "College English 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1036J",
+    "course_name_cn": "学术英语-阅读",
+    "course_name_en": "College English 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1037J",
+    "course_name_cn": "学术英语-写作",
+    "course_name_en": "College English 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "COMP1001J",
+    "course_name_cn": "程序设计1",
+    "course_name_en": "Intro to Programming 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "0006794",
+    "course_name_cn": "心理课",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "0009287-1",
+    "course_name_cn": "形势与政策1",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "0010929",
+    "course_name_cn": "人工智能导论",
+    "course_name_en": "B Introduction to Artificial Intelligence B"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "0010931",
+    "course_name_cn": "国家安全教育",
+    "course_name_en": "National Security Education"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1001J",
+    "course_name_cn": "中国近现代史纲要",
+    "course_name_en": "Essentials of Chinese Modern History"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1002J",
+    "course_name_cn": "思想道德与法治",
+    "course_name_en": "Ideological and Moral Cultivation and Rule of Law"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1034J",
+    "course_name_cn": "学术英语-口语",
+    "course_name_en": "College English 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1035J",
+    "course_name_cn": "学术英语-听力",
+    "course_name_en": "College English 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1036J",
+    "course_name_cn": "学术英语-阅读",
+    "course_name_en": "College English 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1037J",
+    "course_name_cn": "学术英语-写作",
+    "course_name_en": "College English 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1040J",
+    "course_name_cn": "高等数学1",
+    "course_name_en": "Maths1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1041J",
+    "course_name_cn": "高等数学2",
+    "course_name_en": "Maths 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1044J",
+    "course_name_cn": "线性代数",
+    "course_name_en": "Linear Algebra"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1045J",
+    "course_name_cn": "经济学导论",
+    "course_name_en": "Introduction to Economics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "0006794",
+    "course_name_cn": "心理课",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "0009287-1",
+    "course_name_cn": "形势与政策1",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "0010931",
+    "course_name_cn": "国家安全教育",
+    "course_name_en": "National Security Education"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1001J",
+    "course_name_cn": "中国近现代史纲要",
+    "course_name_en": "Essentials of Chinese Modern History"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1002J",
+    "course_name_cn": "思想道德与法治",
+    "course_name_en": "Ideological and Moral Cultivation and Rule of Law"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1014J",
+    "course_name_cn": "线性代数",
+    "course_name_en": "Linear Algebra (Engineering)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1029J",
+    "course_name_cn": "高等数学（工）1",
+    "course_name_en": "Maths (Engineering) 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1030J",
+    "course_name_cn": "高等数学（工）2",
+    "course_name_en": "Maths (Engineering) 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1034J",
+    "course_name_cn": "学术英语-口语",
+    "course_name_en": "College English 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1035J",
+    "course_name_cn": "学术英语-听力",
+    "course_name_en": "College English 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1036J",
+    "course_name_cn": "学术英语-阅读",
+    "course_name_en": "College English 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1037J",
+    "course_name_cn": "学术英语-写作",
+    "course_name_en": "College English 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "COMP1001J",
+    "course_name_cn": "程序设计1",
+    "course_name_en": "Intro to Programming 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "0006794",
+    "course_name_cn": "心理课",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "0009287-1",
+    "course_name_cn": "形势与政策1",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "0010931",
+    "course_name_cn": "国家安全教育",
+    "course_name_en": "National Security Education"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1001J",
+    "course_name_cn": "中国近现代史纲要",
+    "course_name_en": "Essentials of Chinese Modern History"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1002J",
+    "course_name_cn": "思想道德与法治",
+    "course_name_en": "Ideological and Moral Cultivation and Rule of Law"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1014J",
+    "course_name_cn": "线性代数",
+    "course_name_en": "Linear Algebra (Engineering)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1029J",
+    "course_name_cn": "高等数学（工）1",
+    "course_name_en": "Maths (Engineering) 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1030J",
+    "course_name_cn": "高等数学（工）2",
+    "course_name_en": "Maths (Engineering) 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1034J",
+    "course_name_cn": "学术英语-口语",
+    "course_name_en": "College English 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1035J",
+    "course_name_cn": "学术英语-听力",
+    "course_name_en": "College English 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1036J",
+    "course_name_cn": "学术英语-阅读",
+    "course_name_en": "College English 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1037J",
+    "course_name_cn": "学术英语-写作",
+    "course_name_en": "College English 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "COMP1004J",
+    "course_name_cn": "程序设计概论1",
+    "course_name_en": "Intro to Prog Construction 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "0009287-3",
+    "course_name_cn": "形势与政策3",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "BDIC1016J",
+    "course_name_cn": "马克思主义基本原理",
+    "course_name_en": "The Basic Principles of Marxism"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "BDIC2005J",
+    "course_name_cn": "概率论与数理统计",
+    "course_name_en": "Probability and Statistics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "BDIC2008J",
+    "course_name_cn": "大学物理Ⅰ-2",
+    "course_name_en": "University Physics 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "BDIC2015J",
+    "course_name_cn": "学术写作与沟通技巧",
+    "course_name_en": "Academic Writing and Communication Skills"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "COMP2002J",
+    "course_name_cn": "数据结构与算法",
+    "course_name_en": "I Data Struc and Algorithms 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "COMP2005J",
+    "course_name_cn": "面向对象编程",
+    "course_name_en": "Object-oriented programming"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "EEEN2005J",
+    "course_name_cn": "电路与系统",
+    "course_name_en": "Circuits and Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "0009287-3",
+    "course_name_cn": "形势与政策3",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC1016J",
+    "course_name_cn": "马克思主义基本原理",
+    "course_name_en": "The Basic Principles of Marxism"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC1039J",
+    "course_name_cn": "财务会计学导论",
+    "course_name_en": "Introduction to Financial Accounting"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC2005J",
+    "course_name_cn": "概率论与数理统计",
+    "course_name_en": "Probability and Statistics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC2015J",
+    "course_name_cn": "学术写作与沟通技巧",
+    "course_name_en": "Academic Writing and Communication Skills"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC2020J",
+    "course_name_cn": "中级微观经济学1",
+    "course_name_en": "Intermediate Microeconomics 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC2026J",
+    "course_name_cn": "金融数据学",
+    "course_name_en": "Data Science For Finance"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "ECON1001J",
+    "course_name_cn": "宏观经济学原理",
+    "course_name_en": "Principles of Macroeconomics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "0009287-3",
+    "course_name_cn": "形势与政策3",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "BDIC1016J",
+    "course_name_cn": "马克思主义基本原理",
+    "course_name_en": "The Basic Principles of Marxism"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "BDIC2005J",
+    "course_name_cn": "概率论与数理统计",
+    "course_name_en": "Probability and Statistics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "BDIC2008J",
+    "course_name_cn": "大学物理Ⅰ-2",
+    "course_name_en": "University Physics 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "BDIC2015J",
+    "course_name_cn": "学术写作与沟通技巧",
+    "course_name_en": "Academic Writing and Communication Skills"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "COMP2002J",
+    "course_name_cn": "数据结构与算法",
+    "course_name_en": "I Data Struc and Algorithms 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "COMP2005J",
+    "course_name_cn": "面向对象编程",
+    "course_name_en": "Object-oriented programming"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "EEEN2005J",
+    "course_name_cn": "电路与系统",
+    "course_name_en": "Circuits and Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "0009287-3",
+    "course_name_cn": "形势与政策3",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "BDIC1016J",
+    "course_name_cn": "马克思主义基本原理",
+    "course_name_en": "The Basic Principles of Marxism"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "BDIC2005J",
+    "course_name_cn": "概率论与数理统计",
+    "course_name_en": "Probability and Statistics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "BDIC2008J",
+    "course_name_cn": "大学物理Ⅰ-2",
+    "course_name_en": "University Physics 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "BDIC2015J",
+    "course_name_cn": "学术写作与沟通技巧",
+    "course_name_en": "Academic Writing and Communication Skills"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "COMP2010J",
+    "course_name_cn": "数据结构与算法",
+    "course_name_en": "I Data Structures & Algs I (S/E)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "COMP2011J",
+    "course_name_cn": "面向对象编程",
+    "course_name_en": "Object Oriented Prog (S/E)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "COMP2012J",
+    "course_name_cn": "操作系统",
+    "course_name_en": "Operating Systems (S/E)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "0009287-5",
+    "course_name_cn": "形势与政策5",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "BDIC3004J",
+    "course_name_cn": "数字系统设计",
+    "course_name_en": "Digital System Design"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "BDIC3018J",
+    "course_name_cn": "电磁学2",
+    "course_name_en": "Electromagnetics 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "COMP2006J",
+    "course_name_cn": "操作系统",
+    "course_name_en": "Operating Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "EEEN3002J",
+    "course_name_cn": "微控制器",
+    "course_name_en": "Microcontrollers"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "EEEN3003J",
+    "course_name_cn": "信号与系统",
+    "course_name_en": "Signals and Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "EEEN3016J",
+    "course_name_cn": "电子线路与原理",
+    "course_name_en": "Electronics circuits & theory"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "0009287-5",
+    "course_name_cn": "形势与政策5",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "ECON2004J",
+    "course_name_cn": "博弈论",
+    "course_name_en": "Game Theory"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "ECON3001J",
+    "course_name_cn": "国际货币银行学",
+    "course_name_en": "International Money and Banking"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "ECON3004J",
+    "course_name_cn": "企业金融经济",
+    "course_name_en": "Economics of Corporate Finance"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "ECON3006J",
+    "course_name_cn": "金融经济学：资产定价",
+    "course_name_en": "Financial Economics: Asset Pricing"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "STAT2004J",
+    "course_name_cn": "线性建模",
+    "course_name_en": "Linear Modelling"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "STAT2005J",
+    "course_name_cn": "预测分析",
+    "course_name_en": "Predictive Analytics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "0009287-5",
+    "course_name_cn": "形势与政策5",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "BDIC3002J",
+    "course_name_cn": "智能信息处理",
+    "course_name_en": "Intelligent Information Process"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "BDIC3004J",
+    "course_name_cn": "数字系统设计",
+    "course_name_en": "Digital System Design"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "COMP2006J",
+    "course_name_cn": "操作系统",
+    "course_name_en": "Operating Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "EEEN3001J",
+    "course_name_cn": "电子传感器",
+    "course_name_en": "Electronics for Sensors"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "EEEN3002J",
+    "course_name_cn": "微控制器",
+    "course_name_en": "Microcontrollers"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "EEEN3003J",
+    "course_name_cn": "信号与系统",
+    "course_name_en": "Signals and Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "0009287-5",
+    "course_name_cn": "形势与政策5",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "BDIC3023J",
+    "course_name_cn": "软件工程方法学",
+    "course_name_en": "Software Methodology"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "COMP3008J",
+    "course_name_cn": "分布式系统",
+    "course_name_en": "Distributed Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "COMP3011J",
+    "course_name_cn": "移动计算",
+    "course_name_en": "Mobile Computing"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "COMP3019J",
+    "course_name_cn": "",
+    "course_name_en": "Web应用开发 Web Application Develop Web"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "COMP3033J",
+    "course_name_cn": "计算机图形学",
+    "course_name_en": "Computer Graphics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "COMP3038J",
+    "course_name_cn": "多范式编程",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "0009287-7",
+    "course_name_cn": "形势与政策7",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "BDIC3017J",
+    "course_name_cn": "数字信号处理技术",
+    "course_name_en": "DSP Technology"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "EEEN3008J",
+    "course_name_cn": "无线通信",
+    "course_name_en": "Wireless Communications"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "EEEN3015J",
+    "course_name_cn": "控制原理",
+    "course_name_en": "Control Theory"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "EEEN3017J",
+    "course_name_cn": "信息论与编码",
+    "course_name_en": "Information Theory and Coding"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "EEEN3019J",
+    "course_name_cn": "射频电子学",
+    "course_name_en": "RF Electronics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "0009287-7",
+    "course_name_cn": "形势与政策7",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "BDIC3009J",
+    "course_name_cn": "国际金融管理",
+    "course_name_en": "International Financial Management"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "BDIC3016J",
+    "course_name_cn": "行为金融学",
+    "course_name_en": "Behavioral Finance"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "ECON3020J",
+    "course_name_cn": "金融危机：历史与经济原理",
+    "course_name_en": "History and Economics of Financial Crises"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "ECON3022J",
+    "course_name_cn": "产业经济学",
+    "course_name_en": "Economics of Industrial Organization"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "ECON3028J",
+    "course_name_cn": "发展经济学",
+    "course_name_en": "Development Economics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "STAT3007J",
+    "course_name_cn": "时间序列",
+    "course_name_en": "Time Series"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "0009287-7",
+    "course_name_cn": "形势与政策7",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "BDIC3005J",
+    "course_name_cn": "分布式系统",
+    "course_name_en": "Distributed Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "BDIC3011J",
+    "course_name_cn": "并行计算",
+    "course_name_en": "Parallel Computing (BDIC)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "COMP3020J",
+    "course_name_cn": "物联网信息安全",
+    "course_name_en": "Info Security for the IoT"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "COMP3023J",
+    "course_name_cn": "无线传感器系统",
+    "course_name_en": "Wireless Sensor Networks"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "EEEN3008J",
+    "course_name_cn": "无线通信",
+    "course_name_en": "Wireless Communications"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "EEEN3009J",
+    "course_name_cn": "数字通信",
+    "course_name_en": "Digital Communications"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "0009287-7",
+    "course_name_cn": "形势与政策7",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "BDIC3024J",
+    "course_name_cn": "设计模式",
+    "course_name_en": "Design Patterns"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "BDIC3025J",
+    "course_name_cn": "安全与隐私",
+    "course_name_en": "Security & Privacy"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "COMP3010J",
+    "course_name_cn": "机器学习",
+    "course_name_en": "Machine Learning"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "COMP3014J",
+    "course_name_cn": "计算机系统性能",
+    "course_name_en": "Performance of Comp Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "COMP3025J",
+    "course_name_cn": "增强虚拟现实",
+    "course_name_en": "Augmented and Vir'l Reality"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 1,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "COMP3039J",
+    "course_name_cn": "高级软件技术 1",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "0009287-2",
+    "course_name_cn": "形势与政策2",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "0009919",
+    "course_name_cn": "习近平新时代中国特色社会主义思想概论",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "ARCH1001J",
+    "course_name_cn": "爱尔兰文化",
+    "course_name_en": "Irl LandscapeHeritage&Culture"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1007J",
+    "course_name_cn": "体育-2",
+    "course_name_en": "Physical Education 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1015J",
+    "course_name_cn": "大学物理Ⅰ-1",
+    "course_name_en": "University Physics 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1031J",
+    "course_name_cn": "高等数学（工）3",
+    "course_name_en": "Maths (Engineering) 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1032J",
+    "course_name_cn": "高等数学（工）4",
+    "course_name_en": "Maths (Engineering) 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1034J",
+    "course_name_cn": "学术英语-口语",
+    "course_name_en": "College English 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1035J",
+    "course_name_cn": "学术英语-听力",
+    "course_name_en": "College English 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1036J",
+    "course_name_cn": "学术英语-阅读",
+    "course_name_en": "College English 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "BDIC1037J",
+    "course_name_cn": "学术英语-写作",
+    "course_name_en": "College English 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "COMP1002J",
+    "course_name_cn": "程序设计2",
+    "course_name_en": "Intro to Programming 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 1,
+    "course_code": "EEEN1002J",
+    "course_name_cn": "电子系统导论",
+    "course_name_en": "Introduction to Electronic Sys"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "0009287-2",
+    "course_name_cn": "形势与政策2",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "0009919",
+    "course_name_cn": "习近平新时代中国特色社会主义思想概论",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "ARCH1001J",
+    "course_name_cn": "爱尔兰文化",
+    "course_name_en": "Irl LandscapeHeritage&Culture"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1007J",
+    "course_name_cn": "体育-2",
+    "course_name_en": "Physical Education 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1034J",
+    "course_name_cn": "学术英语-口语",
+    "course_name_en": "College English 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1035J",
+    "course_name_cn": "学术英语-听力",
+    "course_name_en": "College English 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1036J",
+    "course_name_cn": "学术英语-阅读",
+    "course_name_en": "College English 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1037J",
+    "course_name_cn": "学术英语-写作",
+    "course_name_en": "College English 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1038J",
+    "course_name_cn": "微观经济学原理",
+    "course_name_en": "Principles of Microeconomics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1042J",
+    "course_name_cn": "高等数学3",
+    "course_name_en": "Maths3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "BDIC1043J",
+    "course_name_cn": "高等数学4",
+    "course_name_en": "Maths4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "ECON1046J",
+    "course_name_cn": "经济与社会",
+    "course_name_en": "Economics and Society"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 1,
+    "course_code": "MATH1002J",
+    "course_name_cn": "分析导论",
+    "course_name_en": "Introduction to Analysis"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "0009287-2",
+    "course_name_cn": "形势与政策2",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "0009919",
+    "course_name_cn": "习近平新时代中国特色社会主义思想概论",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "ARCH1001J",
+    "course_name_cn": "爱尔兰文化",
+    "course_name_en": "Irl LandscapeHeritage&Culture"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1007J",
+    "course_name_cn": "体育-2",
+    "course_name_en": "Physical Education 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1015J",
+    "course_name_cn": "大学物理Ⅰ-1",
+    "course_name_en": "University Physics 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1031J",
+    "course_name_cn": "高等数学（工）3",
+    "course_name_en": "Maths (Engineering) 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1032J",
+    "course_name_cn": "高等数学（工）4",
+    "course_name_en": "Maths (Engineering) 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1034J",
+    "course_name_cn": "学术英语-口语",
+    "course_name_en": "College English 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1035J",
+    "course_name_cn": "学术英语-听力",
+    "course_name_en": "College English 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1036J",
+    "course_name_cn": "学术英语-阅读",
+    "course_name_en": "College English 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "BDIC1037J",
+    "course_name_cn": "学术英语-写作",
+    "course_name_en": "College English 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "COMP1002J",
+    "course_name_cn": "程序设计2",
+    "course_name_en": "Intro to Programming 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 1,
+    "course_code": "EEEN1002J",
+    "course_name_cn": "电子系统导论",
+    "course_name_en": "Introduction to Electronic Sys"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "0009287-2",
+    "course_name_cn": "形势与政策2",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "0009919",
+    "course_name_cn": "习近平新时代中国特色社会主义思想概论",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "ARCH1001J",
+    "course_name_cn": "爱尔兰文化",
+    "course_name_en": "Irl LandscapeHeritage&Culture"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1007J",
+    "course_name_cn": "体育-2",
+    "course_name_en": "Physical Education 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1015J",
+    "course_name_cn": "大学物理Ⅰ-1",
+    "course_name_en": "University Physics 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1031J",
+    "course_name_cn": "高等数学（工）3",
+    "course_name_en": "Maths (Engineering) 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1032J",
+    "course_name_cn": "高等数学（工）4",
+    "course_name_en": "Maths (Engineering) 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1034J",
+    "course_name_cn": "学术英语-口语",
+    "course_name_en": "College English 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1035J",
+    "course_name_cn": "学术英语-听力",
+    "course_name_en": "College English 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1036J",
+    "course_name_cn": "学术英语-阅读",
+    "course_name_en": "College English 3"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "BDIC1037J",
+    "course_name_cn": "学术英语-写作",
+    "course_name_en": "College English 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "COMP1003J",
+    "course_name_cn": "软件工程导论",
+    "course_name_en": "Introduction to Software (B)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 1,
+    "course_code": "COMP1005J",
+    "course_name_cn": "程序设计概论2",
+    "course_name_en": "Intro to Prog Construction 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "0009287-4",
+    "course_name_cn": "形势与政策4",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "BDIC1004J",
+    "course_name_cn": "毛泽东思想和中国特色社会主义理论体系概论",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "BDIC2006J",
+    "course_name_cn": "体育-4",
+    "course_name_en": "Physical Education 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "BDIC2007J",
+    "course_name_cn": "特殊用途英语",
+    "course_name_en": "English for Spec Acad Purposes"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "BDIC2021J",
+    "course_name_cn": "电磁学1",
+    "course_name_en": "Electromagnetics 1"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "COMP2003J",
+    "course_name_cn": "数据结构与算法",
+    "course_name_en": "II Data Struc and Algorithms 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "EEEN2002J",
+    "course_name_cn": "电子电路",
+    "course_name_en": "Electronic Circuits"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "EEEN2003J",
+    "course_name_cn": "数字电路",
+    "course_name_en": "Digital Electronics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 2,
+    "course_code": "EEEN2004J",
+    "course_name_cn": "固体电子学",
+    "course_name_en": "Solid State Electronics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "0009287-4",
+    "course_name_cn": "形势与政策4",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC1004J",
+    "course_name_cn": "毛泽东思想和中国特色社会主义理论体系概论",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC2006J",
+    "course_name_cn": "体育-4",
+    "course_name_en": "Physical Education 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC2007J",
+    "course_name_cn": "特殊用途英语",
+    "course_name_en": "English for Spec Acad Purposes"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC2016J",
+    "course_name_cn": "中级微观经济学 2",
+    "course_name_en": "Intermediate Microeconomics 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "BDIC2019J",
+    "course_name_cn": "金融经济学导论",
+    "course_name_en": "Introduction to Financial Economics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "ECON2002J",
+    "course_name_cn": "中级宏观经济学",
+    "course_name_en": "Intermediate Macroeconomics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "ECON2021J",
+    "course_name_cn": "欧洲经济",
+    "course_name_en": "European Economy"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 2,
+    "course_code": "MATH1004J",
+    "course_name_cn": "金融数学基础",
+    "course_name_en": "Foundations for Financial"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "0009287-4",
+    "course_name_cn": "形势与政策4",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "BDIC1004J",
+    "course_name_cn": "毛泽东思想和中国特色社会主义理论体系概论",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "BDIC2006J",
+    "course_name_cn": "体育-4",
+    "course_name_en": "Physical Education 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "BDIC2007J",
+    "course_name_cn": "特殊用途英语",
+    "course_name_en": "English for Spec Acad Purposes"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "BDIC2025J",
+    "course_name_cn": "离散数学",
+    "course_name_en": "Discrete Mathematics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "COMP2003J",
+    "course_name_cn": "数据结构与算法",
+    "course_name_en": "II Data Struc and Algorithms 2"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "COMP2007J",
+    "course_name_cn": "计算机组成原理",
+    "course_name_en": "Principles of Computer Organization"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "EEEN2002J",
+    "course_name_cn": "电子电路",
+    "course_name_en": "Electronic Circuits"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 2,
+    "course_code": "EEEN2003J",
+    "course_name_cn": "数字电路",
+    "course_name_en": "Digital Electronics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "0009287-4",
+    "course_name_cn": "形势与政策4",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "BDIC2002J",
+    "course_name_cn": "离散数学",
+    "course_name_en": "Discrete Mathematics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "BDIC2006J",
+    "course_name_cn": "体育-4",
+    "course_name_en": "Physical Education 4"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "BDIC2007J",
+    "course_name_cn": "特殊用途英语",
+    "course_name_en": "English for Spec Acad Purposes"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "COMP2008J",
+    "course_name_cn": "软件工程课设1",
+    "course_name_en": "Software EngProject 1 (B)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "COMP2009J",
+    "course_name_cn": "计算机网络",
+    "course_name_en": "Computer Networks (S/E)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "COMP2013J",
+    "course_name_cn": "数据库和信息系统",
+    "course_name_en": "Databases and Info Sys (S/E)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 2,
+    "course_code": "COMP2014J",
+    "course_name_cn": "数据结构与算法",
+    "course_name_en": "II Data Structs & Algs II (S/E)"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "0009287-6",
+    "course_name_cn": "形势与政策6",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "BDIC3001J",
+    "course_name_cn": "计算机架构",
+    "course_name_en": "Computer Architectures"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "EEEN3004J",
+    "course_name_cn": "数字信号处理",
+    "course_name_en": "Digital Signal Processing"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "EEEN3005J",
+    "course_name_cn": "通信原理",
+    "course_name_en": "Communication Theory"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "EEEN3006J",
+    "course_name_cn": "无线系统",
+    "course_name_en": "Wireless Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "EEEN3013J",
+    "course_name_cn": "高等电子学",
+    "course_name_en": "Advanced Electronics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 3,
+    "course_code": "EEEN3018J",
+    "course_name_cn": "数值分析与优化",
+    "course_name_en": "Numerical methods/optimization"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "0009287-6",
+    "course_name_cn": "形势与政策6",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "BDIC3010J",
+    "course_name_cn": "投资组合管理",
+    "course_name_en": "Financial Economics: Portfolio Management"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "BDIC3022J",
+    "course_name_cn": "商务策略",
+    "course_name_en": "Business Strategy"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "ECON3002J",
+    "course_name_cn": "",
+    "course_name_en": "Lab-应用计量经济学 Applied Econometrics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "ECON3005J",
+    "course_name_cn": "财务与风险管理",
+    "course_name_en": "Financial Economics: Derivatives and Risk Management"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "ECON3029J",
+    "course_name_cn": "国际金融学",
+    "course_name_en": "Economics of International Finance"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 3,
+    "course_code": "MATH2003J",
+    "course_name_cn": "经济优化学",
+    "course_name_en": "Optimization in Economics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "0009287-6",
+    "course_name_cn": "形势与政策6",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "BDIC3001J",
+    "course_name_cn": "计算机架构",
+    "course_name_en": "Computer Architectures"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "COMP2001J",
+    "course_name_cn": "计算机网络",
+    "course_name_en": "Computer Networks"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "COMP2004J",
+    "course_name_cn": "数据库和信息系统",
+    "course_name_en": "Databases and Info Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "EEEN3004J",
+    "course_name_cn": "数字信号处理",
+    "course_name_en": "Digital Signal Processing"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "EEEN3005J",
+    "course_name_cn": "通信原理",
+    "course_name_en": "Communication Theory"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 3,
+    "course_code": "EEEN3006J",
+    "course_name_cn": "无线系统",
+    "course_name_en": "Wireless Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "0009287-6",
+    "course_name_cn": "形势与政策6",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "BDIC3026J",
+    "course_name_cn": "软件项目管理",
+    "course_name_en": "Software Proj Management"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "BDIC3027J",
+    "course_name_cn": "软件体系架构",
+    "course_name_en": "Software Systems Architecture"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "COMP3009J",
+    "course_name_cn": "信息获取",
+    "course_name_en": "Information Retrieval"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "COMP3018J",
+    "course_name_cn": "系统设计与验证",
+    "course_name_en": "System Des & Verification"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 3,
+    "course_code": "COMP3030J",
+    "course_name_cn": "软件工程课设2",
+    "course_name_en": "Software Engineering Project"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "0009287-8",
+    "course_name_cn": "形势与政策8",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "BDIC3019J",
+    "course_name_cn": "数字图像处理",
+    "course_name_en": "Digital Image Processing"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "COMP3006J",
+    "course_name_cn": "云计算",
+    "course_name_en": "Cloud Computing"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "COMP3027J",
+    "course_name_cn": "数据挖掘与机器学习",
+    "course_name_en": "Data Mining & Mach Learning"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "EIE",
+    "grade_level": 4,
+    "course_code": "EEEN3007J",
+    "course_name_cn": "",
+    "course_name_en": "Lab-嵌入式系统 Embedded Systems"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "0009287-8",
+    "course_name_cn": "形势与政策8",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "ECON3007J",
+    "course_name_cn": "金融计量经济学",
+    "course_name_en": "Financial Econometrics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "ECON3017J",
+    "course_name_cn": "国际贸易经济学",
+    "course_name_en": "International Trade Economics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "ECON3018J",
+    "course_name_cn": "高级经济计量学",
+    "course_name_en": "Advanced Econometrics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "ECON3023J",
+    "course_name_cn": "高级微观经济学",
+    "course_name_en": "Advanced Microeconomics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "ECON3027J",
+    "course_name_cn": "高级宏观经济学",
+    "course_name_en": "Advanced Macroeconomics"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "FIN",
+    "grade_level": 4,
+    "course_code": "MATH3026J",
+    "course_name_cn": "经济与金融数学",
+    "course_name_en": "Topics in Mathematics for Economics and Finance"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "0009287-8",
+    "course_name_cn": "形势与政策8",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "COMP3006J",
+    "course_name_cn": "云计算",
+    "course_name_en": "Cloud Computing"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "COMP3027J",
+    "course_name_cn": "数据挖掘与机器学习",
+    "course_name_en": "Data Mining & Mach Learning"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "IOT",
+    "grade_level": 4,
+    "course_code": "EEEN3012J",
+    "course_name_cn": "",
+    "course_name_en": "Lab-嵌入式系统与软件 Embedded Systems and Software"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "0009287-8",
+    "course_name_cn": "形势与政策8",
+    "course_name_en": ""
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "COMP3006J",
+    "course_name_cn": "云计算",
+    "course_name_en": "Cloud Computing"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "COMP3032J",
+    "course_name_cn": "毕业设计（论文）",
+    "course_name_en": "Degree Project"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "COMP3035J",
+    "course_name_cn": "高级程序建构",
+    "course_name_en": "Advanced Program Construction"
+  },
+  {
+    "academic_year": "2025-2026",
+    "term": 2,
+    "major": "SE",
+    "grade_level": 4,
+    "course_code": "COMP3036J",
+    "course_name_cn": "并行与机群计算",
+    "course_name_en": "Parallel & Cluster Computing"
+  }
+]
