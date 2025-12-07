@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.tradingplatform.MainActivity
+import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.data.items.ItemRepository
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,7 @@ class PriceAlertService(
     companion object {
         private const val TAG = "PriceAlertService"
         private const val CHANNEL_ID = "price_alert_channel"
-        private const val CHANNEL_NAME = "价格提醒"
+        private const val CHANNEL_NAME = "价格提醒 / Price alert"
     }
 
     private val notificationManager: NotificationManager =
@@ -43,7 +44,7 @@ class PriceAlertService(
                 CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = "商品降价提醒通知"
+                description = "商品降价提醒通知 / Price drop alerts"
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -108,13 +109,37 @@ class PriceAlertService(
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
+            val authRepo = AuthRepository(context)
+            val preferredLang = authRepo.getPreferredLanguage()
+            val isEnglish = preferredLang == "EN"
+            val currentPriceText = String.format("%.2f", item.price)
+            val targetPriceText = String.format("%.2f", wish.targetPrice)
+
+            val title = if (isEnglish) {
+                "Price alert"
+            } else {
+                "商品降价提醒"
+            }
+
+            val contentText = if (isEnglish) {
+                "${item.title} has dropped to ¥$currentPriceText"
+            } else {
+                "${item.title} 已降至 ¥$currentPriceText"
+            }
+
+            val bigText = if (isEnglish) {
+                "The item \"${item.title}\" has dropped to ¥$currentPriceText, which is below your target price ¥$targetPriceText."
+            } else {
+                "您关注的商品「${item.title}」价格已降至 ¥$currentPriceText，低于您的目标价格 ¥$targetPriceText"
+            }
+
             val notification = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle("商品降价提醒")
-                .setContentText("${item.title} 已降至 ¥${String.format("%.2f", item.price)}")
+                .setContentTitle(title)
+                .setContentText(contentText)
                 .setStyle(
                     NotificationCompat.BigTextStyle()
-                        .bigText("您关注的商品「${item.title}」价格已降至 ¥${String.format("%.2f", item.price)}，低于您的目标价格 ¥${String.format("%.2f", wish.targetPrice)}")
+                        .bigText(bigText)
                 )
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)

@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingplatform.data.items.SampleItemSeeder
+import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.timetable.TimetableInitializer
 import com.example.tradingplatform.ui.i18n.AppLanguage
 import com.example.tradingplatform.ui.i18n.LocalAppLanguage
@@ -45,11 +46,26 @@ class MainActivity : ComponentActivity() {
                         AppLanguage.EN -> enStrings
                     }
                 ) {
+                    val context = LocalContext.current
+
+                    LaunchedEffect(Unit) {
+                        val authRepo = AuthRepository(context)
+                        when (authRepo.getPreferredLanguage()) {
+                            "EN" -> languageState.value = AppLanguage.EN
+                            "ZH" -> languageState.value = AppLanguage.ZH
+                        }
+                    }
+
+                    LaunchedEffect(languageState.value) {
+                        val authRepo = AuthRepository(context)
+                        val code = if (languageState.value == AppLanguage.EN) "EN" else "ZH"
+                        authRepo.setPreferredLanguage(code)
+                    }
+
                     // 价格提醒检查
                     val wishlistViewModel: WishlistViewModel = viewModel()
                     // 成就检查
                     val achievementViewModel: AchievementViewModel = viewModel()
-                    val context = LocalContext.current
                     LaunchedEffect(Unit) {
                         // 初始化课表课程数据（仅在首次运行时从 assets 导入）
                         TimetableInitializer.ensureInitialized(context)

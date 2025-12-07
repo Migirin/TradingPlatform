@@ -12,6 +12,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.ui.components.CategorySelector
 import com.example.tradingplatform.ui.viewmodel.WishlistViewModel
+import com.example.tradingplatform.ui.i18n.AppLanguage
+import com.example.tradingplatform.ui.i18n.LocalAppLanguage
 
 @Composable
 fun AddItemToWishlistScreen(
@@ -19,6 +21,8 @@ fun AddItemToWishlistScreen(
     onDone: () -> Unit,
     viewModel: WishlistViewModel = viewModel()
 ) {
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
     val targetPrice = remember { mutableStateOf(item.price.toString()) }
     val enablePriceAlert = remember { mutableStateOf(true) }
     val uiState by viewModel.state.collectAsState()
@@ -40,7 +44,7 @@ fun AddItemToWishlistScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "加入愿望清单",
+            text = if (isEnglish) "Add to wishlist" else "加入愿望清单",
             style = MaterialTheme.typography.headlineSmall
         )
 
@@ -60,13 +64,16 @@ fun AddItemToWishlistScreen(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "当前价格: ¥${String.format("%.2f", item.price)}",
+                    text = if (isEnglish)
+                        "Current price: ¥${String.format("%.2f", item.price)}"
+                    else
+                        "当前价格: ¥${String.format("%.2f", item.price)}",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
                 if (item.category.isNotEmpty()) {
                     Text(
-                        text = "类别: ${item.category}",
+                        text = (if (isEnglish) "Category: " else "类别: ") + item.category,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -92,11 +99,14 @@ fun AddItemToWishlistScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "降价提醒",
+                            text = if (isEnglish) "Price alert" else "降价提醒",
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = "当商品价格降至目标价格时通知您",
+                            text = if (isEnglish)
+                                "Notify you when the price drops to your target price"
+                            else
+                                "当商品价格降至目标价格时通知您",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -111,10 +121,13 @@ fun AddItemToWishlistScreen(
                     OutlinedTextField(
                         value = targetPrice.value,
                         onValueChange = { targetPrice.value = it },
-                        label = { Text("目标价格*") },
+                        label = { Text(if (isEnglish) "Target price*" else "目标价格*") },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = uiState !is com.example.tradingplatform.ui.viewmodel.WishlistUiState.Loading,
-                        placeholder = { Text("例如：${item.price * 0.8}") }
+                        placeholder = {
+                            val example = String.format("%.2f", item.price * 0.8)
+                            Text(if (isEnglish) "e.g. $example" else "例如：$example")
+                        }
                     )
                 }
             }
@@ -134,12 +147,15 @@ fun AddItemToWishlistScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                    Text("正在添加...", modifier = Modifier.padding(start = 8.dp))
+                    Text(
+                        text = if (isEnglish) "Adding..." else "正在添加...",
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
                 }
             }
             com.example.tradingplatform.ui.viewmodel.WishlistUiState.Success -> {
                 Text(
-                    text = "添加成功！",
+                    text = if (isEnglish) "Added successfully!" else "添加成功！",
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -156,7 +172,7 @@ fun AddItemToWishlistScreen(
                 modifier = Modifier.weight(1f),
                 enabled = uiState !is com.example.tradingplatform.ui.viewmodel.WishlistUiState.Loading
             ) {
-                Text("取消")
+                Text(if (isEnglish) "Cancel" else "取消")
             }
             Button(
                 onClick = {

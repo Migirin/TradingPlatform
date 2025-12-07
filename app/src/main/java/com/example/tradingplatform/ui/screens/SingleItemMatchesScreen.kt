@@ -21,6 +21,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.tradingplatform.data.wishlist.ExchangeMatch
 import com.example.tradingplatform.ui.viewmodel.WishlistViewModel
+import com.example.tradingplatform.ui.i18n.AppLanguage
+import com.example.tradingplatform.ui.i18n.LocalAppLanguage
 
 @Composable
 fun SingleItemMatchesScreen(
@@ -32,6 +34,8 @@ fun SingleItemMatchesScreen(
     val matches by viewModel.singleItemMatches.collectAsState()
     val uiState by viewModel.state.collectAsState()
     val wishlist by viewModel.wishlist.collectAsState()
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
     
     // 获取当前匹配的愿望清单项
     val targetWish = wishlist.firstOrNull { it.id == wishlistItemId }
@@ -59,12 +63,12 @@ fun SingleItemMatchesScreen(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "匹配结果",
+                    text = if (isEnglish) "Match results" else "匹配结果",
                     style = MaterialTheme.typography.headlineMedium
                 )
                 if (targetWish != null) {
                     Text(
-                        text = "愿望: ${targetWish.title}",
+                        text = if (isEnglish) "Wishlist: ${targetWish.title}" else "愿望: ${targetWish.title}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -74,14 +78,14 @@ fun SingleItemMatchesScreen(
                 IconButton(onClick = { showFilters = !showFilters }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = "筛选"
+                        contentDescription = if (isEnglish) "Filter" else "筛选"
                     )
                 }
                 Button(onClick = { viewModel.findMatchesForItem(wishlistItemId, minScore = minScore) }) {
-                    Text("刷新")
+                    Text(if (isEnglish) "Refresh" else "刷新")
                 }
                 Button(onClick = onBack) {
-                    Text("返回")
+                    Text(if (isEnglish) "Back" else "返回")
                 }
             }
         }
@@ -101,11 +105,14 @@ fun SingleItemMatchesScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "筛选条件",
+                        text = if (isEnglish) "Filter conditions" else "筛选条件",
                         style = MaterialTheme.typography.titleMedium
                     )
                     Text(
-                        text = "最低匹配分数: ${minScore.toInt()}%",
+                        text = if (isEnglish)
+                            "Minimum match score: ${minScore.toInt()}%"
+                        else
+                            "最低匹配分数: ${minScore.toInt()}%",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Slider(
@@ -125,13 +132,13 @@ fun SingleItemMatchesScreen(
                             },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("应用")
+                            Text(if (isEnglish) "Apply" else "应用")
                         }
                         OutlinedButton(
                             onClick = { showFilters = false },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("取消")
+                            Text(if (isEnglish) "Cancel" else "取消")
                         }
                     }
                 }
@@ -149,7 +156,7 @@ fun SingleItemMatchesScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         CircularProgressIndicator()
-                        Text("正在查找匹配...")
+                        Text(if (isEnglish) "Searching for matches..." else "正在查找匹配...")
                     }
                 }
             }
@@ -183,12 +190,15 @@ fun SingleItemMatchesScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "暂无匹配结果",
+                                text = if (isEnglish) "No matches found" else "暂无匹配结果",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "注意：现在只匹配商品，不再使用愿望清单匹配",
+                                text = if (isEnglish)
+                                    "Note: currently only items are matched, wishlist-based matching is disabled."
+                                else
+                                    "注意：现在只匹配商品，不再使用愿望清单匹配",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -210,7 +220,10 @@ fun SingleItemMatchesScreen(
                                 verticalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
                                 Text(
-                                    text = "你想买：${targetWish.title}",
+                                    text = if (isEnglish)
+                                        "You want: ${targetWish.title}"
+                                    else
+                                        "你想买：${targetWish.title}",
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
@@ -231,7 +244,10 @@ fun SingleItemMatchesScreen(
                                             "≤ ¥${String.format("%.2f", targetWish.maxPrice)}"
                                     }
                                     Text(
-                                        text = "期望价格: $priceRange",
+                                        text = if (isEnglish)
+                                            "Expected price: $priceRange"
+                                        else
+                                            "期望价格: $priceRange",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
@@ -241,7 +257,10 @@ fun SingleItemMatchesScreen(
                     }
                     
                     Text(
-                        text = "找到 ${matches.size} 个匹配结果",
+                        text = if (isEnglish)
+                            "Found ${matches.size} match results"
+                        else
+                            "找到 ${matches.size} 个匹配结果",
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

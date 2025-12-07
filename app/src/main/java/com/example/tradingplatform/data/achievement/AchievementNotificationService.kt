@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.tradingplatform.MainActivity
+import com.example.tradingplatform.data.auth.AuthRepository
 
 /**
  * 成就解锁通知服务
@@ -19,7 +20,7 @@ class AchievementNotificationService(
     companion object {
         private const val TAG = "AchievementNotification"
         private const val CHANNEL_ID = "achievement_channel"
-        private const val CHANNEL_NAME = "成就通知"
+        private const val CHANNEL_NAME = "成就通知 / Achievements"
     }
 
     private val notificationManager: NotificationManager =
@@ -39,7 +40,7 @@ class AchievementNotificationService(
                 CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = "成就解锁通知"
+                description = "成就解锁通知 / Achievement unlock notifications"
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -62,13 +63,34 @@ class AchievementNotificationService(
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
+            val authRepo = AuthRepository(context)
+            val preferredLang = authRepo.getPreferredLanguage()
+            val isEnglish = preferredLang == "EN"
+
+            val titleText = if (isEnglish) {
+                "🎉 Achievement unlocked!"
+            } else {
+                "🎉 成就解锁！"
+            }
+
+            val achievementTitle = achievement.achievementType.getTitle(isEnglish)
+            val achievementDesc = achievement.achievementType.getDescription(isEnglish)
+
+            val contentText = "${achievement.achievementType.icon} $achievementTitle"
+
+            val bigText = if (isEnglish) {
+                "Congratulations, you have unlocked: $achievementTitle\n$achievementDesc"
+            } else {
+                "恭喜您解锁成就：$achievementTitle\n$achievementDesc"
+            }
+
             val notification = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle("🎉 成就解锁！")
-                .setContentText("${achievement.achievementType.icon} ${achievement.achievementType.displayName}")
+                .setContentTitle(titleText)
+                .setContentText(contentText)
                 .setStyle(
                     NotificationCompat.BigTextStyle()
-                        .bigText("恭喜您解锁成就：${achievement.achievementType.displayName}\n${achievement.achievementType.description}")
+                        .bigText(bigText)
                 )
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)

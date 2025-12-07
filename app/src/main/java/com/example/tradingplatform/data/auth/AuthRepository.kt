@@ -27,6 +27,7 @@ class AuthRepository(
         private const val KEY_CURRENT_USER_UID = "current_user_uid"
         private const val KEY_CURRENT_STUDENT_ID = "current_student_id"
         private const val KEY_DEV_SIMULATED_MONTH = "dev_simulated_month"
+        private const val KEY_APP_LANGUAGE = "app_language"
         
         // 保存的登录凭据
         private const val KEY_SAVED_EMAIL = "saved_email"
@@ -470,6 +471,25 @@ class AuthRepository(
     fun getSimulatedMonth(): Int? {
         val value = prefs?.getInt(KEY_DEV_SIMULATED_MONTH, -1) ?: -1
         return if (value in 1..12) value else null
+    }
+
+    /**
+     * 保存当前应用语言偏好，例如 "ZH" 或 "EN"。
+     */
+    fun setPreferredLanguage(languageCode: String) {
+        prefs?.edit()?.apply {
+            putString(KEY_APP_LANGUAGE, languageCode)
+            apply()
+        }
+        Log.d(TAG, "已保存应用语言: $languageCode")
+    }
+
+    /**
+     * 获取当前保存的应用语言偏好。
+     * 如果尚未设置，则返回 null。
+     */
+    fun getPreferredLanguage(): String? {
+        return prefs?.getString(KEY_APP_LANGUAGE, null)
     }
     
     /**

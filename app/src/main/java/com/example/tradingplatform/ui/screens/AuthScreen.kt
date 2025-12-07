@@ -224,7 +224,7 @@ fun RegisterForm(
         OutlinedTextField(
             value = emailState.value,
             onValueChange = { emailState.value = it },
-            label = { Text("校内邮箱 @ucdconnect.ie") },
+            label = { Text(strings.authEmailLabel) },
             enabled = uiState !is AuthUiState.Loading,
             modifier = Modifier.fillMaxWidth()
         )
