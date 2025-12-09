@@ -62,18 +62,18 @@ class MainActivity : ComponentActivity() {
                         authRepo.setPreferredLanguage(code)
                     }
 
-                    // 价格提醒检查
+                    // ViewModel handling wishlist data and price alerts
                     val wishlistViewModel: WishlistViewModel = viewModel()
-                    // 成就检查
+                    // ViewModel handling achievement progress and unlock status
                     val achievementViewModel: AchievementViewModel = viewModel()
                     LaunchedEffect(Unit) {
-                        // 初始化课表课程数据（仅在首次运行时从 assets 导入）
+                        // Initialize timetable data (import from assets on first app launch only)
                         TimetableInitializer.ensureInitialized(context)
-                        // 初始化示例商品数据（仅在本地 items 表为空时插入）
+                        // Seed sample items (only when the local items table is empty)
                         SampleItemSeeder.ensureSampleItems(context)
-                        // 应用启动时检查一次价格
+                        // On app start, check all wishlist price alerts and trigger notifications if needed
                         wishlistViewModel.checkPriceAlerts()
-                        // 检查成就
+                        // On app start, check and unlock achievements based on current usage data
                         achievementViewModel.checkAchievements()
                     }
 
