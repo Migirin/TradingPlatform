@@ -1,0 +1,18 @@
+# 第三方 API 配置示例
+# 复制此文件为 local.properties 并填入真实的 API 密钥
+# 注意：不要将 local.properties 提交到 Git
+
+# 阿里云配置
+aliyun.access.key.id=your-aliyun-access-key-id
+aliyun.access.key.secret=your-aliyun-access-key-secret
+
+# 腾讯云配置
+tencent.secret.id=your-tencent-secret-id
+tencent.secret.key=your-tencent-secret-key
+
+# 百度 AI 配置
+baidu.api.key=your-baidu-api-key
+baidu.secret.key=your-baidu-secret-key
+
+
+
