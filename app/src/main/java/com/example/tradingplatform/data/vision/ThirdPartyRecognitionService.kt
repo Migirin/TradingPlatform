@@ -190,6 +190,9 @@ class ThirdPartyRecognitionService(
                 val resultArray = json.optJSONArray("result")
                 if (resultArray != null && resultArray.length() > 0) {
                     val results = mutableListOf<ProductRecognitionResult>()
+                    // 需要过滤的通用材质/抽象标签
+                    val lowPriorityLabels = setOf("金属", "玻璃", "塑料", "材质", "表面", "纹理")
+                    
                     for (i in 0 until resultArray.length()) {
                         val item = resultArray.getJSONObject(i)
                         val name = item.optString("name", "")
@@ -197,16 +200,21 @@ class ThirdPartyRecognitionService(
                         val baikeInfo = item.optJSONObject("baike_info")
                         val description = baikeInfo?.optString("description", "") ?: ""
                         
-                        results.add(
-                            ProductRecognitionResult(
-                                productName = name,
-                                category = extractCategoryFromDescription(description),
-                                confidence = score,
-                                brand = extractBrandFromName(name)
+                        // 过滤：置信度阈值 > 0.3，且过滤纯材质标签（除非置信度很高）
+                        val isLowPriority = lowPriorityLabels.any { name.contains(it) }
+                        if (score > 0.3f && (!isLowPriority || score > 0.8f)) {
+                            results.add(
+                                ProductRecognitionResult(
+                                    productName = name,
+                                    category = extractCategoryFromDescription(description),
+                                    confidence = score,
+                                    brand = extractBrandFromName(name)
+                                )
                             )
-                        )
+                        }
                     }
-                    return results
+                    // 按置信度排序，优先显示具体商品
+                    return results.sortedByDescending { it.confidence }
                 }
             }
             return emptyList()
@@ -241,6 +249,18 @@ class ThirdPartyRecognitionService(
      * 解决"glass"、"metal"等材质识别问题，转换为具体商品
      */
     private fun mapGeneralResultsToProducts(generalResults: List<ProductRecognitionResult>): List<ProductRecognitionResult> {
+        // 需要过滤的纯材质标签（除非置信度很高或与其他特征组合）
+        val materialOnlyLabels = setOf("metal", "glass", "plastic", "wood", "fabric", "leather", 
+            "ceramic", "stone", "aluminum", "steel", "copper", "silver", "gold")
+        
+        // 先过滤：移除置信度低且是纯材质的标签
+        val filteredResults = generalResults.filter { result ->
+            val lowerName = result.productName.lowercase()
+            val isMaterialOnly = materialOnlyLabels.any { lowerName == it || lowerName.contains("$it ") }
+            
+            // 保留条件：置信度 > 0.3，且如果是纯材质则置信度必须 > 0.7
+            result.confidence > 0.3f && (!isMaterialOnly || result.confidence > 0.7f)
+        }
         // 优先级映射：更具体的匹配优先
         val productMapping = listOf(
             // 手机相关（高优先级）
@@ -280,8 +300,11 @@ class ThirdPartyRecognitionService(
             "earbuds" to "无线耳机",
             "speaker" to "音响",
             "camera" to "相机",
-            "watch" to "智能手表",
+            "watch" to "手表",
+            "wristwatch" to "手表",
+            "timepiece" to "手表",
             "smartwatch" to "智能手表",
+            "apple watch" to "Apple Watch",
             "keyboard" to "键盘",
             "mouse" to "鼠标",
             "monitor" to "显示器",
@@ -296,20 +319,28 @@ class ThirdPartyRecognitionService(
             "furniture" to "家具"
         )
 
-        // 检查是否同时识别到多个手机相关特征
-        val hasPhoneFeatures = generalResults.any { result ->
+        // 检查是否同时识别到多个手机相关特征（使用原始结果判断）
+        val hasPhoneFeatures = filteredResults.any { result ->
             val lower = result.productName.lowercase()
             lower.contains("screen") || lower.contains("display") || 
-            lower.contains("touchscreen") || lower.contains("camera lens")
+            lower.contains("touchscreen") || lower.contains("camera lens") ||
+            lower.contains("smartphone") || lower.contains("phone")
         }
         
-        val hasPhoneMaterials = generalResults.count { result ->
+        val hasPhoneMaterials = filteredResults.count { result ->
             val lower = result.productName.lowercase()
             lower.contains("glass") || lower.contains("metal") || 
             lower.contains("plastic") || lower.contains("aluminum")
         } >= 2 // 至少识别到2种材质
 
-        return generalResults.mapIndexed { index, result ->
+        // 添加手表识别映射
+        val watchKeywords = setOf("watch", "wristwatch", "timepiece", "clock", "dial", "strap", "band")
+        val hasWatchFeatures = filteredResults.any { result ->
+            val lower = result.productName.lowercase()
+            watchKeywords.any { lower.contains(it) }
+        }
+
+        val mappedResults = filteredResults.mapIndexed { index, result ->
             val lowerKeyword = result.productName.lowercase()
             
             // 优先匹配具体商品名称
@@ -322,6 +353,27 @@ class ThirdPartyRecognitionService(
                 if (lowerKeyword.contains("glass") || lowerKeyword.contains("metal") || 
                     lowerKeyword.contains("plastic") || lowerKeyword.contains("aluminum")) {
                     mappedName = "手机"
+                }
+            }
+            
+            // 手表识别：如果识别到手表特征，映射为手表
+            if (mappedName == null && hasWatchFeatures) {
+                if (watchKeywords.any { lowerKeyword.contains(it) }) {
+                    mappedName = "手表"
+                }
+            }
+            
+            // 如果仍然是材质标签且置信度不高，尝试根据上下文推断
+            if (mappedName == null && materialOnlyLabels.any { lowerKeyword == it }) {
+                // 如果置信度不高，直接跳过（已在前面过滤）
+                // 这里只处理高置信度的材质标签
+                if (result.confidence > 0.7f) {
+                    // 根据其他识别结果推断
+                    if (hasPhoneFeatures) {
+                        mappedName = "手机"
+                    } else if (hasWatchFeatures) {
+                        mappedName = "手表"
+                    }
                 }
             }
 
@@ -351,6 +403,21 @@ class ThirdPartyRecognitionService(
                 result
             }
         }
+        
+        // 排序：优先显示具体商品（非材质），然后按置信度排序
+        return mappedResults
+            .filter { it.productName.isNotEmpty() } // 过滤掉空名称
+            .sortedWith(compareByDescending<ProductRecognitionResult> { result ->
+                val lowerName = result.productName.lowercase()
+                val isMaterial = materialOnlyLabels.any { lowerName.contains(it) }
+                when {
+                    !isMaterial && result.confidence > 0.6f -> 3 // 具体商品且高置信度
+                    !isMaterial -> 2 // 具体商品
+                    result.confidence > 0.7f -> 1 // 高置信度材质
+                    else -> 0
+                }
+            }.thenByDescending { it.confidence })
+            .take(5) // 只返回前5个结果
     }
 
     /**

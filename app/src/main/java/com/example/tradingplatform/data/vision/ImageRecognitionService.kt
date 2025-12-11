@@ -55,16 +55,46 @@ class ImageRecognitionService(
             suspendCancellableCoroutine { continuation ->
                 labeler.process(image)
                     .addOnSuccessListener { labels ->
+                        // 需要过滤的通用材质/抽象标签（低优先级）
+                        val lowPriorityLabels = setOf(
+                            "metal", "glass", "plastic", "wood", "fabric", "leather",
+                            "ceramic", "stone", "paper", "cardboard", "foam",
+                            "surface", "material", "texture", "pattern", "color"
+                        )
+                        
                         val results = labels.map { label ->
                             RecognitionResult(
                                 label = label.text,
                                 confidence = label.confidence,
                                 index = label.index
                             )
-                        }.sortedByDescending { it.confidence }
+                        }
+                        .filter { result ->
+                            // 1. 置信度阈值：只保留置信度 > 0.3 的结果
+                            result.confidence > 0.3f
+                        }
+                        .filter { result ->
+                            // 2. 过滤通用材质标签（除非置信度很高 > 0.8）
+                            val isLowPriority = lowPriorityLabels.any { 
+                                result.label.lowercase().contains(it) 
+                            }
+                            !isLowPriority || result.confidence > 0.8f
+                        }
+                        .sortedWith(compareByDescending<RecognitionResult> { result ->
+                            // 优先排序：具体商品名称 > 高置信度 > 其他
+                            val isSpecificProduct = !lowPriorityLabels.any { 
+                                result.label.lowercase().contains(it) 
+                            }
+                            when {
+                                isSpecificProduct && result.confidence > 0.6f -> 3
+                                isSpecificProduct -> 2
+                                result.confidence > 0.7f -> 1
+                                else -> 0
+                            }
+                        }.thenByDescending { it.confidence })
                         
                         val modelType = if (useCloudModel) "云端" else "设备端"
-                        Log.d(TAG, "$modelType 识别成功: ${results.size} 个标签")
+                        Log.d(TAG, "$modelType 识别成功: ${results.size} 个标签（已过滤）")
                         continuation.resume(results)
                     }
                     .addOnFailureListener { e ->
