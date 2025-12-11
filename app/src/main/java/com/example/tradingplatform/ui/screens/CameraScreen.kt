@@ -2,6 +2,7 @@ package com.example.tradingplatform.ui.screens
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
@@ -13,6 +14,7 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.DisposableEffect
@@ -153,23 +155,40 @@ fun CameraPreview(
     // 预览视图引用 / Preview view reference
     var previewView: PreviewView? by remember { mutableStateOf(null) }
 
-    AndroidView(
-        factory = { ctx ->
-            PreviewView(ctx).apply {
-                scaleType = PreviewView.ScaleType.FILL_CENTER
-                previewView = this
-                android.util.Log.d("CameraPreview", "PreviewView 已创建")
+    Box(modifier = Modifier.fillMaxSize()) {
+        AndroidView(
+            factory = { ctx ->
+                PreviewView(ctx).apply {
+                    scaleType = PreviewView.ScaleType.FILL_CENTER
+                    previewView = this
+                    android.util.Log.d("CameraPreview", "PreviewView 已创建")
+                }
+            },
+            modifier = Modifier.fillMaxSize(),
+            onRelease = {
+                // 释放时取消绑定 / Unbind on release
+                cameraProvider?.unbindAll()
+                preview = null
+                imageCapture = null
+                previewView = null
+                android.util.Log.d("CameraPreview", "PreviewView 已释放")
             }
-        },
-        modifier = Modifier.fillMaxSize(),
-        onRelease = {
-            // 释放时取消绑定 / Unbind on release
-            cameraProvider?.unbindAll()
-            preview = null
-            imageCapture = null
-            previewView = null
+        )
+        
+        // 如果预览没有画面（模拟器常见问题），显示提示
+        if (preview != null && cameraProvider != null && previewView != null) {
+            LaunchedEffect(preview, cameraProvider) {
+                kotlinx.coroutines.delay(2000) // 等待2秒
+                // 检查预览是否真的在显示（模拟器可能无法提供画面）
+                previewView?.let { view ->
+                    if (view.width > 0 && view.height > 0) {
+                        android.util.Log.d("CameraPreview", "PreviewView 尺寸: ${view.width}x${view.height}")
+                        // 模拟器可能无法提供画面，但功能仍然可用（可以拍照）
+                    }
+                }
+            }
         }
-    )
+    }
 
     // 当相机提供者准备好后，绑定相机 / Bind camera when camera provider is ready
     LaunchedEffect(cameraProvider, previewView) {
@@ -188,8 +207,10 @@ fun CameraPreview(
                     .build()
                     .also {
                         it.setSurfaceProvider(view.surfaceProvider)
+                        android.util.Log.d("CameraPreview", "预览 SurfaceProvider 已设置")
                     }
                 preview = newPreview
+                android.util.Log.d("CameraPreview", "预览对象已创建，等待绑定")
 
                 // 创建图像捕获 / Create image capture
                 val newImageCapture = ImageCapture.Builder()
@@ -197,22 +218,116 @@ fun CameraPreview(
                     .build()
                 imageCapture = newImageCapture
 
-                // 选择后置摄像头 / Select back camera
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                // 绑定到生命周期 / Bind to lifecycle
-                provider.bindToLifecycle(
-                    lifecycleOwner,
-                    cameraSelector,
-                    newPreview,
-                    newImageCapture
-                )
+                // 检查可用的摄像头 / Check available cameras
+                val cameraInfo = provider.availableCameraInfos
+                android.util.Log.d("CameraPreview", "可用摄像头数量: ${cameraInfo.size}")
                 
-                android.util.Log.d("CameraPreview", "相机绑定成功")
-                errorMessage = null
+                var bindSuccess = false
+                var lastException: Exception? = null
+                var cameraSelector: CameraSelector? = null
+                
+                // 策略1：优先尝试后置摄像头 / Strategy 1: Try back camera first
+                try {
+                    cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                    provider.bindToLifecycle(
+                        lifecycleOwner,
+                        cameraSelector,
+                        newPreview,
+                        newImageCapture
+                    )
+                    android.util.Log.d("CameraPreview", "后置摄像头绑定成功")
+                    bindSuccess = true
+                } catch (e: Exception) {
+                    android.util.Log.w("CameraPreview", "后置摄像头绑定失败，尝试前置摄像头", e)
+                    lastException = e
+                    provider.unbindAll()
+                    
+                    // 策略2：尝试前置摄像头 / Strategy 2: Try front camera
+                    try {
+                        cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                        provider.bindToLifecycle(
+                            lifecycleOwner,
+                            cameraSelector,
+                            newPreview,
+                            newImageCapture
+                        )
+                        android.util.Log.d("CameraPreview", "前置摄像头绑定成功")
+                        bindSuccess = true
+                    } catch (e2: Exception) {
+                        android.util.Log.w("CameraPreview", "前置摄像头也绑定失败，尝试使用第一个可用相机", e2)
+                        lastException = e2
+                        provider.unbindAll()
+                        
+                        // 策略3：模拟器相机可能没有 lensFacing 信息，尝试使用第一个可用相机 / Strategy 3: Use first available camera (for emulators)
+                        if (cameraInfo.isNotEmpty()) {
+                            try {
+                                // 获取相机管理器
+                                val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager
+                                val cameraIds = cameraManager.cameraIdList
+                                
+                                android.util.Log.d("CameraPreview", "找到 ${cameraIds.size} 个相机ID: ${cameraIds.joinToString()}")
+                                
+                                if (cameraIds.isNotEmpty()) {
+                                    // 创建一个接受所有相机的选择器（不限制 lensFacing）
+                                    val anyCameraSelector = CameraSelector.Builder()
+                                        .addCameraFilter { cameras ->
+                                            // 接受所有可用的相机
+                                            cameras
+                                        }
+                                        .build()
+                                    
+                                    provider.bindToLifecycle(
+                                        lifecycleOwner,
+                                        anyCameraSelector,
+                                        newPreview,
+                                        newImageCapture
+                                    )
+                                    android.util.Log.d("CameraPreview", "使用第一个可用相机绑定成功 (相机ID: ${cameraIds[0]})")
+                                    bindSuccess = true
+                                    cameraSelector = anyCameraSelector
+                                }
+                            } catch (e3: Exception) {
+                                android.util.Log.e("CameraPreview", "使用第一个可用相机失败: ${e3.message}", e3)
+                                lastException = e3
+                            }
+                        }
+                    }
+                }
+                
+                if (bindSuccess) {
+                    android.util.Log.d("CameraPreview", "相机绑定成功")
+                    android.util.Log.d("CameraPreview", "PreviewView 状态: ${view.width}x${view.height}, visibility=${view.visibility}")
+                    
+                    // 检查预览是否真的在运行（模拟器可能无法提供画面）
+                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                        android.util.Log.d("CameraPreview", "延迟检查：PreviewView 是否显示画面")
+                        if (view.width > 0 && view.height > 0) {
+                            android.util.Log.d("CameraPreview", "PreviewView 尺寸正常，但可能模拟器无法提供画面数据")
+                        }
+                    }, 1000)
+                    
+                    errorMessage = null
+                } else {
+                    val errorMsg = lastException?.message ?: "无法初始化相机"
+                    android.util.Log.e("CameraPreview", "所有摄像头绑定失败: $errorMsg")
+                    errorMessage = "相机初始化失败：$errorMsg\n\n" +
+                            "这是模拟器相机配置问题。\n\n" +
+                            "解决方案：\n" +
+                            "1. AVD Manager -> Edit -> Advanced Settings -> Camera\n" +
+                            "2. 设置 Front Camera 和 Back Camera 为 'Webcam0' 或 'Emulated'\n" +
+                            "3. 重启模拟器\n" +
+                            "4. 或使用真实设备测试（推荐）"
+                }
             } catch (e: Exception) {
                 android.util.Log.e("CameraPreview", "相机初始化失败", e)
-                errorMessage = java.lang.String.format(strings.cameraInitFailed, e.message ?: "")
+                errorMessage = java.lang.String.format(
+                    strings.cameraInitFailed + "\n\n错误详情: %s\n\n" +
+                    "解决方案：\n" +
+                    "1. 检查模拟器相机配置（AVD Manager -> Edit -> Advanced Settings）\n" +
+                    "2. 确保启用了 Front Camera 和 Back Camera\n" +
+                    "3. 或使用真实设备测试",
+                    e.message ?: "未知错误"
+                )
             }
         }
     }

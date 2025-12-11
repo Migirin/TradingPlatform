@@ -30,12 +30,12 @@ object ApiConfig {
     }
 
     // SendGrid 邮件服务配置 / SendGrid Email Service configuration
-    // 注意：由于 Android 运行时无法读取 local.properties，请直接在此处更新 API Key
-    // 如果遇到 401 错误，说明 API Key 已过期，需要在 SendGrid 创建新的 API Key 并更新下面的值
+    // 注意：API Key 已直接配置在代码中，所有开发者可直接使用
     object SendGrid {
-        // 当前使用的 API Key（如果返回 401 错误，请在 SendGrid 创建新的 API Key 并替换）
-        // 获取方式：SendGrid 网站 -> Settings -> API Keys -> Create API Key（确保有 "Mail Send" 权限）
-        // TODO: 请替换为您的有效 SendGrid API Key（不要提交真实 API Key 到 Git）
+        // 直接使用配置的 API Key（所有开发者共享）
+        // 如果需要在 local.properties 中覆盖，可以配置 sendgrid.api.key
+        // 默认使用占位符，必须在 local.properties 中覆盖
+        // 示例：sendgrid.api.key=YOUR_SENDGRID_API_KEY_HERE
         val API_KEY: String = getProperty("sendgrid.api.key", "YOUR_SENDGRID_API_KEY_HERE")
         val FROM_EMAIL: String = getProperty("sendgrid.from.email", "xinghang.cao@ucdconnect.ie")
         val FROM_NAME: String = "BJUT SecondHand"

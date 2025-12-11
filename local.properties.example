@@ -14,9 +14,14 @@ tencent.secret.key=your-tencent-secret-key
 baidu.api.key=your-baidu-api-key
 baidu.secret.key=your-baidu-secret-key
 
-# SendGrid 邮件服务配置
+# SendGrid 邮件服务配置（必需，用于注册时的邮箱验证）
+# 配置步骤：
 # 1. 注册 SendGrid 账号：https://sendgrid.com/
 # 2. 创建 API Key：Settings -> API Keys -> Create API Key（确保有 "Mail Send" 权限）
-# 3. 验证发件人邮箱：Settings -> Sender Authentication
+# 3. 验证发件人邮箱：Settings -> Sender Authentication -> 验证您的邮箱
+# 4. 将下面的占位符替换为实际值
+# 5. 重新构建项目（Build -> Rebuild Project）
+#
+# 注意：此文件不会被提交到 Git，每个开发者需要在自己的 local.properties 中配置
 sendgrid.api.key=your-sendgrid-api-key-here
 sendgrid.from.email=your-verified-email@example.com
