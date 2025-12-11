@@ -22,6 +22,8 @@ import com.example.tradingplatform.ui.i18n.LocalAppStrings
 import com.example.tradingplatform.ui.i18n.LocalAppLanguage
 import com.example.tradingplatform.ui.i18n.AppLanguage
 import com.example.tradingplatform.ui.viewmodel.ItemViewModel
+import com.example.tradingplatform.ui.viewmodel.WishlistViewModel
+import com.example.tradingplatform.data.wishlist.WishlistRepository
 
 enum class MainScreenTab {
     HOME,      // 首页 / Home
@@ -36,13 +38,15 @@ fun MainScreen(
     onNavigateToMy: () -> Unit,
     onNavigateToPost: () -> Unit,
     onNavigateToCamera: () -> Unit,
-    viewModel: ItemViewModel = viewModel()
+    viewModel: ItemViewModel = viewModel(),
+    wishlistViewModel: WishlistViewModel? = null
 ) {
     // 内容区域 - 只显示首页内容 / Content area - only show home content
     HomeTab(
         onItemClick = onItemClick,
         viewModel = viewModel,
-        onNavigateToMy = onNavigateToMy
+        onNavigateToMy = onNavigateToMy,
+        wishlistViewModel = wishlistViewModel
     )
 }
 
@@ -50,7 +54,8 @@ fun MainScreen(
 fun HomeTab(
     onItemClick: (Item) -> Unit,
     viewModel: ItemViewModel,
-    onNavigateToMy: () -> Unit
+    onNavigateToMy: () -> Unit,
+    wishlistViewModel: WishlistViewModel? = null
 ) {
     val items by viewModel.items.collectAsState()
     val uiState by viewModel.state.collectAsState()
@@ -68,6 +73,9 @@ fun HomeTab(
     LaunchedEffect(Unit) {
         currentUid = authRepo.getCurrentUserUid()
         currentEmail = authRepo.getCurrentUserEmail()
+        // 登录后自动检查价格提醒（会触发浮窗）/ Auto check price alerts after login (will trigger snackbar)
+        wishlistViewModel?.checkPriceAlerts(strings.priceAlertMessage)
+        android.util.Log.d("MainScreen", "登录后价格提醒检查已触发")
     }
     
     // 过滤掉当前用户发布的商品 / Filter out items posted by current user

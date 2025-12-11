@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.material3.CircularProgressIndicator
@@ -65,6 +66,8 @@ fun MyScreen(
     onItemClick: (Item) -> Unit,
     onExchangeMatch: () -> Unit = {},
     onWishlistItemMatch: (String) -> Unit = {},
+    onEditWishlistItem: (String) -> Unit = {},
+    onEditItemPrice: (String) -> Unit = {},
     onChangePassword: () -> Unit = {},
     onChatWithUser: (String, String, String, String) -> Unit = { _, _, _, _ -> },
     initialTab: MyScreenTab = MyScreenTab.MY_SOLD,
@@ -83,8 +86,10 @@ fun MyScreen(
         currentUid = authRepo.getCurrentUserUid()
         currentEmail = authRepo.getCurrentUserEmail()
         avatarUri = authRepo.getAvatarUri()
-        // 刷新商品列表，确保从 Supabase 获取最新数据 / Refresh item list, ensure latest data from Supabase
-        itemViewModel.loadItems()
+        // 刷新商品列表，获取更多数据以确保包含用户的商品 / Refresh item list, get more data to ensure user's items are included
+        itemViewModel.loadAllItems()
+        // 自动检查价格提醒（从 Supabase 获取最新价格）/ Auto check price alerts (get latest prices from Supabase)
+        wishlistViewModel.checkPriceAlerts()
     }
     
     // 图片选择器 / Image picker
@@ -101,9 +106,19 @@ fun MyScreen(
     val items by itemViewModel.items.collectAsState()
     val wishlist by wishlistViewModel.wishlist.collectAsState()
     
+    // 调试日志 / Debug log
+    LaunchedEffect(items, currentUid, currentEmail) {
+        android.util.Log.d("MyScreen", "当前用户 UID: $currentUid")
+        android.util.Log.d("MyScreen", "当前用户 Email: $currentEmail")
+        android.util.Log.d("MyScreen", "商品总数: ${items.size}")
+        items.take(5).forEach { item ->
+            android.util.Log.d("MyScreen", "商品: ${item.title}, ownerUid=${item.ownerUid}, ownerEmail=${item.ownerEmail}")
+        }
+    }
+    
     // 我出售的商品 - 同时匹配 ownerUid 和 ownerEmail / My sold items - match both ownerUid and ownerEmail
     val mySoldItems = remember(items, currentUid, currentEmail) {
-        items.filter { item ->
+        val filtered = items.filter { item ->
             // 优先匹配 ownerUid，如果没有则匹配 ownerEmail / Prioritize matching ownerUid, if not then match ownerEmail
             val uidMatch = currentUid?.let { item.ownerUid == it } ?: false
             val emailMatch = currentEmail?.let { 
@@ -111,6 +126,8 @@ fun MyScreen(
             } ?: false
             uidMatch || emailMatch
         }
+        android.util.Log.d("MyScreen", "我出售的商品数量: ${filtered.size}")
+        filtered
     }
     
     // 我买到的商品（暂时为空，需要购买记录系统）/ My bought items (empty for now, needs purchase record system)
@@ -230,7 +247,8 @@ fun MyScreen(
                 MySoldItemsTab(
                     items = mySoldItems,
                     onItemClick = onItemClick,
-                    onExchangeMatch = onExchangeMatch
+                    onExchangeMatch = onExchangeMatch,
+                    onEditPrice = onEditItemPrice
                 )
             }
             MyScreenTab.MY_BOUGHT -> {
@@ -242,6 +260,7 @@ fun MyScreen(
                 MyWishlistTab(
                     wishlist = wishlist,
                     onItemMatch = onWishlistItemMatch,
+                    onEdit = onEditWishlistItem,
                     onDelete = { wishlistViewModel.deleteWishlistItem(it) }
                 )
             }
@@ -393,7 +412,8 @@ fun MySettingsTab(
 fun MySoldItemsTab(
     items: List<Item>,
     onItemClick: (Item) -> Unit,
-    onExchangeMatch: () -> Unit
+    onExchangeMatch: () -> Unit,
+    onEditPrice: (String) -> Unit = {}
 ) {
     val strings = LocalAppStrings.current
     val lang = LocalAppLanguage.current
@@ -442,10 +462,91 @@ fun MySoldItemsTab(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(items, key = { it.id }) { item ->
-                    ItemCard(
+                    MySoldItemCard(
                         item = item,
                         isEnglish = isEnglish,
-                        onClick = { onItemClick(item) }
+                        onClick = { onItemClick(item) },
+                        onEditPrice = { onEditPrice(item.id) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MySoldItemCard(
+    item: Item,
+    isEnglish: Boolean,
+    onClick: () -> Unit,
+    onEditPrice: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = ItemCardColor
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            if (item.imageUrl.isNotEmpty()) {
+                Image(
+                    painter = rememberAsyncImagePainter(item.imageUrl),
+                    contentDescription = item.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(100.dp)
+                )
+            } else {
+                // 占位图 / Placeholder image
+                Box(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(100.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(if (isEnglish) "No image" else "无图片", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = item.title,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "¥${String.format("%.2f", item.price)}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    // 编辑价格按钮 / Edit price button
+                    IconButton(
+                        onClick = onEditPrice,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = if (isEnglish) "Edit price" else "编辑价格",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+                if (item.description.isNotEmpty()) {
+                    Text(
+                        text = item.description.take(50) + if (item.description.length > 50) "..." else "",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -486,6 +587,7 @@ fun MyBoughtItemsTab(
 fun MyWishlistTab(
     wishlist: List<WishlistItem>,
     onItemMatch: (String) -> Unit,
+    onEdit: (String) -> Unit = {},
     onDelete: (String) -> Unit
 ) {
     val strings = LocalAppStrings.current
@@ -522,6 +624,7 @@ fun MyWishlistTab(
                 WishlistItemCard(
                     item = item,
                     onDelete = { onDelete(item.id) },
+                    onEdit = { onEdit(item.id) },
                     onFindMatches = { onItemMatch(item.id) }
                 )
             }

@@ -53,10 +53,16 @@ class WishlistViewModel(
     // 单个愿望清单项的匹配结果 / Match results for a single wishlist item
     private val _singleItemMatches = MutableStateFlow<List<ExchangeMatch>>(emptyList())
     val singleItemMatches: StateFlow<List<ExchangeMatch>> = _singleItemMatches
+    
+    // 降价提醒消息（用于浮窗显示）/ Price drop alert message (for snackbar display)
+    private val _priceAlertMessage = MutableStateFlow<String?>(null)
+    val priceAlertMessage: StateFlow<String?> = _priceAlertMessage.asStateFlow()
 
     init {
         // 初始化时记录日志 / Log on initialization
-        Log.d("WishlistViewModel", "WishlistViewModel 初始化")
+        Log.d("WishlistViewModel", "========== WishlistViewModel 初始化 ==========")
+        Log.d("WishlistViewModel", "Repository: $repo")
+        Log.d("WishlistViewModel", "Wishlist Flow 已创建")
     }
 
     fun loadWishlist() {
@@ -99,17 +105,68 @@ class WishlistViewModel(
         }
     }
 
-    /**
-     * 检查价格变化并发送提醒 / Check price changes and send alerts
-     */
-    fun checkPriceAlerts() {
+    fun updateWishlistItem(
+        itemId: String,
+        title: String,
+        category: String,
+        minPrice: Double,
+        maxPrice: Double,
+        targetPrice: Double = 0.0,
+        enablePriceAlert: Boolean = false,
+        description: String = ""
+    ) {
+        _state.value = WishlistUiState.Loading
         viewModelScope.launch {
             try {
-                repo.checkPriceAlerts()
+                // 先获取现有项以保留原始数据
+                val existingItems = wishlist.value
+                val existingItem = existingItems.firstOrNull { it.id == itemId }
+                    ?: throw IllegalStateException("愿望清单项不存在")
+                
+                val updatedItem = existingItem.copy(
+                    title = title,
+                    category = category,
+                    minPrice = minPrice,
+                    maxPrice = maxPrice,
+                    targetPrice = targetPrice,
+                    enablePriceAlert = enablePriceAlert,
+                    description = description
+                )
+                repo.updateWishlistItem(updatedItem)
+                Log.d("WishlistViewModel", "愿望清单项更新成功: $itemId, title: ${updatedItem.title}")
+                _state.value = WishlistUiState.Success
+            } catch (e: Exception) {
+                Log.e("WishlistViewModel", "更新愿望清单项失败", e)
+                _state.value = WishlistUiState.Error("更新失败: ${e.message ?: "未知错误"}")
+            }
+        }
+    }
+
+    /**
+     * 检查价格变化并发送提醒 / Check price changes and send alerts
+     * @param messageFormat 消息格式，包含3个%s占位符 / Message format with 3 %s placeholders
+     */
+    fun checkPriceAlerts(messageFormat: String = "🎉「%s」降价啦！现价 ¥%s，低于目标价 ¥%s") {
+        viewModelScope.launch {
+            try {
+                val alertMessages = repo.checkPriceAlertsWithResult(messageFormat)
+                if (alertMessages.isNotEmpty()) {
+                    // 合并所有降价提醒消息 / Combine all price drop alert messages
+                    val message = alertMessages.joinToString("\n")
+                    _priceAlertMessage.value = message
+                    Log.d("WishlistViewModel", "发现 ${alertMessages.size} 个降价提醒: $message")
+                }
             } catch (e: Exception) {
                 Log.e("WishlistViewModel", "检查价格提醒失败", e)
             }
         }
+    }
+    
+    /**
+     * 清除降价提醒消息 / Clear price alert message
+     */
+    fun clearPriceAlertMessage() {
+        _priceAlertMessage.value = null
     }
 
     fun deleteWishlistItem(itemId: String) {

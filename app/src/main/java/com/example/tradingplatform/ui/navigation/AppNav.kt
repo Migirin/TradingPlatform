@@ -5,9 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -42,11 +46,14 @@ import com.example.tradingplatform.ui.screens.WishlistScreen
 import com.example.tradingplatform.ui.screens.ExchangeMatchesScreen
 import com.example.tradingplatform.ui.screens.SingleItemMatchesScreen
 import com.example.tradingplatform.ui.screens.AddItemToWishlistScreen
+import com.example.tradingplatform.ui.screens.EditWishlistItemScreen
+import com.example.tradingplatform.ui.screens.EditItemPriceScreen
 import com.example.tradingplatform.ui.screens.MyScreen
 import com.example.tradingplatform.ui.screens.AchievementScreen
 import com.example.tradingplatform.ui.screens.CameraScreen
 import com.example.tradingplatform.ui.screens.ChangePasswordScreen
 import com.example.tradingplatform.ui.screens.RecognitionResultScreen
+import com.example.tradingplatform.ui.screens.AllItemsScreen
 import com.example.tradingplatform.data.vision.ApiConfig
 import com.example.tradingplatform.ui.i18n.LocalAppStrings
 import com.example.tradingplatform.ui.i18n.AppLanguage
@@ -79,12 +86,15 @@ object Routes {
     const val EXCHANGE_MATCHES = "exchange_matches"
     const val SINGLE_ITEM_MATCHES = "single_item_matches/{wishlistItemId}"
     const val ADD_ITEM_TO_WISHLIST = "add_item_to_wishlist/{itemId}"
+    const val EDIT_WISHLIST_ITEM = "edit_wishlist_item/{itemId}"
+    const val EDIT_ITEM_PRICE = "edit_item_price/{itemId}"
     const val ACHIEVEMENTS = "achievements"
     const val CAMERA = "camera"
     const val RECOGNITION_RESULT = "recognition_result"
     const val MY = "my"
     const val MY_SOLD = "my_sold"
     const val CHANGE_PASSWORD = "change_password"
+    const val ALL_ITEMS = "all_items"
     
     fun addItemToWishlist(itemId: String) = "add_item_to_wishlist/$itemId"
     fun chatWithUser(receiverUid: String, receiverEmail: String, itemId: String = "", itemTitle: String = "") = 
@@ -101,6 +111,7 @@ fun AppNavHost(
 ) {
     // 共享的 ViewModel 实例（在导航作用域外创建）/ Shared ViewModel instance (created outside navigation scope)
     val sharedViewModel: ItemViewModel = viewModel()
+    val wishlistViewModel: com.example.tradingplatform.ui.viewmodel.WishlistViewModel = viewModel()
     val context = LocalContext.current
     val authRepo = AuthRepository(context)
     val strings = LocalAppStrings.current
@@ -144,6 +155,7 @@ fun AppNavHost(
         composable(Routes.ITEMS) { 
             MainScreen(
                 viewModel = sharedViewModel,
+                wishlistViewModel = wishlistViewModel,
                 onItemClick = { item ->
                     Log.d("AppNav", "点击商品，准备导航: ${item.id} - ${item.title}")
                     sharedViewModel.setSelectedItem(item) // 保存选中的商品 / Save selected item
@@ -203,6 +215,16 @@ fun AppNavHost(
                 }
             ) 
         }
+        composable(Routes.ALL_ITEMS) {
+            AllItemsScreen(
+                viewModel = sharedViewModel,
+                onItemClick = { item ->
+                    Log.d("AppNav", "从商品列表点击商品: ${item.id} - ${item.title}")
+                    sharedViewModel.setSelectedItem(item)
+                    navController.navigate(Routes.itemDetail(item.id))
+                }
+            )
+        }
         composable(
             route = Routes.CHAT_WITH_USER,
             arguments = listOf(
@@ -225,13 +247,18 @@ fun AppNavHost(
             )
         }
         composable(Routes.WISHLIST) {
+            val wishlistViewModel: com.example.tradingplatform.ui.viewmodel.WishlistViewModel = viewModel()
             WishlistScreen(
                 onBack = { navController.popBackStack() },
                 onFindMatches = {}, // 已移除，不再使用 / Removed, no longer used
                 onFindMatchesForItem = { wishlistItemId ->
                     navController.navigate("single_item_matches/$wishlistItemId")
                 },
-                onAchievementsClick = { navController.navigate(Routes.ACHIEVEMENTS) }
+                onEditItem = { itemId ->
+                    navController.navigate("edit_wishlist_item/$itemId")
+                },
+                onAchievementsClick = { navController.navigate(Routes.ACHIEVEMENTS) },
+                viewModel = wishlistViewModel
             )
         }
         composable(Routes.ACHIEVEMENTS) {
@@ -360,6 +387,12 @@ fun AppNavHost(
                 onWishlistItemMatch = { wishlistItemId ->
                     navController.navigate("single_item_matches/$wishlistItemId")
                 },
+                onEditWishlistItem = { itemId ->
+                    navController.navigate("edit_wishlist_item/$itemId")
+                },
+                onEditItemPrice = { itemId ->
+                    navController.navigate("edit_item_price/$itemId")
+                },
                 onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
                 onChatWithUser = { receiverUid, receiverEmail, itemId, itemTitle ->
                     navController.navigate(Routes.chatWithUser(receiverUid, receiverEmail, itemId, itemTitle))
@@ -377,6 +410,12 @@ fun AppNavHost(
                 onExchangeMatch = { navController.navigate(Routes.EXCHANGE_MATCHES) },
                 onWishlistItemMatch = { wishlistItemId ->
                     navController.navigate("single_item_matches/$wishlistItemId")
+                },
+                onEditWishlistItem = { itemId ->
+                    navController.navigate("edit_wishlist_item/$itemId")
+                },
+                onEditItemPrice = { itemId ->
+                    navController.navigate("edit_item_price/$itemId")
                 },
                 onChangePassword = { navController.navigate(Routes.CHANGE_PASSWORD) },
                 onChatWithUser = { receiverUid, receiverEmail, itemId, itemTitle ->
@@ -407,6 +446,121 @@ fun AppNavHost(
                 }
                 val isEnglish = LocalAppLanguage.current == AppLanguage.EN
                 Text(if (isEnglish) "Item not found" else "商品不存在")
+            }
+        }
+        composable(
+            route = Routes.EDIT_WISHLIST_ITEM,
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getString("itemId") ?: ""
+            val wishlistViewModel: com.example.tradingplatform.ui.viewmodel.WishlistViewModel = viewModel()
+            val wishlist by wishlistViewModel.wishlist.collectAsState()
+            val isEnglish = LocalAppLanguage.current == AppLanguage.EN
+            
+            // 添加加载状态跟踪，等待数据加载完成 / Add loading state tracking, wait for data to load
+            var hasWaited by remember { mutableStateOf(false) }
+            
+            LaunchedEffect(Unit) {
+                // 等待一小段时间让 Flow 发出数据 / Wait a short time for Flow to emit data
+                kotlinx.coroutines.delay(500)
+                hasWaited = true
+            }
+            
+            val wishlistItem = remember(itemId, wishlist) {
+                wishlist.firstOrNull { it.id == itemId }
+            }
+            
+            when {
+                wishlistItem != null -> {
+                    EditWishlistItemScreen(
+                        item = wishlistItem,
+                        onDone = { navController.popBackStack() },
+                        viewModel = wishlistViewModel
+                    )
+                }
+                !hasWaited -> {
+                    // 显示加载中状态 / Show loading state
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(if (isEnglish) "Loading..." else "加载中...")
+                        }
+                    }
+                }
+                else -> {
+                    // 数据加载完成但找不到项目 / Data loaded but item not found
+                    LaunchedEffect(Unit) {
+                        navController.popBackStack()
+                    }
+                    Text(if (isEnglish) "Wishlist item not found" else "愿望清单项不存在")
+                }
+            }
+        }
+        composable(
+            route = Routes.EDIT_ITEM_PRICE,
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getString("itemId") ?: ""
+            val isEnglish = LocalAppLanguage.current == AppLanguage.EN
+            
+            // 添加加载状态跟踪 / Add loading state tracking
+            var hasWaited by remember { mutableStateOf(false) }
+            var item by remember { mutableStateOf<com.example.tradingplatform.data.items.Item?>(null) }
+            val items by sharedViewModel.items.collectAsState()
+            
+            LaunchedEffect(itemId) {
+                Log.d("AppNav", "编辑价格页面 - itemId: $itemId")
+                Log.d("AppNav", "编辑价格页面 - items 数量: ${items.size}")
+                
+                // 先从当前列表查找 / First search in current list
+                item = items.firstOrNull { it.id == itemId }
+                Log.d("AppNav", "编辑价格页面 - 从列表查找: ${item?.title}")
+                
+                // 如果找不到，重新加载所有商品 / If not found, reload all items
+                if (item == null) {
+                    Log.d("AppNav", "编辑价格页面 - 重新加载所有商品")
+                    sharedViewModel.loadAllItems()
+                    kotlinx.coroutines.delay(1000)
+                    item = sharedViewModel.items.value.firstOrNull { it.id == itemId }
+                    Log.d("AppNav", "编辑价格页面 - 重新加载后查找: ${item?.title}")
+                }
+                
+                hasWaited = true
+            }
+            
+            when {
+                item != null -> {
+                    EditItemPriceScreen(
+                        item = item!!,
+                        onDone = { navController.popBackStack() },
+                        viewModel = sharedViewModel
+                    )
+                }
+                !hasWaited -> {
+                    // 显示加载中状态 / Show loading state
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(if (isEnglish) "Loading..." else "加载中...")
+                        }
+                    }
+                }
+                else -> {
+                    // 数据加载完成但找不到商品 / Data loaded but item not found
+                    Log.w("AppNav", "编辑价格页面 - 找不到商品: $itemId")
+                    LaunchedEffect(Unit) {
+                        navController.popBackStack()
+                    }
+                    Text(if (isEnglish) "Item not found" else "商品不存在")
+                }
             }
         }
         composable(
@@ -494,6 +648,7 @@ fun BottomNavigationBar(
     val isPostSelected = currentRoute == Routes.POST
     val isMySelected = currentRoute == Routes.MY || currentRoute == Routes.MY_SOLD
     val isCameraSelected = currentRoute == Routes.CAMERA || currentRoute == Routes.RECOGNITION_RESULT
+    val isAllItemsSelected = currentRoute == Routes.ALL_ITEMS
     
     NavigationBar(
         containerColor = LowSaturationRed
@@ -518,15 +673,13 @@ fun BottomNavigationBar(
             )
         )
         NavigationBarItem(
-            icon = { Icon(MessageIcon, contentDescription = strings.bottomMessagesLabel) },
-            label = { Text(strings.bottomMessagesLabel) },
-            selected = isMessagesSelected,
+            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = strings.bottomAllItemsLabel) },
+            label = { Text(strings.bottomAllItemsLabel) },
+            selected = isAllItemsSelected,
             onClick = {
-                if (!isMessagesSelected) {
-                    navController.navigate(Routes.CHAT) {
-                        // 如果已经在CHAT页面，不重复导航 / If already on CHAT page, don't navigate again
-                        launchSingleTop = true
-                    }
+                navController.navigate(Routes.ALL_ITEMS) {
+                    // 如果已经在ALL_ITEMS页面，不重复导航 / If already on ALL_ITEMS page, don't navigate again
+                    launchSingleTop = true
                 }
             },
             colors = NavigationBarItemDefaults.colors(
@@ -543,6 +696,24 @@ fun BottomNavigationBar(
                 navController.navigate(Routes.POST) {
                     // 如果已经在POST页面，不重复导航 / If already on POST page, don't navigate again
                     launchSingleTop = true
+                }
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                indicatorColor = Color.Transparent
+            )
+        )
+        NavigationBarItem(
+            icon = { Icon(MessageIcon, contentDescription = strings.bottomMessagesLabel) },
+            label = { Text(strings.bottomMessagesLabel) },
+            selected = isMessagesSelected,
+            onClick = {
+                if (!isMessagesSelected) {
+                    navController.navigate(Routes.CHAT) {
+                        // 如果已经在CHAT页面，不重复导航 / If already on CHAT page, don't navigate again
+                        launchSingleTop = true
+                    }
                 }
             },
             colors = NavigationBarItemDefaults.colors(

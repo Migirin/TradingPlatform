@@ -161,6 +161,125 @@ class ItemRepository(
     }
 
     /**
+     * 更新商品价格 / Update item price
+     */
+    suspend fun updateItemPrice(itemId: String, newPrice: Double) = withContext(Dispatchers.IO) {
+        if (itemDao == null) {
+            throw IllegalStateException("数据库未初始化")
+        }
+
+        // 获取当前用户信息 / Get current user information
+        val currentEmail = authRepo?.getCurrentUserEmail()
+        val currentUid = authRepo?.getCurrentUserUid()
+
+        // 获取现有商品 / Get existing item
+        val existingEntity = itemDao.getItemById(itemId)
+            ?: throw IllegalStateException("商品不存在")
+
+        // 检查是否为商品所有者 / Check if user is the owner
+        val isOwner = (currentUid != null && existingEntity.ownerUid == currentUid) ||
+                (currentEmail != null && existingEntity.ownerEmail.equals(currentEmail, ignoreCase = true))
+
+        if (!isOwner) {
+            throw IllegalStateException("只有商品所有者可以修改价格")
+        }
+
+        val oldPrice = existingEntity.price
+        Log.d(TAG, "更新商品价格: $itemId, 旧价格: $oldPrice, 新价格: $newPrice")
+
+        // 更新本地数据库 / Update local database
+        val updatedEntity = existingEntity.copy(
+            price = newPrice,
+            updatedAt = System.currentTimeMillis()
+        )
+        itemDao.insertItem(updatedEntity)
+        Log.d(TAG, "商品价格已更新到本地数据库: $itemId")
+
+        // 同步到 Supabase / Sync to Supabase
+        try {
+            if (supabaseApi != null) {
+                val updateRequest = com.example.tradingplatform.data.supabase.UpdateItemRequest(
+                    price = newPrice
+                )
+                val response = supabaseApi.updateItem("eq.$itemId", updateRequest)
+                if (response.isSuccessful) {
+                    Log.d(TAG, "商品价格已同步到 Supabase: $itemId")
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.w(TAG, "Supabase 同步失败: ${response.code()} - $errorBody")
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Supabase 同步失败（本地已更新）", e)
+        }
+
+        // 如果价格降低，检查并发送降价提醒 / If price dropped, check and send price alerts
+        if (newPrice < oldPrice && context != null) {
+            try {
+                Log.d(TAG, "检测到降价，检查降价提醒...")
+                val updatedItem = updatedEntity.toItem()
+                checkAndSendPriceAlerts(updatedItem)
+            } catch (e: Exception) {
+                Log.e(TAG, "检查降价提醒失败", e)
+            }
+        }
+    }
+
+    /**
+     * 检查并发送降价提醒给关注此商品的用户 / Check and send price alerts to users watching this item
+     */
+    private suspend fun checkAndSendPriceAlerts(item: Item) = withContext(Dispatchers.IO) {
+        if (context == null) return@withContext
+        
+        try {
+            val priceAlertService = com.example.tradingplatform.data.wishlist.PriceAlertService(context)
+            
+            // 从 Supabase 获取所有愿望清单（包括其他用户的）/ Get all wishlists from Supabase (including other users)
+            val allWishlistItems = mutableListOf<com.example.tradingplatform.data.wishlist.WishlistItem>()
+            
+            try {
+                val response = supabaseApi?.getAllWishlistItems(limit = 500)
+                if (response?.isSuccessful == true) {
+                    val supabaseItems = response.body() ?: emptyList()
+                    allWishlistItems.addAll(supabaseItems.map { it.toWishlistItem() })
+                    Log.d(TAG, "从 Supabase 获取 ${allWishlistItems.size} 个愿望清单项")
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "从 Supabase 获取愿望清单失败", e)
+            }
+            
+            // 筛选出关注此商品且启用了降价提醒的愿望清单项 / Filter wishlist items watching this item with price alerts enabled
+            val relevantWishlistItems = allWishlistItems.filter { wish ->
+                if (!wish.enablePriceAlert || wish.targetPrice <= 0) {
+                    return@filter false
+                }
+                
+                // 检查是否关联了此商品 / Check if linked to this item
+                if (wish.itemId == item.id) {
+                    return@filter item.price <= wish.targetPrice
+                }
+                
+                // 检查标题和类别是否匹配 / Check if title and category match
+                val titleMatch = item.title.contains(wish.title, ignoreCase = true) ||
+                        wish.title.contains(item.title, ignoreCase = true)
+                val categoryMatch = wish.category.isEmpty() || item.category == wish.category
+                val priceMatch = item.price <= wish.targetPrice
+                
+                titleMatch && categoryMatch && priceMatch
+            }
+            
+            Log.d(TAG, "找到 ${relevantWishlistItems.size} 个符合降价提醒条件的愿望清单项")
+            
+            // 发送降价提醒 / Send price alerts
+            relevantWishlistItems.forEach { wish ->
+                priceAlertService.sendPriceAlertForItem(wish, item)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "检查降价提醒失败", e)
+        }
+    }
+
+    /**
      * 删除商品 / Delete item
      */
     suspend fun deleteItem(itemId: String) = withContext(Dispatchers.IO) {
@@ -252,6 +371,49 @@ class ItemRepository(
         val entities = itemDao.getItems(limit)
         val localItems = entities.map { it.toItem() }
         Log.d(TAG, "从本地数据库获取 ${localItems.size} 个商品")
+        localItems
+    }
+
+    /**
+     * 获取所有商品（不限制数量）/ Get all items (no limit)
+     * 用于"我的"页面，确保获取用户的所有商品 / For "My" page, ensure all user's items are fetched
+     */
+    suspend fun listAllItems(): List<Item> = withContext(Dispatchers.IO) {
+        // 尝试从 Supabase 获取 / Try to get from Supabase
+        try {
+            val response = supabaseApi?.getAllItems()
+            if (response?.isSuccessful == true) {
+                val supabaseItems = response.body() ?: emptyList()
+                val items = supabaseItems.map { it.toItem() }
+                
+                // 同步到本地数据库 / Sync to local database
+                items.forEach { item ->
+                    try {
+                        val entity = ItemEntity.fromItem(item)
+                        itemDao?.insertItem(entity)
+                    } catch (e: Exception) {
+                        Log.w(TAG, "同步商品到本地失败: ${item.id}", e)
+                    }
+                }
+                
+                Log.d(TAG, "从 Supabase 获取所有商品: ${items.size} 个")
+                return@withContext items
+            } else {
+                val errorBody = response?.errorBody()?.string()
+                Log.w(TAG, "从 Supabase 获取所有商品失败: HTTP ${response?.code()} - $errorBody")
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "从 Supabase 获取所有商品失败，使用本地数据", e)
+        }
+        
+        // 从本地数据库获取所有 / Get all from local database
+        if (itemDao == null) {
+            return@withContext emptyList()
+        }
+
+        val entities = itemDao.getAllItemsSync()
+        val localItems = entities.map { it.toItem() }
+        Log.d(TAG, "从本地数据库获取所有商品: ${localItems.size} 个")
         localItems
     }
 

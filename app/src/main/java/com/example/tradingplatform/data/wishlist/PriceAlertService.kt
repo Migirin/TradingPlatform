@@ -93,6 +93,13 @@ class PriceAlertService(
     }
 
     /**
+     * 发送价格提醒通知（公开方法，供外部调用）/ Send price alert notification (public method for external use)
+     */
+    fun sendPriceAlertForItem(wish: WishlistItem, item: Item) {
+        sendPriceAlert(wish, item)
+    }
+
+    /**
      * 发送价格提醒通知
      */
     private fun sendPriceAlert(wish: WishlistItem, item: Item) {

@@ -48,6 +48,60 @@ class WishlistRepository(
             Log.e(TAG, "检查价格提醒失败", e)
         }
     }
+    
+    /**
+     * 检查价格变化并返回提醒消息（用于浮窗显示）/ Check price changes and return alert messages (for snackbar display)
+     * @param messageFormat 消息格式，包含3个%s占位符：商品名称、现价、目标价 / Message format with 3 %s placeholders: item title, current price, target price
+     */
+    suspend fun checkPriceAlertsWithResult(messageFormat: String = "🎉「%s」降价啦！现价 ¥%s，低于目标价 ¥%s"): List<String> = withContext(Dispatchers.IO) {
+        val alertMessages = mutableListOf<String>()
+        try {
+            val wishlist = getWishlistSync()
+            if (wishlist.isEmpty()) {
+                return@withContext alertMessages
+            }
+            
+            val alertService = PriceAlertService(context ?: return@withContext alertMessages)
+            
+            for (wish in wishlist) {
+                if (!wish.enablePriceAlert || wish.targetPrice <= 0) {
+                    continue
+                }
+                
+                // 如果有关联的商品ID，检查该商品的价格 / If linked to an item, check its price
+                if (wish.itemId.isNotEmpty()) {
+                    val item = itemRepository?.getItemById(wish.itemId)
+                    if (item != null && item.price <= wish.targetPrice) {
+                        val message = String.format(messageFormat, item.title, String.format("%.2f", item.price), String.format("%.2f", wish.targetPrice))
+                        alertMessages.add(message)
+                        // 同时发送系统通知 / Also send system notification
+                        alertService.sendPriceAlertForItem(wish, item)
+                    }
+                } else {
+                    // 如果没有关联商品ID，查找匹配的商品 / If no linked item, find matching items
+                    val allItems = itemRepository?.listItems() ?: emptyList()
+                    val matchingItems = allItems.filter { item ->
+                        val titleMatch = item.title.contains(wish.title, ignoreCase = true) ||
+                                wish.title.contains(item.title, ignoreCase = true)
+                        val categoryMatch = wish.category.isEmpty() || item.category == wish.category
+                        val priceMatch = item.price <= wish.targetPrice
+                        titleMatch && categoryMatch && priceMatch
+                    }
+                    
+                    matchingItems.forEach { item ->
+                        val message = String.format(messageFormat, item.title, String.format("%.2f", item.price), String.format("%.2f", wish.targetPrice))
+                        alertMessages.add(message)
+                        alertService.sendPriceAlertForItem(wish, item)
+                    }
+                }
+            }
+            
+            Log.d(TAG, "检查价格提醒完成，发现 ${alertMessages.size} 个降价商品")
+        } catch (e: Exception) {
+            Log.e(TAG, "检查价格提醒失败", e)
+        }
+        alertMessages
+    }
 
     /**
      * 添加愿望清单项 / Add wishlist item
@@ -117,6 +171,53 @@ class WishlistRepository(
     }
 
     /**
+     * 更新愿望清单项 / Update wishlist item
+     */
+    suspend fun updateWishlistItem(item: WishlistItem) = withContext(Dispatchers.IO) {
+        if (wishlistDao == null) {
+            throw IllegalStateException("数据库未初始化")
+        }
+
+        val currentEmail = authRepo?.getCurrentUserEmail() ?: "dev@example.com"
+        val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user"
+        
+        val updatedItem = item.copy(
+            userId = currentUid,
+            userEmail = currentEmail,
+            updatedAt = Date()
+        )
+
+        val entity = WishlistEntity.fromWishlistItem(updatedItem)
+        wishlistDao.insertWishlistItem(entity) // Room 的 insert 会更新已存在的项
+        Log.d(TAG, "愿望清单项已更新到本地: ${updatedItem.id}, title: ${updatedItem.title}")
+        
+        // 同步到 Supabase / Sync to Supabase
+        try {
+            val updateRequest = com.example.tradingplatform.data.supabase.UpdateWishlistItemRequest(
+                title = updatedItem.title,
+                category = updatedItem.category.ifEmpty { null },
+                minPrice = updatedItem.minPrice.takeIf { it > 0 },
+                maxPrice = updatedItem.maxPrice.takeIf { it > 0 },
+                targetPrice = updatedItem.targetPrice.takeIf { it > 0 },
+                itemId = updatedItem.itemId.ifEmpty { null },
+                enablePriceAlert = updatedItem.enablePriceAlert,
+                description = updatedItem.description.ifEmpty { null }
+            )
+            val response = supabaseApi?.updateWishlistItem("eq.${updatedItem.id}", updateRequest)
+            if (response?.isSuccessful == true) {
+                Log.d(TAG, "愿望清单项已同步到 Supabase: ${updatedItem.id}")
+            } else {
+                val errorBody = response?.errorBody()?.string()
+                Log.w(TAG, "Supabase 同步失败: HTTP ${response?.code()} - $errorBody")
+                // 即使 Supabase 失败，本地数据仍然保存 / Even if Supabase fails, local data is still saved
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Supabase 同步失败（本地数据已保存）", e)
+            // 即使 Supabase 失败，本地数据仍然保存 / Even if Supabase fails, local data is still saved
+        }
+    }
+
+    /**
      * 删除愿望清单项 / Delete wishlist item
      */
     suspend fun deleteWishlistItem(itemId: String) = withContext(Dispatchers.IO) {
@@ -142,40 +243,80 @@ class WishlistRepository(
 
     /**
      * 获取当前用户的愿望清单 / Get current user's wishlist
+     * 优先从 Supabase 获取，失败则从本地获取 / Prioritize Supabase, fallback to local
      */
     fun getWishlistFlow(): Flow<List<WishlistItem>> {
+        Log.d(TAG, "========== getWishlistFlow() 被调用 ==========")
         if (wishlistDao == null) {
-            Log.w(TAG, "wishlistDao 为 null，返回空列表")
+            Log.w(TAG, "❌ wishlistDao 为 null，返回空列表")
             return flowOf(emptyList())
         }
+        Log.d(TAG, "✅ wishlistDao 不为 null，继续执行")
 
         // 使用 flow 构建器，在 flowOn 中执行 suspend 函数 / Use flow builder, execute suspend function in flowOn
         return flow {
             try {
                 val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user"
-                Log.d(TAG, "获取愿望清单 Flow，用户ID: $currentUid")
+                val currentEmail = authRepo?.getCurrentUserEmail() ?: ""
+                Log.d(TAG, "📋 获取愿望清单 Flow，用户ID: $currentUid, email: $currentEmail")
+                
+                // 先尝试从 Supabase 获取 / Try to get from Supabase first
+                try {
+                    Log.d(TAG, "🌐 尝试从 Supabase 获取愿望清单...")
+                    val response = supabaseApi?.getWishlistByUser("eq.$currentUid")
+                    if (response?.isSuccessful == true) {
+                        val supabaseItems = response.body() ?: emptyList()
+                        if (supabaseItems.isNotEmpty()) {
+                            Log.d(TAG, "✅ 从 Supabase 获取到 ${supabaseItems.size} 个愿望清单项")
+                            // 同步到本地数据库 / Sync to local database
+                            supabaseItems.forEach { supabaseItem ->
+                                try {
+                                    val localItem = supabaseItem.toWishlistItem()
+                                    val entity = WishlistEntity.fromWishlistItem(localItem)
+                                    wishlistDao?.insertWishlistItem(entity)
+                                    Log.d(TAG, "✅ 已同步到本地: ${supabaseItem.id}")
+                                } catch (e: Exception) {
+                                    Log.w(TAG, "⚠️ 同步愿望清单项到本地失败: ${supabaseItem.id}", e)
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "ℹ️ Supabase 中没有愿望清单项")
+                        }
+                    } else {
+                        val errorBody = response?.errorBody()?.string()
+                        Log.w(TAG, "⚠️ 从 Supabase 获取失败: HTTP ${response?.code()} - $errorBody")
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "⚠️ 从 Supabase 获取愿望清单失败，将使用本地数据", e)
+                }
+                
                 emit(currentUid)
             } catch (e: Exception) {
-                Log.e(TAG, "获取用户ID失败", e)
+                Log.e(TAG, "❌ 获取用户ID失败", e)
                 emit("dev_user") // 降级到默认用户ID / Fallback to default user ID
             }
         }.flowOn(Dispatchers.IO)
         .flatMapLatest { userId ->
+            Log.d(TAG, "🔄 flatMapLatest 开始，用户ID: $userId")
             try {
                 wishlistDao.getWishlistByUser(userId).map { entities ->
+                    Log.d(TAG, "📦 从本地数据库获取到 ${entities.size} 个实体")
                     val items = entities.map { 
                         try {
                             it.toWishlistItem()
                         } catch (e: Exception) {
-                            Log.e(TAG, "转换愿望清单项失败", e)
+                            Log.e(TAG, "❌ 转换愿望清单项失败", e)
                             null
                         }
                     }.filterNotNull()
-                    Log.d(TAG, "愿望清单 Flow 更新，用户ID: $userId, 数量: ${items.size}")
+                    Log.d(TAG, "✅ 愿望清单 Flow 更新，用户ID: $userId, 数量: ${items.size}")
+                    if (items.isNotEmpty()) {
+                        Log.d(TAG, "📝 愿望清单项列表: ${items.map { it.title }}")
+                    }
                     items
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "查询愿望清单失败", e)
+                Log.e(TAG, "❌ 查询愿望清单失败", e)
                 flowOf(emptyList())
             }
         }

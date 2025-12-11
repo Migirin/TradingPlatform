@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ fun WishlistScreen(
     onBack: () -> Unit,
     onFindMatches: () -> Unit,
     onFindMatchesForItem: (String) -> Unit = {},
+    onEditItem: (String) -> Unit = {},
     onAchievementsClick: () -> Unit = {},
     viewModel: WishlistViewModel = viewModel()
 ) {
@@ -31,8 +33,15 @@ fun WishlistScreen(
     val isEnglish = lang == AppLanguage.EN
     
     // 调试日志 / Debug log
+    LaunchedEffect(Unit) {
+        android.util.Log.d("WishlistScreen", "========== WishlistScreen 已加载 ==========")
+        android.util.Log.d("WishlistScreen", "ViewModel: $viewModel")
+    }
     LaunchedEffect(wishlist.size) {
-        android.util.Log.d("WishlistScreen", "愿望清单数量: ${wishlist.size}")
+        android.util.Log.d("WishlistScreen", "📊 愿望清单数量: ${wishlist.size}")
+        if (wishlist.isNotEmpty()) {
+            android.util.Log.d("WishlistScreen", "📝 愿望清单项: ${wishlist.map { it.title }}")
+        }
     }
     
     // 显示错误状态 / Display error state
@@ -124,6 +133,7 @@ fun WishlistScreen(
                     WishlistItemCard(
                         item = item,
                         onDelete = { viewModel.deleteWishlistItem(item.id) },
+                        onEdit = { onEditItem(item.id) },
                         onFindMatches = { onFindMatchesForItem(item.id) }
                     )
                 }
@@ -136,6 +146,7 @@ fun WishlistScreen(
 fun WishlistItemCard(
     item: WishlistItem,
     onDelete: () -> Unit,
+    onEdit: () -> Unit = {},
     onFindMatches: () -> Unit = {}
 ) {
     val lang = LocalAppLanguage.current
@@ -159,12 +170,21 @@ fun WishlistItemCard(
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = if (isEnglish) "Delete" else "删除",
-                        tint = MaterialTheme.colorScheme.error
-                    )
+                Row {
+                    IconButton(onClick = onEdit) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = if (isEnglish) "Edit" else "编辑",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = if (isEnglish) "Delete" else "删除",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
 

@@ -20,10 +20,16 @@ interface ItemDao {
     fun getAllItems(): Flow<List<ItemEntity>>
 
     /**
-     * 获取所有商品（非 Flow，用于一次性查询）
+     * 获取商品（带数量限制，非 Flow，用于一次性查询）/ Get items with limit (non-Flow, for one-time query)
      */
     @Query("SELECT * FROM items ORDER BY createdAt DESC LIMIT :limit")
     suspend fun getItems(limit: Int = 50): List<ItemEntity>
+
+    /**
+     * 获取所有商品（非 Flow，不限制数量）/ Get all items (non-Flow, no limit)
+     */
+    @Query("SELECT * FROM items ORDER BY createdAt DESC")
+    suspend fun getAllItemsSync(): List<ItemEntity>
 
     /**
      * 根据ID获取商品

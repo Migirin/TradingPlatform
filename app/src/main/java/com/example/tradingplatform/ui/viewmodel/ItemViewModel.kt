@@ -88,6 +88,25 @@ class ItemViewModel(
         }
     }
 
+    /**
+     * 加载所有商品（用于"我的"页面，确保获取用户的所有商品）/ Load all items (for "My" page, ensure all user's items are fetched)
+     */
+    fun loadAllItems() {
+        _state.value = ItemUiState.Loading
+        viewModelScope.launch {
+            try {
+                val itemList = repo.listAllItems() // 获取所有商品，不限制数量 / Get all items, no limit
+                _items.value = itemList
+                _state.value = ItemUiState.Idle
+                Log.d("ItemViewModel", "加载所有商品完成，共 ${itemList.size} 个")
+            } catch (e: Exception) {
+                Log.e("ItemViewModel", "加载所有商品失败", e)
+                _items.value = emptyList()
+                _state.value = ItemUiState.Error("加载失败: ${e.message ?: "未知错误"}")
+            }
+        }
+    }
+
     fun postItem(title: String, price: Double, category: String, description: String, story: String, phoneNumber: String, imageUri: Uri?) {
         _state.value = ItemUiState.Loading
         viewModelScope.launch {
@@ -128,6 +147,25 @@ class ItemViewModel(
             } catch (e: Exception) {
                 Log.e("ItemViewModel", "刷新商品列表失败", e)
                 // 不改变当前状态 / Don't change current state
+            }
+        }
+    }
+
+    /**
+     * 更新商品价格 / Update item price
+     */
+    fun updateItemPrice(itemId: String, newPrice: Double) {
+        _state.value = ItemUiState.Loading
+        viewModelScope.launch {
+            try {
+                repo.updateItemPrice(itemId, newPrice)
+                Log.d("ItemViewModel", "商品价格更新成功: $itemId, 新价格: $newPrice")
+                _state.value = ItemUiState.Success
+                // 重新加载列表 / Reload list
+                loadItemsWithoutStateReset()
+            } catch (e: Exception) {
+                Log.e("ItemViewModel", "更新商品价格失败", e)
+                _state.value = ItemUiState.Error("更新失败: ${e.message ?: "未知错误"}")
             }
         }
     }

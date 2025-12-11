@@ -13,12 +13,18 @@ import retrofit2.http.Path
 interface SupabaseApi {
     
     /**
-     * 获取所有商品
+     * 获取商品（带数量限制）/ Get items (with limit)
      */
     @GET("items?select=*&order=created_at.desc")
     suspend fun getItems(
         @Query("limit") limit: Int = 50
     ): Response<List<SupabaseItem>>
+
+    /**
+     * 获取所有商品（不限制数量）/ Get all items (no limit)
+     */
+    @GET("items?select=*&order=created_at.desc")
+    suspend fun getAllItems(): Response<List<SupabaseItem>>
     
     /**
      * 根据ID获取商品
