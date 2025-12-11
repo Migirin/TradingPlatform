@@ -13,8 +13,8 @@ sealed interface AuthUiState {
     data object Loading : AuthUiState
     data class Error(val message: String) : AuthUiState
     data object Success : AuthUiState
-    data class VerificationEmailSent(val email: String) : AuthUiState // 验证邮件已发送
-    data object EmailVerified : AuthUiState // 邮箱已验证
+    data class VerificationEmailSent(val email: String) : AuthUiState // 验证邮件已发送 / Verification email sent
+    data object EmailVerified : AuthUiState // 邮箱已验证 / Email verified
 }
 
 class AuthViewModel(
@@ -25,7 +25,7 @@ class AuthViewModel(
     val state: StateFlow<AuthUiState> = _state
 
     /**
-     * 注册新用户
+     * 注册新用户 / Register new user
      */
     fun register(email: String, password: String) {
         if (!email.endsWith("@ucdconnect.ie", ignoreCase = true)) {
@@ -40,7 +40,7 @@ class AuthViewModel(
         viewModelScope.launch {
             val result = repo.register(email, password)
             result.onSuccess {
-                // 注册成功，验证邮件已发送
+                // 注册成功，验证邮件已发送 / Registration successful, verification email sent
                 _state.value = AuthUiState.VerificationEmailSent(email)
             }.onFailure { exception ->
                 val errorMessage = exception.message ?: "注册失败"
@@ -50,7 +50,7 @@ class AuthViewModel(
     }
 
     /**
-     * 验证邮箱
+     * 验证邮箱 / Verify email
      */
     fun verifyEmail(email: String, code: String) {
         _state.value = AuthUiState.Loading
@@ -66,7 +66,7 @@ class AuthViewModel(
     }
 
     /**
-     * 登录
+     * 登录 / Login
      */
     fun login(email: String, password: String) {
         if (!email.endsWith("@ucdconnect.ie", ignoreCase = true)) {
@@ -86,7 +86,7 @@ class AuthViewModel(
     }
 
     /**
-     * 重新发送验证邮件
+     * 重新发送验证邮件 / Resend verification email
      */
     fun resendVerificationEmail(email: String) {
         _state.value = AuthUiState.Loading
@@ -102,7 +102,7 @@ class AuthViewModel(
     }
 
     /**
-     * 删除用户（用于测试/清理数据）
+     * 删除用户（用于测试/清理数据）/ Delete user (for testing/cleaning data)
      */
     fun deleteUser(email: String) {
         _state.value = AuthUiState.Loading
@@ -118,7 +118,7 @@ class AuthViewModel(
     }
     
     /**
-     * 更改密码
+     * 更改密码 / Change password
      */
     fun changePassword(currentPassword: String, newPassword: String) {
         if (newPassword.length < 6) {

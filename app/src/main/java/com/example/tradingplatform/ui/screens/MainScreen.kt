@@ -19,13 +19,15 @@ import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.data.timetable.RecommendationReasonType
 import com.example.tradingplatform.data.timetable.RecommendedItem
 import com.example.tradingplatform.ui.i18n.LocalAppStrings
+import com.example.tradingplatform.ui.i18n.LocalAppLanguage
+import com.example.tradingplatform.ui.i18n.AppLanguage
 import com.example.tradingplatform.ui.viewmodel.ItemViewModel
 
 enum class MainScreenTab {
-    HOME,      // 首页
-    POST,      // 发布商品
-    MY,        // 我的
-    CAMERA     // 拍照识别
+    HOME,      // 首页 / Home
+    POST,      // 发布商品 / Post item
+    MY,        // 我的 / My
+    CAMERA     // 拍照识别 / Camera recognition
 }
 
 @Composable
@@ -36,58 +38,12 @@ fun MainScreen(
     onNavigateToCamera: () -> Unit,
     viewModel: ItemViewModel = viewModel()
 ) {
-    var selectedTab by remember { mutableStateOf(MainScreenTab.HOME) }
-    val strings = LocalAppStrings.current
-    
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // 内容区域 - 只显示首页内容
-        Box(modifier = Modifier.weight(1f)) {
-            HomeTab(
-                onItemClick = onItemClick,
-                viewModel = viewModel,
-                onNavigateToMy = onNavigateToMy
-            )
-        }
-        
-        // 底部导航栏
-        NavigationBar {
-            NavigationBarItem(
-                icon = { Icon(Icons.Default.Home, contentDescription = strings.bottomHomeLabel) },
-                label = { Text(strings.bottomHomeLabel) },
-                selected = selectedTab == MainScreenTab.HOME,
-                onClick = { selectedTab = MainScreenTab.HOME }
-            )
-            NavigationBarItem(
-                icon = { Icon(Icons.Default.Add, contentDescription = strings.bottomPostLabel) },
-                label = { Text(strings.bottomPostLabel) },
-                selected = false,
-                onClick = {
-                    // 直接导航，不改变 selectedTab
-                    onNavigateToPost()
-                }
-            )
-            NavigationBarItem(
-                icon = { Icon(Icons.Default.Person, contentDescription = strings.bottomMyLabel) },
-                label = { Text(strings.bottomMyLabel) },
-                selected = false,
-                onClick = {
-                    // 直接导航，不改变 selectedTab
-                    onNavigateToMy()
-                }
-            )
-            NavigationBarItem(
-                icon = { Icon(Icons.Default.Settings, contentDescription = strings.bottomCameraLabel) },
-                label = { Text(strings.bottomCameraLabel) },
-                selected = false,
-                onClick = {
-                    // 直接导航，不改变 selectedTab
-                    onNavigateToCamera()
-                }
-            )
-        }
-    }
+    // 内容区域 - 只显示首页内容 / Content area - only show home content
+    HomeTab(
+        onItemClick = onItemClick,
+        viewModel = viewModel,
+        onNavigateToMy = onNavigateToMy
+    )
 }
 
 @Composable
@@ -103,6 +59,8 @@ fun HomeTab(
     val context = LocalContext.current
     val authRepo = remember { AuthRepository(context) }
     val strings = LocalAppStrings.current
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
     
     var currentUid by remember { mutableStateOf<String?>(null) }
     var currentEmail by remember { mutableStateOf<String?>(null) }
@@ -112,14 +70,14 @@ fun HomeTab(
         currentEmail = authRepo.getCurrentUserEmail()
     }
     
-    // 过滤掉当前用户发布的商品
+    // 过滤掉当前用户发布的商品 / Filter out items posted by current user
     val filteredItems = remember(items, currentUid, currentEmail) {
         items.filter { item ->
             val uidMatch = currentUid?.let { item.ownerUid == it } ?: false
             val emailMatch = currentEmail?.let { 
                 item.ownerEmail.equals(it, ignoreCase = true) 
             } ?: false
-            // 只显示不是当前用户的商品
+            // 只显示不是当前用户的商品 / Only show items that are not from current user
             !uidMatch && !emailMatch
         }
     }
@@ -130,12 +88,12 @@ fun HomeTab(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Load timetable-based recommendations once when Home tab is composed
+        // 在首页标签页组合时加载基于课表的推荐 / Load timetable-based recommendations once when Home tab is composed
         LaunchedEffect(Unit) {
             viewModel.loadRecommendedItemsForCurrentStudent()
         }
 
-        // Recommended textbooks section (local demo)
+        // 推荐教材部分（本地演示）/ Recommended textbooks section (local demo)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -314,7 +272,7 @@ fun HomeTab(
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         items(filteredItems, key = { it.id }) { item ->
-                            ItemCard(item = item, onClick = { onItemClick(item) })
+                            ItemCard(item = item, isEnglish = isEnglish, onClick = { onItemClick(item) })
                         }
                     }
                 }
@@ -329,11 +287,13 @@ private fun RecommendedItemWithReasons(
     onItemClick: (Item) -> Unit,
     strings: com.example.tradingplatform.ui.i18n.AppStrings
 ) {
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier.widthIn(max = 320.dp)
     ) {
-        ItemCard(item = recommended.item, onClick = { onItemClick(recommended.item) })
+        ItemCard(item = recommended.item, isEnglish = isEnglish, onClick = { onItemClick(recommended.item) })
 
         val reasonLabels = recommended.reasons.mapNotNull { reason ->
             when (reason.type) {

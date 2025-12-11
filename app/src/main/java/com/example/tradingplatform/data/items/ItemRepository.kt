@@ -27,9 +27,9 @@ data class Item(
     val title: String = "",
     val price: Double = 0.0,
     val description: String = "",
-    val category: String = "", // 商品类别
-    val story: String = "", // 商品故事/背景
-    val imageUrl: String = "", // 本地文件路径
+    val category: String = "", // 商品类别 / Item category
+    val story: String = "", // 商品故事/背景 / Item story/background
+    val imageUrl: String = "", // 本地文件路径 / Local file path
     val phoneNumber: String = "",
     val ownerUid: String = "",
     val ownerEmail: String = "",
@@ -51,7 +51,7 @@ class ItemRepository(
     private val supabaseStorage: SupabaseStorage? = context?.let { SupabaseStorage(it) }
 
     /**
-     * 保存图片到本地存储
+     * 保存图片到本地存储 / Save image to local storage
      */
     private suspend fun saveImageToLocal(uri: Uri): String = withContext(Dispatchers.IO) {
         if (context == null) {
@@ -64,17 +64,17 @@ class ItemRepository(
         }
 
         try {
-            // 创建图片目录
+            // 创建图片目录 / Create image directory
             val imagesDir = File(context.filesDir, "item_images")
             if (!imagesDir.exists()) {
                 imagesDir.mkdirs()
             }
 
-            // 生成唯一文件名
+            // 生成唯一文件名 / Generate unique filename
             val fileName = "item_${UUID.randomUUID()}.jpg"
             val file = File(imagesDir, fileName)
 
-            // 复制文件
+            // 复制文件 / Copy file
             FileOutputStream(file).use { output ->
                 inputStream.copyTo(output)
             }
@@ -87,14 +87,14 @@ class ItemRepository(
     }
 
     /**
-     * 添加商品
+     * 添加商品 / Add item
      */
     suspend fun addItem(item: Item, imageUri: Uri? = null): String = withContext(Dispatchers.IO) {
         if (itemDao == null) {
             throw IllegalStateException("数据库未初始化")
         }
 
-        // 获取当前用户信息
+        // 获取当前用户信息 / Get current user information
         val currentEmail = authRepo?.getCurrentUserEmail() ?: "dev@example.com"
         val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user_${System.currentTimeMillis()}"
 
@@ -102,7 +102,7 @@ class ItemRepository(
 
         var imageUrl = item.imageUrl
         
-        // 优先上传到 Supabase Storage，失败则保存到本地
+        // 优先上传到 Supabase Storage，失败则保存到本地 / Prioritize uploading to Supabase Storage, fallback to local storage
         if (imageUri != null) {
             try {
                 imageUrl = supabaseStorage?.uploadImage(imageUri) ?: saveImageToLocal(imageUri)
@@ -119,7 +119,7 @@ class ItemRepository(
         }
 
         val newItem = item.copy(
-            id = UUID.randomUUID().toString(), // 使用 UUID 作为 ID
+            id = UUID.randomUUID().toString(), // 使用 UUID 作为 ID / Use UUID as ID
             ownerUid = currentUid,
             ownerEmail = currentEmail,
             imageUrl = imageUrl,
@@ -127,12 +127,12 @@ class ItemRepository(
             updatedAt = Date()
         )
 
-        // 保存到本地数据库
+        // 保存到本地数据库 / Save to local database
         val itemEntity = ItemEntity.fromItem(newItem)
         itemDao.insertItem(itemEntity)
         Log.d(TAG, "商品已保存到本地数据库: ${newItem.id}")
         
-        // 同步到 Supabase
+        // 同步到 Supabase / Sync to Supabase
         try {
             if (supabaseApi == null) {
                 Log.w(TAG, "Supabase API 未初始化，跳过同步")
@@ -154,21 +154,21 @@ class ItemRepository(
             Log.e(TAG, "异常消息: ${e.message}")
             Log.e(TAG, "异常堆栈:", e)
             e.printStackTrace()
-            // 即使 Supabase 失败，本地数据仍然保存
+            // 即使 Supabase 失败，本地数据仍然保存 / Even if Supabase fails, local data is still saved
         }
         
         newItem.id
     }
 
     /**
-     * 删除商品
+     * 删除商品 / Delete item
      */
     suspend fun deleteItem(itemId: String) = withContext(Dispatchers.IO) {
         if (itemDao == null) {
             throw IllegalStateException("数据库未初始化")
         }
 
-        // 检查是否为开发者模式（未登录）
+        // 检查是否为开发者模式（未登录）/ Check if developer mode (not logged in)
         val isDevMode = authRepo?.isLoggedIn() != true
 
         if (!isDevMode) {
@@ -177,7 +177,7 @@ class ItemRepository(
 
         Log.d(TAG, "删除商品: $itemId (开发者模式)")
 
-        // 获取商品信息，删除关联的图片文件
+        // 获取商品信息，删除关联的图片文件 / Get item info, delete associated image file
         val itemEntity = itemDao.getItemById(itemId)
         if (itemEntity != null && itemEntity.imageUrl.isNotEmpty()) {
             try {
@@ -191,11 +191,11 @@ class ItemRepository(
             }
         }
 
-        // 从本地数据库删除
+        // 从本地数据库删除 / Delete from local database
         itemDao.deleteItemById(itemId)
         Log.d(TAG, "商品已从本地数据库删除: $itemId")
         
-        // 从 Supabase 删除
+        // 从 Supabase 删除 / Delete from Supabase
         try {
             val response = supabaseApi?.deleteItem("eq.$itemId")
             if (response?.isSuccessful == true) {
@@ -210,18 +210,18 @@ class ItemRepository(
     }
 
     /**
-     * 获取商品列表（按创建时间倒序）
-     * 优先从 Supabase 获取，失败则从本地获取
+     * 获取商品列表（按创建时间倒序）/ Get item list (sorted by creation time descending)
+     * 优先从 Supabase 获取，失败则从本地获取 / Prioritize Supabase, fallback to local
      */
     suspend fun listItems(limit: Int = 50): List<Item> = withContext(Dispatchers.IO) {
-        // 尝试从 Supabase 获取
+        // 尝试从 Supabase 获取 / Try to get from Supabase
         try {
             val response = supabaseApi?.getItems(limit = limit)
             if (response?.isSuccessful == true) {
                 val supabaseItems = response.body() ?: emptyList()
                 val items = supabaseItems.map { it.toItem() }
                 
-                // 同步到本地数据库
+                // 同步到本地数据库 / Sync to local database
                 items.forEach { item ->
                     try {
                         val entity = ItemEntity.fromItem(item)
@@ -244,7 +244,7 @@ class ItemRepository(
             e.printStackTrace()
         }
         
-        // 从本地数据库获取
+        // 从本地数据库获取 / Get from local database
         if (itemDao == null) {
             return@withContext emptyList()
         }
@@ -256,19 +256,19 @@ class ItemRepository(
     }
 
     /**
-     * 根据ID获取商品
-     * 优先从 Supabase 获取，失败则从本地获取
+     * 根据ID获取商品 / Get item by ID
+     * 优先从 Supabase 获取，失败则从本地获取 / Prioritize Supabase, fallback to local
      */
     suspend fun getItemById(itemId: String): Item? = withContext(Dispatchers.IO) {
-        // 尝试从 Supabase 获取
+        // 尝试从 Supabase 获取 / Try to get from Supabase
         try {
-            // Supabase PostgREST 使用 id=eq.{value} 格式
+            // Supabase PostgREST 使用 id=eq.{value} 格式 / Supabase PostgREST uses id=eq.{value} format
             val response = supabaseApi?.getItemById("eq.$itemId")
             if (response?.isSuccessful == true) {
                 val supabaseItems = response.body() ?: emptyList()
                 if (supabaseItems.isNotEmpty()) {
                     val item = supabaseItems.first().toItem()
-                    // 同步到本地
+                    // 同步到本地 / Sync to local
                     try {
                         val entity = ItemEntity.fromItem(item)
                         itemDao?.insertItem(entity)
@@ -282,7 +282,7 @@ class ItemRepository(
             Log.w(TAG, "从 Supabase 获取商品失败，使用本地数据", e)
         }
         
-        // 从本地数据库获取
+        // 从本地数据库获取 / Get from local database
         if (itemDao == null) {
             return@withContext null
         }
@@ -292,7 +292,7 @@ class ItemRepository(
     }
 
     /**
-     * 获取商品列表 Flow（用于实时更新）
+     * 获取商品列表 Flow（用于实时更新）/ Get item list Flow (for real-time updates)
      */
     fun getItemsFlow(): kotlinx.coroutines.flow.Flow<List<Item>> {
         if (itemDao == null) {

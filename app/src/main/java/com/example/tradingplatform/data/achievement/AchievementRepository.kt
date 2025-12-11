@@ -31,7 +31,7 @@ class AchievementRepository(
     private val wishlistRepository: WishlistRepository? = context?.let { WishlistRepository(it) }
 
     /**
-     * 获取用户的成就列表
+     * 获取用户的成就列表 / Get user's achievement list
      */
     fun getUserAchievementsFlow(): Flow<List<UserAchievement>> {
         if (achievementDao == null) {
@@ -49,7 +49,7 @@ class AchievementRepository(
     }
 
     /**
-     * 获取用户成就列表（同步）
+     * 获取用户成就列表（同步）/ Get user achievement list (synchronous)
      */
     suspend fun getUserAchievementsSync(): List<UserAchievement> = withContext(Dispatchers.IO) {
         if (achievementDao == null) {
@@ -60,7 +60,7 @@ class AchievementRepository(
     }
 
     /**
-     * 检查并授予成就
+     * 检查并授予成就 / Check and grant achievements
      */
     suspend fun checkAndGrantAchievements() = withContext(Dispatchers.IO) {
         if (achievementDao == null || authRepo == null) {
@@ -70,10 +70,10 @@ class AchievementRepository(
         val currentUid = authRepo.getCurrentUserUid() ?: return@withContext
         val currentEmail = authRepo.getCurrentUserEmail() ?: return@withContext
 
-        // 获取用户统计数据
+        // 获取用户统计数据 / Get user statistics
         val stats = getUserStats(currentUid)
 
-        // 检查各种成就
+        // 检查各种成就 / Check various achievements
         checkPostAchievements(currentUid, stats.postCount)
         checkMessageAchievements(currentUid, stats.messageCount)
         checkWishlistAchievements(currentUid, stats.wishlistCount)
@@ -84,7 +84,7 @@ class AchievementRepository(
     }
 
     /**
-     * 用户统计数据
+     * 用户统计数据 / User statistics data
      */
     private data class UserStats(
         val postCount: Int = 0,
@@ -98,13 +98,13 @@ class AchievementRepository(
     )
 
     /**
-     * 获取用户统计数据
+     * 获取用户统计数据 / Get user statistics
      */
     private suspend fun getUserStats(userId: String): UserStats {
         val items = itemRepository?.listItems()?.filter { it.ownerUid == userId } ?: emptyList()
         val wishlist = wishlistRepository?.getWishlistSync() ?: emptyList()
         
-        // 统计消息数量（从数据库获取）
+        // 统计消息数量（从数据库获取）/ Count messages (get from database)
         val messageCount = if (database != null) {
             try {
                 val chatDao = database.chatMessageDao()
@@ -121,16 +121,16 @@ class AchievementRepository(
             postCount = items.size,
             messageCount = messageCount,
             wishlistCount = wishlist.size,
-            exchangeCount = 0, // TODO: 跟踪交换次数（需要添加交换记录表）
+            exchangeCount = 0, // TODO: 跟踪交换次数（需要添加交换记录表）/ TODO: Track exchange count (need to add exchange record table)
             priceAlertCount = wishlist.count { it.enablePriceAlert },
-            priceAlertSuccessCount = 0, // TODO: 跟踪成功触发的提醒
+            priceAlertSuccessCount = 0, // TODO: 跟踪成功触发的提醒 / TODO: Track successfully triggered alerts
             storyCount = items.count { it.story.isNotEmpty() },
             uniqueCategories = items.map { it.category }.filter { it.isNotEmpty() }.toSet()
         )
     }
 
     /**
-     * 检查发布商品相关成就
+     * 检查发布商品相关成就 / Check post-related achievements
      */
     private suspend fun checkPostAchievements(userId: String, postCount: Int) {
         val achievements = listOf(
@@ -148,7 +148,7 @@ class AchievementRepository(
     }
 
     /**
-     * 检查消息相关成就
+     * 检查消息相关成就 / Check message-related achievements
      */
     private suspend fun checkMessageAchievements(userId: String, messageCount: Int) {
         val achievements = listOf(
@@ -165,7 +165,7 @@ class AchievementRepository(
     }
 
     /**
-     * 检查愿望清单相关成就
+     * 检查愿望清单相关成就 / Check wishlist-related achievements
      */
     private suspend fun checkWishlistAchievements(userId: String, wishlistCount: Int) {
         val achievements = listOf(
@@ -182,7 +182,7 @@ class AchievementRepository(
     }
 
     /**
-     * 检查交换相关成就
+     * 检查交换相关成就 / Check exchange-related achievements
      */
     private suspend fun checkExchangeAchievements(userId: String, exchangeCount: Int) {
         val achievements = listOf(
@@ -199,7 +199,7 @@ class AchievementRepository(
     }
 
     /**
-     * 检查价格提醒相关成就
+     * 检查价格提醒相关成就 / Check price alert-related achievements
      */
     private suspend fun checkPriceAlertAchievements(
         userId: String,
@@ -215,7 +215,7 @@ class AchievementRepository(
     }
 
     /**
-     * 检查故事相关成就
+     * 检查故事相关成就 / Check story-related achievements
      */
     private suspend fun checkStoryAchievements(userId: String, storyCount: Int) {
         if (storyCount >= 1) {
@@ -227,17 +227,17 @@ class AchievementRepository(
     }
 
     /**
-     * 检查类别相关成就
+     * 检查类别相关成就 / Check category-related achievements
      */
     private suspend fun checkCategoryAchievements(userId: String, uniqueCategories: Set<String>) {
-        // 检查是否使用了所有类别（简化版，检查是否使用了至少5个不同类别）
+        // 检查是否使用了所有类别（简化版，检查是否使用了至少5个不同类别）/ Check if all categories used (simplified: check if at least 5 different categories used)
         if (uniqueCategories.size >= 5) {
             grantAchievement(userId, AchievementType.CATEGORY_EXPERT, uniqueCategories.size, 5)
         }
     }
 
     /**
-     * 授予成就
+     * 授予成就 / Grant achievement
      */
     private suspend fun grantAchievement(
         userId: String,
@@ -247,10 +247,10 @@ class AchievementRepository(
     ) {
         if (achievementDao == null) return
 
-        // 检查是否已经解锁
+        // 检查是否已经解锁 / Check if already unlocked
         val existing = achievementDao.getAchievementByType(userId, type.id)
         if (existing != null && existing.progress >= target) {
-            return // 已经解锁
+            return // 已经解锁 / Already unlocked
         }
 
         val achievement = UserAchievement(
@@ -265,7 +265,7 @@ class AchievementRepository(
         val entity = UserAchievementEntity.fromUserAchievement(achievement)
         achievementDao.insertAchievement(entity)
         
-        // 如果是新解锁的成就，发送通知
+        // 如果是新解锁的成就，发送通知 / If newly unlocked achievement, send notification
         if (progress >= target && (existing == null || existing.progress < target)) {
             Log.d(TAG, "成就解锁: ${type.displayName} - ${type.description}")
             if (context != null) {
@@ -276,7 +276,7 @@ class AchievementRepository(
     }
 
     /**
-     * 获取成就的目标值
+     * 获取成就的目标值 / Get target value for achievement type
      */
     private fun getTargetForType(type: AchievementType): Int {
         return when (type) {

@@ -17,10 +17,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import com.example.tradingplatform.ui.theme.ItemCardColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +33,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.tradingplatform.data.items.Item
 import com.example.tradingplatform.ui.viewmodel.ItemViewModel
+import com.example.tradingplatform.ui.i18n.AppLanguage
+import com.example.tradingplatform.ui.i18n.LocalAppLanguage
 
 @Composable
 fun ItemListScreen(
@@ -43,6 +47,8 @@ fun ItemListScreen(
     val vm = viewModel
     val items by vm.items.collectAsState()
     val uiState by vm.state.collectAsState()
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -53,7 +59,7 @@ fun ItemListScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(onClick = onPostClick, modifier = Modifier.weight(1f)) {
-                Text("发布物品")
+                Text(if (isEnglish) "Post item" else "发布物品")
             }
         }
         
@@ -65,13 +71,13 @@ fun ItemListScreen(
                 onClick = onMyClick,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("我的")
+                Text(if (isEnglish) "My" else "我的")
             }
             OutlinedButton(
                 onClick = onCameraClick,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("📷 拍照识别")
+                Text(if (isEnglish) "📷 Camera AI" else "📷 拍照识别")
             }
         }
 
@@ -83,7 +89,7 @@ fun ItemListScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CircularProgressIndicator()
-                    Text("加载中...", modifier = Modifier.padding(start = 8.dp))
+                    Text(if (isEnglish) "Loading..." else "加载中...", modifier = Modifier.padding(start = 8.dp))
                 }
             }
             is com.example.tradingplatform.ui.viewmodel.ItemUiState.Error -> {
@@ -95,14 +101,17 @@ fun ItemListScreen(
             else -> {
                 if (items.isEmpty()) {
                     Text(
-                        text = "暂无商品，点击上方按钮发布第一个商品吧！",
+                        text = if (isEnglish)
+                            "No items yet. Click the button above to post the first item!"
+                        else
+                            "暂无商品，点击上方按钮发布第一个商品吧！",
                         modifier = Modifier.padding(16.dp),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         items(items, key = { it.id }) { item ->
-                            ItemCard(item = item, onClick = { onItemClick(item) })
+                            ItemCard(item = item, isEnglish = isEnglish, onClick = { onItemClick(item) })
                         }
                     }
                 }
@@ -112,7 +121,7 @@ fun ItemListScreen(
 }
 
 @Composable
-fun ItemCard(item: Item, onClick: () -> Unit) {
+fun ItemCard(item: Item, isEnglish: Boolean, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,7 +130,10 @@ fun ItemCard(item: Item, onClick: () -> Unit) {
                     Log.d("ItemCard", "点击商品: ${item.id} - ${item.title}")
                     onClick()
                 }
-            )
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = ItemCardColor // 淡红色背景 / Light red background
+        )
     ) {
         Row(
             modifier = Modifier
@@ -139,14 +151,14 @@ fun ItemCard(item: Item, onClick: () -> Unit) {
                         .height(100.dp)
                 )
             } else {
-                // 占位图
+                // 占位图 / Placeholder image
                 Box(
                     modifier = Modifier
                         .width(100.dp)
                         .height(100.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("无图片", style = MaterialTheme.typography.bodySmall)
+                    Text(if (isEnglish) "No image" else "无图片", style = MaterialTheme.typography.bodySmall)
                 }
             }
             Column(modifier = Modifier.weight(1f)) {

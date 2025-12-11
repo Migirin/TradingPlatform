@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONArray
 
 /**
- * 课表初始化工具：从 assets 中的 JSON 导入课程数据到 Room
+ * 课表初始化工具：从 assets 中的 JSON 导入课程数据到 Room / Timetable initialization utility: import course data from JSON in assets to Room
  */
 object TimetableInitializer {
 
@@ -17,7 +17,7 @@ object TimetableInitializer {
     private const val ASSET_FILE_NAME = "timetable_courses_2025_2026.json"
 
     /**
-     * 如果课表表为空，则从 assets/timetable_courses_2025_2026.json 导入数据
+     * 如果课表表为空，则从 assets/timetable_courses_2025_2026.json 导入数据 / If timetable table is empty, import data from assets/timetable_courses_2025_2026.json
      */
     suspend fun ensureInitialized(context: Context) {
         withContext(Dispatchers.IO) {

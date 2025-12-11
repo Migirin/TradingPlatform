@@ -26,11 +26,9 @@ data class RecommendedItem(
 )
 
 /**
- * Local textbook recommendation repository based on timetable and posted items.
+ * 基于课表和已发布商品的本地教材推荐仓库 / Local textbook recommendation repository based on timetable and posted items
  *
- * This repository runs fully on device. It uses the student's timetable
- * to find relevant courses and then matches posted items by simple
- * keyword searching on title/description/category.
+ * 此仓库完全在设备上运行。它使用学生的课表来查找相关课程，然后通过简单的关键词搜索在标题/描述/类别中匹配已发布的商品。 / This repository runs fully on device. It uses the student's timetable to find relevant courses and then matches posted items by simple keyword searching on title/description/category.
  */
 class TextbookRecommendationRepository(
     private val context: Context? = null
@@ -46,9 +44,9 @@ class TextbookRecommendationRepository(
     private val authRepository: AuthRepository? = context?.let { AuthRepository(it) }
     private val wishlistRepository: WishlistRepository? = context?.let { WishlistRepository(it) }
     private val cetKeywords: List<String> = listOf(
-        // Chinese keywords
+        // 中文关键词 / Chinese keywords
         "四级", "六级", "四六级", "英语四级", "英语六级", "真题", "词汇", "听力",
-        // English keywords (stored in lowercase, matched in lowercase)
+        // 英文关键词（存储为小写，匹配时也使用小写）/ English keywords (stored in lowercase, matched in lowercase)
         "cet-4", "cet4", "cet 4",
         "cet-6", "cet6", "cet 6",
         "college english test", "english exam", "english test",
@@ -67,8 +65,8 @@ class TextbookRecommendationRepository(
     )
 
     /**
-     * Get recommended items for a given student ID at a specific date.
-     * This is intended for local demo and in-app recommendation.
+     * 获取给定学号在特定日期的推荐商品 / Get recommended items for a given student ID at a specific date
+     * 此方法用于本地演示和应用内推荐 / This is intended for local demo and in-app recommendation
      */
     suspend fun getRecommendedItemsForStudent(
         studentId: String,
@@ -81,7 +79,7 @@ class TextbookRecommendationRepository(
 
         return@withContext try {
             val effectiveNow = resolveEffectiveDate(now)
-            // 1. Query both term-1 and term-2 courses for this student
+            // 1. 查询该学生的第一学期和第二学期课程 / Query both term-1 and term-2 courses for this student
             val year = effectiveNow.year
             val dateForTerm1 = LocalDate.of(year, 10, 1) // term=1
             val dateForTerm2 = LocalDate.of(year, 3, 1)  // term=2
@@ -94,7 +92,7 @@ class TextbookRecommendationRepository(
                 return@withContext emptyList()
             }
 
-            // 2. Build keyword lists for each term and CET
+            // 2. 为每个学期和四六级构建关键词列表 / Build keyword lists for each term and CET
             val term1Keywords = buildKeywordsFromCourses(term1Courses)
             val term2Keywords = buildKeywordsFromCourses(term2Courses)
 
@@ -106,14 +104,14 @@ class TextbookRecommendationRepository(
                 return@withContext emptyList()
             }
 
-            // 3. Load items (prefer remote via ItemRepository)
+            // 3. 加载商品（优先通过 ItemRepository 从远程获取）/ Load items (prefer remote via ItemRepository)
             val allItems = itemRepository.listItems(limit = 200)
             if (allItems.isEmpty()) {
                 Log.d(TAG, "No items available for recommendation")
                 return@withContext emptyList()
             }
 
-            // 4. Filter out current user's own items
+            // 4. 过滤掉当前用户自己的商品 / Filter out current user's own items
             val currentUid = authRepository?.getCurrentUserUid()
             val currentEmail = authRepository?.getCurrentUserEmail()?.lowercase()
             val availableItems = allItems.filter { item ->
@@ -129,7 +127,7 @@ class TextbookRecommendationRepository(
                 return@withContext emptyList()
             }
 
-            // 5. Load current user's wishlist for personalization
+            // 5. 加载当前用户的愿望清单以进行个性化 / Load current user's wishlist for personalization
             val wishlistItems = try {
                 wishlistRepository?.getWishlistSync().orEmpty()
             } catch (e: Exception) {
@@ -152,7 +150,7 @@ class TextbookRecommendationRepository(
                 }
             }
 
-            // 6. Score items by timetable/CET keywords and wishlist personalization
+            // 6. 根据课表/四六级关键词和愿望清单个性化对商品进行评分 / Score items by timetable/CET keywords and wishlist personalization
             val weights = computeTermWeights(effectiveNow.monthValue)
             val scored = availableItems.map { item ->
                 val term1Score = if (term1Keywords.isNotEmpty()) {
@@ -228,18 +226,17 @@ class TextbookRecommendationRepository(
     }
 
     /**
-     * Compute weights for first-term (term 1) and second-term (term 2) courses
-     * based on the effective calendar month.
+     * 根据有效日历月份计算第一学期（term 1）和第二学期（term 2）课程的权重 / Compute weights for first-term (term 1) and second-term (term 2) courses based on the effective calendar month
      *
-     * Rules:
-     *  - For second term courses:
-     *      - Jan-Feb (1-2): highest weight
-     *      - Mar-Jun (3-6): medium weight
-     *      - Other months (7-12): lowest weight
-     *  - For first term courses:
-     *      - Jul-Aug (7-8): highest weight
-     *      - Sep-Dec (9-12): medium weight
-     *      - Other months (1-6): lowest weight
+     * 规则：/ Rules:
+     *  - 对于第二学期课程：/ For second term courses:
+     *      - 1-2月：最高权重 / Jan-Feb (1-2): highest weight
+     *      - 3-6月：中等权重 / Mar-Jun (3-6): medium weight
+     *      - 其他月份（7-12）：最低权重 / Other months (7-12): lowest weight
+     *  - 对于第一学期课程：/ For first term courses:
+     *      - 7-8月：最高权重 / Jul-Aug (7-8): highest weight
+     *      - 9-12月：中等权重 / Sep-Dec (9-12): medium weight
+     *      - 其他月份（1-6）：最低权重 / Other months (1-6): lowest weight
      */
     private fun computeTermWeights(month: Int): TermWeights {
         val low = 0.3
@@ -301,8 +298,8 @@ class TextbookRecommendationRepository(
     }
 
     /**
-     * Determine whether the given date falls into the CET exam preparation season.
-     * We treat February-May and August-November as CET seasons.
+     * 判断给定日期是否处于四六级考试准备季 / Determine whether the given date falls into the CET exam preparation season
+     * 我们将2-5月和8-11月视为四六级考试季 / We treat February-May and August-November as CET seasons
      */
     private fun isCetSeason(date: LocalDate): Boolean {
         val m = date.monthValue
@@ -310,8 +307,8 @@ class TextbookRecommendationRepository(
     }
 
     /**
-     * Build a list of simple keywords from course names.
-     * Both Chinese and English names are used as raw keywords.
+     * 从课程名称构建简单关键词列表 / Build a list of simple keywords from course names
+     * 中文和英文名称都用作原始关键词 / Both Chinese and English names are used as raw keywords
      */
     private fun buildKeywordsFromCourses(courses: List<com.example.tradingplatform.data.local.TimetableCourseEntity>): List<String> {
         val keywords = mutableSetOf<String>()
@@ -334,9 +331,8 @@ class TextbookRecommendationRepository(
     }
 
     /**
-     * Calculate a very simple keyword-based match score for an item.
-     * The score is the count of distinct keywords appearing in
-     * the item's title/description/category, normalized to [0, 1].
+     * 计算商品的简单基于关键词的匹配分数 / Calculate a very simple keyword-based match score for an item
+     * 分数是出现在商品标题/描述/类别中的不同关键词数量，归一化到 [0, 1] / The score is the count of distinct keywords appearing in the item's title/description/category, normalized to [0, 1]
      */
     private fun calculateMatchScore(item: Item, keywords: List<String>): Double {
         if (keywords.isEmpty()) return 0.0
@@ -362,7 +358,7 @@ class TextbookRecommendationRepository(
         }
 
         if (matches == 0) return 0.0
-        // Normalize score to [0, 1]
+        // 将分数归一化到 [0, 1] / Normalize score to [0, 1]
         return (matches.toDouble() / keywords.size).coerceIn(0.0, 1.0)
     }
 }

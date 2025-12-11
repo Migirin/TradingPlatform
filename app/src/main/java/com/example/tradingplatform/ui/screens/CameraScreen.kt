@@ -67,14 +67,14 @@ fun CameraScreen(
         ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     ) }
 
-    // 权限请求启动器
+    // 权限请求启动器 / Permission request launcher
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasPermission = isGranted
     }
 
-    // 首次进入时自动请求权限
+    // 首次进入时自动请求权限 / Auto request permission on first entry
     LaunchedEffect(Unit) {
         if (!hasPermission) {
             permissionLauncher.launch(Manifest.permission.CAMERA)
@@ -121,7 +121,7 @@ fun CameraPreview(
     var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
     var errorMessage: String? by remember { mutableStateOf(null) }
 
-    // 初始化相机提供者
+    // 初始化相机提供者 / Initialize camera provider
     LaunchedEffect(Unit) {
         try {
             val future = ProcessCameraProvider.getInstance(context)
@@ -142,7 +142,7 @@ fun CameraPreview(
         }
     }
 
-    // 清理资源
+    // 清理资源 / Cleanup resources
     DisposableEffect(Unit) {
         onDispose {
             cameraProvider?.unbindAll()
@@ -150,7 +150,7 @@ fun CameraPreview(
         }
     }
 
-    // 预览视图引用
+    // 预览视图引用 / Preview view reference
     var previewView: PreviewView? by remember { mutableStateOf(null) }
 
     AndroidView(
@@ -163,7 +163,7 @@ fun CameraPreview(
         },
         modifier = Modifier.fillMaxSize(),
         onRelease = {
-            // 释放时取消绑定
+            // 释放时取消绑定 / Unbind on release
             cameraProvider?.unbindAll()
             preview = null
             imageCapture = null
@@ -171,7 +171,7 @@ fun CameraPreview(
         }
     )
 
-    // 当相机提供者准备好后，绑定相机
+    // 当相机提供者准备好后，绑定相机 / Bind camera when camera provider is ready
     LaunchedEffect(cameraProvider, previewView) {
         if (cameraProvider != null && previewView != null && preview == null) {
             try {
@@ -180,10 +180,10 @@ fun CameraPreview(
                 val provider = cameraProvider!!
                 val view = previewView!!
                 
-                // 取消之前的绑定
+                // 取消之前的绑定 / Unbind previous bindings
                 provider.unbindAll()
 
-                // 创建预览
+                // 创建预览 / Create preview
                 val newPreview = Preview.Builder()
                     .build()
                     .also {
@@ -191,16 +191,16 @@ fun CameraPreview(
                     }
                 preview = newPreview
 
-                // 创建图像捕获
+                // 创建图像捕获 / Create image capture
                 val newImageCapture = ImageCapture.Builder()
                     .setTargetRotation(view.display.rotation)
                     .build()
                 imageCapture = newImageCapture
 
-                // 选择后置摄像头
+                // 选择后置摄像头 / Select back camera
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-                // 绑定到生命周期
+                // 绑定到生命周期 / Bind to lifecycle
                 provider.bindToLifecycle(
                     lifecycleOwner,
                     cameraSelector,
@@ -217,7 +217,7 @@ fun CameraPreview(
         }
     }
 
-    // 显示错误信息
+    // 显示错误信息 / Display error message
     errorMessage?.let { error ->
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -238,7 +238,7 @@ fun CameraPreview(
         }
     }
 
-    // 拍照按钮和返回按钮
+    // 拍照按钮和返回按钮 / Capture button and back button
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
@@ -282,7 +282,7 @@ private fun captureImage(
     
     imageCapture.takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
         override fun onCaptureSuccess(imageProxy: ImageProxy) {
-            // 在后台线程处理图片
+            // 在后台线程处理图片 / Process image in background thread
             executor.execute {
                 try {
                     val bitmap = imageProxyToBitmap(imageProxy)
@@ -291,7 +291,7 @@ private fun captureImage(
                     
                     val rotatedBitmap = rotateBitmap(bitmap, rotation)
                     
-                    // 切换到主线程调用回调
+                    // 切换到主线程调用回调 / Switch to main thread to call callback
                     android.os.Handler(android.os.Looper.getMainLooper()).post {
                         onImageCaptured(rotatedBitmap)
                     }
@@ -313,7 +313,7 @@ private fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap {
     val format = imageProxy.format
     android.util.Log.d("CameraScreen", "ImageProxy format: $format, planes: ${imageProxy.planes.size}")
     
-    // 如果是 JPEG 格式，直接解码
+    // 如果是 JPEG 格式，直接解码 / If JPEG format, decode directly
     if (format == ImageFormat.JPEG) {
         val buffer = imageProxy.planes[0].buffer
         val bytes = ByteArray(buffer.remaining())
@@ -322,7 +322,7 @@ private fun imageProxyToBitmap(imageProxy: ImageProxy): Bitmap {
             ?: throw IllegalStateException("无法解码 JPEG 图片")
     }
     
-    // 如果是 YUV_420_888 格式，转换为 Bitmap
+    // 如果是 YUV_420_888 格式，转换为 Bitmap / If YUV_420_888 format, convert to Bitmap
     if (format == ImageFormat.YUV_420_888) {
         if (imageProxy.planes.size < 3) {
             throw IllegalStateException("YUV 格式需要至少 3 个平面")

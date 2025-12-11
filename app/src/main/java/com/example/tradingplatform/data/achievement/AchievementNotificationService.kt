@@ -62,7 +62,6 @@ class AchievementNotificationService(
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-
             val authRepo = AuthRepository(context)
             val preferredLang = authRepo.getPreferredLanguage()
             val isEnglish = preferredLang == "EN"

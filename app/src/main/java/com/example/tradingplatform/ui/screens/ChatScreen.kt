@@ -30,6 +30,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.chat.ChatMessage
 import com.example.tradingplatform.ui.i18n.LocalAppStrings
+import com.example.tradingplatform.ui.theme.MessageBubbleOther
+import com.example.tradingplatform.ui.theme.MessageBubbleSelf
 import com.example.tradingplatform.ui.viewmodel.ChatViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -56,25 +58,25 @@ fun ChatScreen(
     val authRepo = remember { AuthRepository(context) }
     val listState = rememberLazyListState()
 
-    // 获取当前用户 UID
+    // 获取当前用户 UID / Get current user UID
     LaunchedEffect(Unit) {
         currentUserUid.value = authRepo.getCurrentUserUid()
     }
     
-    // 如果提供了接收者信息，显示对话详情；否则显示对话列表
+    // 如果提供了接收者信息，显示对话详情；否则显示对话列表 / If receiver info provided, show conversation detail; otherwise show conversation list
     LaunchedEffect(receiverUid, receiverEmail) {
         if (receiverUid != null && receiverEmail != null) {
             targetReceiverUid.value = receiverUid
             targetReceiverEmail.value = receiverEmail
-            // 加载与该用户的聊天记录
+            // 加载与该用户的聊天记录 / Load chat history with this user
             vm.loadMessagesWithUser(receiverUid)
         } else {
-            // 如果没有指定接收者，加载对话列表
+            // 如果没有指定接收者，加载对话列表 / If no receiver specified, load conversation list
             vm.loadConversations()
         }
     }
     
-    // 如果通过参数提供了接收者，立即设置（不等待LaunchedEffect）
+    // 如果通过参数提供了接收者，立即设置（不等待LaunchedEffect）/ If receiver provided via parameter, set immediately (don't wait for LaunchedEffect)
     if (receiverUid != null && receiverEmail != null) {
         if (targetReceiverUid.value.isBlank()) {
             targetReceiverUid.value = receiverUid
@@ -82,7 +84,7 @@ fun ChatScreen(
         }
     }
     
-    // 如果指定了接收者，显示对话详情；否则显示对话列表
+    // 如果指定了接收者，显示对话详情；否则显示对话列表 / If receiver specified, show conversation detail; otherwise show conversation list
     if (receiverUid != null && receiverEmail != null) {
         ChatDetailScreen(
             onBack = onBack,
@@ -118,7 +120,7 @@ fun ChatListScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // 顶部栏
+        // 顶部栏 / Top bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -135,7 +137,7 @@ fun ChatListScreen(
             }
         }
         
-        // 对话列表
+        // 对话列表 / Conversation list / Conversation list
         if (conversations.isEmpty()) {
             Column(
                 modifier = Modifier
@@ -244,9 +246,11 @@ fun ChatDetailScreen(
     listState: androidx.compose.foundation.lazy.LazyListState
 ) {
     val strings = LocalAppStrings.current
-    // 自动滚动到底部
-    LaunchedEffect(messages.size) {
+    // 自动滚动到底部（当消息列表更新时）/ Auto scroll to bottom (when message list updates)
+    LaunchedEffect(messages.size, messages.lastOrNull()?.id) {
         if (messages.isNotEmpty()) {
+            // 使用 kotlinx.coroutines.delay 确保布局完成后再滚动 / Use kotlinx.coroutines.delay to ensure layout completes before scrolling
+            kotlinx.coroutines.delay(100)
             listState.animateScrollToItem(messages.size - 1)
         }
     }
@@ -254,7 +258,7 @@ fun ChatDetailScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // 顶部栏
+        // 顶部栏 / Top bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -280,7 +284,7 @@ fun ChatDetailScreen(
             }
         }
 
-        // 消息列表
+        // 消息列表 / Message list
         if (messages.isEmpty()) {
             Column(
                 modifier = Modifier
@@ -302,19 +306,24 @@ fun ChatDetailScreen(
                 )
             }
         } else {
+            // 确保消息按时间升序排列（最早的在上，最新的在下）/ Ensure messages sorted by time ascending (oldest on top, newest at bottom)
+            val sortedMessages = remember(messages) {
+                messages.sortedBy { it.timestamp }
+            }
+            
             LazyColumn(
                 state = listState,
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(messages, key = { it.id }) { message ->
+                items(sortedMessages, key = { it.id }) { message ->
                     MessageCard(message = message, currentUserUid = currentUserUid)
                 }
             }
         }
 
-        // 发送消息区域
+        // 发送消息区域 / Send message area
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -369,9 +378,9 @@ fun MessageCard(
                 .padding(horizontal = 4.dp),
             colors = CardDefaults.cardColors(
                 containerColor = if (isMyMessage) {
-                    MaterialTheme.colorScheme.primaryContainer
+                    MessageBubbleSelf // 自己发出的消息：红色（饱和度略高于导航栏）/ Self message: red (slightly higher saturation than nav bar)
                 } else {
-                    MaterialTheme.colorScheme.surfaceVariant
+                    MessageBubbleOther // 对方发送的消息：灰白色（比背景白色稍暗）/ Other's message: off-white (slightly darker than white background)
                 }
             )
         ) {

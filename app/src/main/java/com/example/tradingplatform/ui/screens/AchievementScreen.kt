@@ -32,10 +32,10 @@ fun AchievementScreen(
     val unlockedCount = viewModel.getUnlockedCount()
     val totalCount = viewModel.getTotalCount()
 
-    // 获取所有成就类型
+    // 获取所有成就类型 / Get all achievement types
     val allAchievementTypes = AchievementType.values()
     
-    // 创建成就映射（已解锁的 + 未解锁的）
+    // 创建成就映射（已解锁的 + 未解锁的）/ Create achievement map (unlocked + locked)
     val achievementMap = achievements.associateBy { it.achievementType.id }
     val allAchievements = allAchievementTypes.map { type ->
         achievementMap[type.id] ?: UserAchievement(
@@ -53,7 +53,7 @@ fun AchievementScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 顶部标题和统计
+        // 顶部标题和统计 / Top title and statistics
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -68,7 +68,7 @@ fun AchievementScreen(
             }
         }
 
-        // 成就统计卡片
+        // 成就统计卡片 / Achievement statistics card
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -93,7 +93,7 @@ fun AchievementScreen(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-                // 进度条
+                // 进度条 / Progress bar
                 val progress = unlockedCount.toFloat() / totalCount.toFloat()
                 LinearProgressIndicator(
                     progress = progress,
@@ -107,7 +107,7 @@ fun AchievementScreen(
             }
         }
 
-        // 成就列表
+        // 成就列表 / Achievement list
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(allAchievements, key = { it.achievementType.id }) { achievement ->
                 AchievementCard(achievement = achievement)
@@ -206,7 +206,7 @@ fun AchievementCard(achievement: UserAchievement) {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 成就图标
+            // 成就图标 / Achievement icon
             Box(
                 modifier = Modifier
                     .size(64.dp)
@@ -236,7 +236,7 @@ fun AchievementCard(achievement: UserAchievement) {
                 )
             }
 
-            // 成就信息
+            // 成就信息 / Achievement information
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -257,7 +257,7 @@ fun AchievementCard(achievement: UserAchievement) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                // 进度条（对于需要多步完成的成就）
+                // 进度条（对于需要多步完成的成就）/ Progress bar (for multi-step achievements)
                 if (achievement.target > 1) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Row(
@@ -298,7 +298,7 @@ fun AchievementCard(achievement: UserAchievement) {
                         )
                     }
                 } else {
-                    // 单步成就
+                    // 单步成就 / Single-step achievement
                     if (isUnlocked) {
                         Surface(
                             shape = RoundedCornerShape(8.dp),

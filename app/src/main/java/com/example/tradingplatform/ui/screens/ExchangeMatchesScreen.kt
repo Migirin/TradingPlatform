@@ -58,13 +58,13 @@ fun ExchangeMatchesScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 顶部标题和返回按钮
+        // 顶部标题和返回按钮 / Top title and back button
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 左侧：返回按钮和标题
+            // 左侧：返回按钮和标题 / Left: back button and title
             Row(
                 modifier = Modifier.weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -83,7 +83,7 @@ fun ExchangeMatchesScreen(
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
             }
-            // 右侧：筛选和刷新按钮
+            // 右侧：筛选和刷新按钮 / Right: filter and refresh buttons
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -106,7 +106,7 @@ fun ExchangeMatchesScreen(
             }
         }
 
-        // 筛选面板
+        // 筛选面板 / Filter panel
         if (showFilters) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -223,7 +223,7 @@ fun ExchangeMatchesScreen(
                                 onMyItemClick = { onItemClick(match.myItem) },
                                 onOtherItemClick = { onItemClick(match.otherItem) },
                                 onSendMessage = {
-                                    // 导航到聊天界面，传递对方用户信息
+                                    // 导航到聊天界面，传递对方用户信息 / Navigate to chat screen, pass other user information
                                     val receiverUid = match.otherItem.ownerUid.ifEmpty { "unknown" }
                                     val receiverEmail = match.otherItem.ownerEmail.ifEmpty { "unknown@example.com" }
                                     onSendMessage(receiverUid, receiverEmail, match.otherItem.id, match.otherItem.title)
@@ -254,7 +254,7 @@ fun ExchangeMatchCard(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // 匹配分数
+            // 匹配分数 / Match score
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -284,7 +284,7 @@ fun ExchangeMatchCard(
 
             Divider()
 
-            // 我的商品信息
+            // 我的商品信息 / My item information
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = strings.exchangeMatchMyItem,
@@ -350,7 +350,7 @@ fun ExchangeMatchCard(
 
             Divider()
 
-            // 交换箭头
+            // 交换箭头 / Exchange arrow
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -365,7 +365,7 @@ fun ExchangeMatchCard(
 
             Divider()
 
-            // 其他用户的商品信息
+            // 其他用户的商品信息 / Other user's item information
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = strings.exchangeMatchOtherItem,
@@ -439,7 +439,7 @@ fun ExchangeMatchCard(
                 }
             }
 
-            // 匹配原因
+            // 匹配原因 / Match reasons
             if (match.matchReasons.isNotEmpty()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -461,7 +461,7 @@ fun ExchangeMatchCard(
                 }
             }
             
-            // 发消息按钮
+            // 发消息按钮 / Send message button
             Button(
                 onClick = onSendMessage,
                 modifier = Modifier.fillMaxWidth()

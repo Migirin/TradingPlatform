@@ -58,25 +58,25 @@ fun PostItemScreen(
     val lang = LocalAppLanguage.current
     val isEnglish = lang == AppLanguage.EN
 
-    // 图片选择器
+    // 图片选择器 / Image picker
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         imageUri.value = uri
     }
 
-    // 发布成功后返回
+    // 发布成功后返回 / Return after successful post
     var hasNavigated by remember { mutableStateOf(false) }
     LaunchedEffect(uiState) {
         android.util.Log.d("PostItemScreen", "uiState changed: $uiState, hasNavigated: $hasNavigated")
         if (uiState is ItemUiState.Success && !hasNavigated) {
             hasNavigated = true
             android.util.Log.d("PostItemScreen", "发布成功，准备导航")
-            // 延迟一下，让用户看到成功提示
+            // 延迟一下，让用户看到成功提示 / Delay a bit to let user see success message
             kotlinx.coroutines.delay(800)
             android.util.Log.d("PostItemScreen", "调用 onDone()")
-            vm.resetState() // 先重置状态
-            onDone() // 然后导航返回
+            vm.resetState() // 先重置状态 / Reset state first
+            onDone() // 然后导航返回 / Then navigate back
         }
     }
 
@@ -92,7 +92,7 @@ fun PostItemScreen(
             style = MaterialTheme.typography.headlineSmall
         )
 
-        // 图片选择
+        // 图片选择 / Image selection
         if (imageUri.value != null) {
             Image(
                 painter = rememberAsyncImagePainter(imageUri.value),

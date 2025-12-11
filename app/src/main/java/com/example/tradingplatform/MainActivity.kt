@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tradingplatform.data.auth.TestUserSeeder
 import com.example.tradingplatform.data.items.SampleItemSeeder
-import com.example.tradingplatform.data.auth.AuthRepository
 import com.example.tradingplatform.data.timetable.TimetableInitializer
 import com.example.tradingplatform.ui.i18n.AppLanguage
 import com.example.tradingplatform.ui.i18n.LocalAppLanguage
@@ -46,42 +46,25 @@ class MainActivity : ComponentActivity() {
                         AppLanguage.EN -> enStrings
                     }
                 ) {
-                    val context = LocalContext.current
-
-                    LaunchedEffect(Unit) {
-                        val authRepo = AuthRepository(context)
-                        when (authRepo.getPreferredLanguage()) {
-                            "EN" -> languageState.value = AppLanguage.EN
-                            "ZH" -> languageState.value = AppLanguage.ZH
-                        }
-                    }
-
-                    LaunchedEffect(languageState.value) {
-                        val authRepo = AuthRepository(context)
-                        val code = if (languageState.value == AppLanguage.EN) "EN" else "ZH"
-                        authRepo.setPreferredLanguage(code)
-                    }
-
-                    // ViewModel handling wishlist data and price alerts
+                    // 价格提醒检查 / Price alert check
                     val wishlistViewModel: WishlistViewModel = viewModel()
-                    // ViewModel handling achievement progress and unlock status
+                    // 成就检查 / Achievement check
                     val achievementViewModel: AchievementViewModel = viewModel()
+                    val context = LocalContext.current
                     LaunchedEffect(Unit) {
-                        // Initialize timetable data (import from assets on first app launch only)
+                        // 初始化测试用户（如果不存在则创建）/ Initialize test users (create if not exist)
+                        TestUserSeeder.ensureTestUsers(context)
+                        // 初始化课表课程数据（仅在首次运行时从 assets 导入）/ Initialize timetable course data (import from assets only on first run)
                         TimetableInitializer.ensureInitialized(context)
-                        // Seed sample items (only when the local items table is empty)
+                        // 初始化示例商品数据（仅在本地 items 表为空时插入）/ Initialize sample item data (insert only when local items table is empty)
                         SampleItemSeeder.ensureSampleItems(context)
-                        // On app start, check all wishlist price alerts and trigger notifications if needed
+                        // 应用启动时检查一次价格 / Check price alerts once on app startup
                         wishlistViewModel.checkPriceAlerts()
-                        // On app start, check and unlock achievements based on current usage data
+                        // 检查成就 / Check achievements
                         achievementViewModel.checkAchievements()
                     }
 
-                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        AppNavHost(
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
+                    AppNavHost()
                 }
             }
         }

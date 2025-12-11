@@ -32,7 +32,7 @@ class ItemViewModel(
     private val _state = MutableStateFlow<ItemUiState>(ItemUiState.Idle)
     val state: StateFlow<ItemUiState> = _state
     
-    // 允许外部重置状态（用于导航后清理）
+    // 允许外部重置状态（用于导航后清理）/ Allow external state reset (for cleanup after navigation)
     fun resetState() {
         _state.value = ItemUiState.Idle
     }
@@ -43,19 +43,19 @@ class ItemViewModel(
     private val _recommendedItems = MutableStateFlow<List<RecommendedItem>>(emptyList())
     val recommendedItems: StateFlow<List<RecommendedItem>> = _recommendedItems
     
-    // 当前选中的商品（用于详情页）
+    // 当前选中的商品（用于详情页）/ Currently selected item (for detail page)
     private val _selectedItem = MutableStateFlow<Item?>(null)
     val selectedItem: StateFlow<Item?> = _selectedItem
 
     /**
-     * 根据ID获取商品
+     * 根据ID获取商品 / Get item by ID
      */
     fun getItemById(itemId: String): Item? {
         return _items.value.find { it.id == itemId }
     }
     
     /**
-     * 设置当前选中的商品
+     * 设置当前选中的商品 / Set currently selected item
      */
     fun setSelectedItem(item: Item) {
         Log.d("ItemViewModel", "设置选中商品: ${item.id} - ${item.title}")
@@ -63,7 +63,7 @@ class ItemViewModel(
     }
     
     /**
-     * 获取当前选中的商品
+     * 获取当前选中的商品 / Get currently selected item
      */
     fun getSelectedItem(): Item? {
         return _selectedItem.value
@@ -104,9 +104,9 @@ class ItemViewModel(
                 repo.addItem(item, imageUri)
                 Log.d("ItemViewModel", "商品发布成功，设置状态为 Success")
                 _state.value = ItemUiState.Success
-                // 重新加载列表（不重置状态）
+                // 重新加载列表（不重置状态）/ Reload list (without resetting state)
                 loadItemsWithoutStateReset()
-                // 检查成就
+                // 检查成就 / Check achievements
                 achievementRepo.checkAndGrantAchievements()
                 Log.d("ItemViewModel", "发布流程完成，状态: ${_state.value}")
             } catch (e: Exception) {
@@ -117,7 +117,7 @@ class ItemViewModel(
     }
     
     /**
-     * 加载商品列表但不重置状态（用于发布成功后刷新列表）
+     * 加载商品列表但不重置状态（用于发布成功后刷新列表）/ Load item list without resetting state (for refreshing list after successful post)
      */
     private fun loadItemsWithoutStateReset() {
         viewModelScope.launch {
@@ -127,19 +127,19 @@ class ItemViewModel(
                 Log.d("ItemViewModel", "商品列表已刷新，共 ${itemsList.size} 个商品")
             } catch (e: Exception) {
                 Log.e("ItemViewModel", "刷新商品列表失败", e)
-                // 不改变当前状态
+                // 不改变当前状态 / Don't change current state
             }
         }
     }
 
     /**
-     * 删除商品（仅开发者模式可用）
+     * 删除商品（仅开发者模式可用）/ Delete item (only available in developer mode)
      */
     fun deleteItem(itemId: String) {
         _state.value = ItemUiState.Loading
         viewModelScope.launch {
             try {
-                // 检查是否为开发者模式（未登录）
+                // 检查是否为开发者模式（未登录）/ Check if developer mode (not logged in)
                 val isDevMode = !authRepo.isLoggedIn()
                 
                 if (!isDevMode) {
@@ -149,10 +149,10 @@ class ItemViewModel(
                 }
                 
                 repo.deleteItem(itemId)
-                // 从列表中移除
+                // 从列表中移除 / Remove from list
                 _items.value = _items.value.filter { it.id != itemId }
                 _state.value = ItemUiState.Success
-                // 重新加载列表
+                // 重新加载列表 / Reload list
                 loadItems()
             } catch (e: Exception) {
                 Log.e("ItemViewModel", "删除商品失败", e)

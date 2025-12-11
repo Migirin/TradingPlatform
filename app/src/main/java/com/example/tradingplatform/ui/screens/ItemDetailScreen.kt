@@ -61,7 +61,7 @@ fun ItemDetailScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        // 顶部返回按钮
+        // 顶部返回按钮 / Top back button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -78,7 +78,7 @@ fun ItemDetailScreen(
             }
         }
 
-        // 商品图片
+        // 商品图片 / Item image
         if (item.imageUrl.isNotEmpty()) {
             Image(
                 painter = rememberAsyncImagePainter(item.imageUrl),
@@ -111,14 +111,14 @@ fun ItemDetailScreen(
             }
         }
 
-        // 商品信息
+        // 商品信息 / Item information
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(PaddingValues(16.dp)),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 标题和价格
+            // 标题和价格 / Title and price
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     text = item.title,
@@ -144,7 +144,7 @@ fun ItemDetailScreen(
                 )
             }
 
-            // 描述
+            // 描述 / Description
             if (item.description.isNotEmpty()) {
                 Column {
                     Text(
@@ -160,7 +160,7 @@ fun ItemDetailScreen(
                 }
             }
 
-            // 商品故事/背景墙（特殊样式展示）
+            // 商品故事/背景墙（特殊样式展示）/ Item story/background wall (special style display)
             if (item.story.isNotEmpty()) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -187,7 +187,7 @@ fun ItemDetailScreen(
                         Column(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            // 标题和图标
+                            // 标题和图标 / Title and icon
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -206,7 +206,7 @@ fun ItemDetailScreen(
                                 )
                             }
                             
-                            // 故事内容
+                            // 故事内容 / Story content
                             Text(
                                 text = item.story,
                                 style = MaterialTheme.typography.bodyLarge,
@@ -218,7 +218,7 @@ fun ItemDetailScreen(
                 }
             }
 
-            // 商品信息卡片
+            // 商品信息卡片 / Item information card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -274,7 +274,7 @@ fun ItemDetailScreen(
                 }
             }
 
-            // 操作按钮
+            // 操作按钮 / Action buttons
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -290,7 +290,7 @@ fun ItemDetailScreen(
                         Text(if (isEnglish) "Contact seller" else "联系卖家")
                     }
                 }
-                // 只有不是自己的商品才能加入愿望清单
+                // 只有不是自己的商品才能加入愿望清单 / Only items that are not own can be added to wishlist
                 if (!isOwnItem) {
                     OutlinedButton(
                         onClick = onAddToWishlist,
@@ -299,7 +299,7 @@ fun ItemDetailScreen(
                         Text(if (isEnglish) "Add to wishlist" else "加入愿望清单")
                     }
                 }
-                // 开发者模式显示删除按钮
+                // 开发者模式显示删除按钮 / Developer mode shows delete button
                 if (isDevMode && onDelete != null) {
                     Button(
                         onClick = onDelete,

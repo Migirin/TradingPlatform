@@ -30,12 +30,12 @@ fun WishlistScreen(
     val lang = LocalAppLanguage.current
     val isEnglish = lang == AppLanguage.EN
     
-    // 调试日志
+    // 调试日志 / Debug log
     LaunchedEffect(wishlist.size) {
         android.util.Log.d("WishlistScreen", "愿望清单数量: ${wishlist.size}")
     }
     
-    // 显示错误状态
+    // 显示错误状态 / Display error state
     if (uiState is com.example.tradingplatform.ui.viewmodel.WishlistUiState.Error) {
         val errorMessage = (uiState as com.example.tradingplatform.ui.viewmodel.WishlistUiState.Error).message
         Card(
@@ -60,7 +60,7 @@ fun WishlistScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 顶部标题和按钮
+        // 顶部标题和按钮 / Top title and button
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -75,7 +75,7 @@ fun WishlistScreen(
             }
         }
 
-        // 操作按钮
+        // 操作按钮 / Action buttons
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -88,7 +88,7 @@ fun WishlistScreen(
             }
         }
 
-        // 愿望清单列表
+        // 愿望清单列表 / Wishlist list
         if (wishlist.isEmpty()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),

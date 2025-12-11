@@ -37,15 +37,15 @@ fun SingleItemMatchesScreen(
     val lang = LocalAppLanguage.current
     val isEnglish = lang == AppLanguage.EN
     
-    // 获取当前匹配的愿望清单项
+    // Get the wishlist item we are matching for
     val targetWish = wishlist.firstOrNull { it.id == wishlistItemId }
     
     var minScore by remember { mutableStateOf(30.0) }
     var showFilters by remember { mutableStateOf(false) }
 
     LaunchedEffect(wishlistItemId) {
-        // 注意：findMatchesForWishlistItem 已废弃，现在只匹配商品
-        // 此功能暂时保留但不会返回结果
+        // Note: findMatchesForWishlistItem is deprecated; now we only match concrete items
+        // This function is kept for compatibility but only item-based matching is used
         viewModel.findMatchesForItem(wishlistItemId, minScore = minScore)
     }
 
@@ -55,7 +55,7 @@ fun SingleItemMatchesScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 顶部标题
+        // Top title
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -90,7 +90,7 @@ fun SingleItemMatchesScreen(
             }
         }
 
-        // 筛选面板
+        // Filter panel
         if (showFilters) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -205,7 +205,7 @@ fun SingleItemMatchesScreen(
                         }
                     }
                 } else {
-                    // 显示匹配的愿望清单项信息
+                    // Display information of the wishlist item we are matching
                     if (targetWish != null) {
                         Card(
                             modifier = Modifier.fillMaxWidth(),

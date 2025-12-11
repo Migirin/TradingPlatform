@@ -83,7 +83,7 @@ class ChatViewModel(
             try {
                 repo.sendMessage(receiverUid, receiverEmail, content, itemId, itemTitle)
                 _state.value = ChatUiState.SendSuccess
-                // 检查成就
+                // 检查成就 / Check achievements
                 achievementRepo.checkAndGrantAchievements()
             } catch (e: Exception) {
                 _state.value = ChatUiState.Error(e.message ?: "发送消息失败")

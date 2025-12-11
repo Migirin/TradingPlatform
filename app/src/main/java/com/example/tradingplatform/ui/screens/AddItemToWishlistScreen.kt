@@ -21,13 +21,13 @@ fun AddItemToWishlistScreen(
     onDone: () -> Unit,
     viewModel: WishlistViewModel = viewModel()
 ) {
-    val lang = LocalAppLanguage.current
-    val isEnglish = lang == AppLanguage.EN
     val targetPrice = remember { mutableStateOf(item.price.toString()) }
     val enablePriceAlert = remember { mutableStateOf(true) }
     val uiState by viewModel.state.collectAsState()
+    val lang = LocalAppLanguage.current
+    val isEnglish = lang == AppLanguage.EN
 
-    // 发布成功后返回
+    // 发布成功后返回 / Return after successful submission
     LaunchedEffect(uiState is com.example.tradingplatform.ui.viewmodel.WishlistUiState.Success) {
         if (uiState is com.example.tradingplatform.ui.viewmodel.WishlistUiState.Success) {
             kotlinx.coroutines.delay(500)
@@ -48,7 +48,7 @@ fun AddItemToWishlistScreen(
             style = MaterialTheme.typography.headlineSmall
         )
 
-        // 商品信息预览
+        // 商品信息预览 / Item information preview
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -81,7 +81,7 @@ fun AddItemToWishlistScreen(
             }
         }
 
-        // 降价提醒设置
+        // 降价提醒设置 / Price drop alert settings
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -136,7 +136,7 @@ fun AddItemToWishlistScreen(
         when (val s = uiState) {
             is com.example.tradingplatform.ui.viewmodel.WishlistUiState.Error -> {
                 Text(
-                    text = s.message,
+                    text = if (isEnglish) "Error: ${s.message}" else "错误：${s.message}",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -147,10 +147,7 @@ fun AddItemToWishlistScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                    Text(
-                        text = if (isEnglish) "Adding..." else "正在添加...",
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
+                    Text(if (isEnglish) "Adding..." else "正在添加...", modifier = Modifier.padding(start = 8.dp))
                 }
             }
             com.example.tradingplatform.ui.viewmodel.WishlistUiState.Success -> {
@@ -196,7 +193,7 @@ fun AddItemToWishlistScreen(
                 enabled = (!enablePriceAlert.value || targetPrice.value.toDoubleOrNull() != null) &&
                         uiState !is com.example.tradingplatform.ui.viewmodel.WishlistUiState.Loading
             ) {
-                Text("添加")
+                Text(if (isEnglish) "Add" else "添加")
             }
         }
     }

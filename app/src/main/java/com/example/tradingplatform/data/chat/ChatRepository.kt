@@ -38,7 +38,7 @@ class ChatRepository(
     private val authRepo: AuthRepository? = context?.let { AuthRepository(it) }
 
     /**
-     * 发送消息
+     * 发送消息 / Send message
      */
     suspend fun sendMessage(
         receiverUid: String,
@@ -51,7 +51,7 @@ class ChatRepository(
             throw IllegalStateException("数据库未初始化")
         }
 
-        // 获取当前用户信息
+        // 获取当前用户信息 / Get current user information
         val currentEmail = authRepo?.getCurrentUserEmail() ?: "dev@example.com"
         val currentUid = authRepo?.getCurrentUserUid() ?: "dev_user_${System.currentTimeMillis()}"
 
@@ -73,7 +73,7 @@ class ChatRepository(
     }
 
     /**
-     * 获取当前用户的所有消息（实时监听）
+     * 获取当前用户的所有消息（实时监听）/ Get all messages for current user (real-time monitoring)
      */
     fun getMessagesFlow(): Flow<List<ChatMessage>> {
         if (chatMessageDao == null) {
@@ -90,7 +90,7 @@ class ChatRepository(
     }
 
     /**
-     * 获取与特定用户的聊天消息
+     * 获取与特定用户的聊天消息 / Get chat messages with specific user
      */
     fun getChatWithUserFlow(otherUserUid: String): Flow<List<ChatMessage>> {
         if (chatMessageDao == null) {
@@ -107,7 +107,7 @@ class ChatRepository(
     }
     
     /**
-     * 获取所有对话列表（按最后消息时间排序）
+     * 获取所有对话列表（按最后消息时间排序）/ Get all conversation list (sorted by last message time)
      */
     fun getConversationsFlow(): Flow<List<ChatConversation>> {
         if (chatMessageDao == null) {
@@ -123,7 +123,7 @@ class ChatRepository(
                     .map { entities ->
                         entities.map { entity ->
                             val message = entity.toChatMessage()
-                            // 确定对方用户信息
+                            // 确定对方用户信息 / Determine other user information
                             val otherUid = if (message.senderUid == currentUid) {
                                 message.receiverUid
                             } else {
@@ -151,7 +151,7 @@ class ChatRepository(
 }
 
 /**
- * 对话列表项
+ * 对话列表项 / Conversation list item
  */
 data class ChatConversation(
     val otherUserUid: String,

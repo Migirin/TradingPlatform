@@ -10,15 +10,15 @@ import java.util.Date
 import java.util.UUID
 
 /**
- * Seed sample textbook items into the local database for demo and testing.
+ * Seed sample textbook items into the local database for demo and testing. / 将示例教材商品种子数据插入本地数据库，用于演示和测试
  */
 object SampleItemSeeder {
 
     private const val TAG = "SampleItemSeeder"
 
     /**
-     * Ensure there are some sample items in the local database.
-     * Only inserts data when the items table is empty.
+     * Ensure there are some sample items in the local database. / 确保本地数据库中有一些示例商品
+     * Only inserts data when the items table is empty. / 仅在商品表为空时插入数据
      */
     suspend fun ensureSampleItems(context: Context) {
         withContext(Dispatchers.IO) {
@@ -33,7 +33,7 @@ object SampleItemSeeder {
 
             val now = Date().time
             val sampleItems = listOf(
-                // ==== 通用基础教材（与多个课程匹配）====
+                // ==== 通用基础教材（与多个课程匹配）==== / ==== Common basic textbooks (matching multiple courses) ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "Calculus textbook (高等数学)",
@@ -77,7 +77,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== SE 大一上 (term1, grade 1) ==== 
+                // ==== SE 大一上 (term1, grade 1) ==== / ==== SE Year 1 Term 1 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "SE 大一上 高等数学（工）1 教材",
@@ -121,7 +121,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== SE 大一下 (term2, grade 1) ====
+                // ==== SE 大一下 (term2, grade 1) ==== / ==== SE Year 1 Term 2 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "SE 大一下 大学物理Ⅰ 教材",
@@ -165,7 +165,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== SE 大二上 (grade 2 term1) ====
+                // ==== SE 大二上 (grade 2 term1) ==== / ==== SE Year 2 Term 1 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "SE 大二上 概率论与数理统计 教材",
@@ -209,7 +209,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== SE 大二下 (grade 2 term2) ====
+                // ==== SE 大二下 (grade 2 term2) ==== / ==== SE Year 2 Term 2 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "SE 大二下 操作系统 教材",
@@ -253,7 +253,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== SE 大三上 (grade 3 term1) ====
+                // ==== SE 大三上 (grade 3 term1) ==== / ==== SE Year 3 Term 1 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "SE 大三上 软件工程方法学 教材",
@@ -297,7 +297,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== SE 大三下 (grade 3 term2) ====
+                // ==== SE 大三下 (grade 3 term2) ==== / ==== SE Year 3 Term 2 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "SE 大三下 计算机图形学 教材",
@@ -341,7 +341,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== SE 大四上 (grade 4 term1) ====
+                // ==== SE 大四上 (grade 4 term1) ==== / ==== SE Year 4 Term 1 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "SE 大四上 设计模式 教材",
@@ -385,7 +385,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== SE 大四下 (grade 4 term2) ====
+                // ==== SE 大四下 (grade 4 term2) ==== / ==== SE Year 4 Term 2 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "SE 大四下 计算机系统性能 教材",
@@ -429,7 +429,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== FIN 大一上 (FIN grade1 term1) ====
+                // ==== FIN 大一上 (FIN grade1 term1) ==== / ==== FIN Year 1 Term 1 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "FIN 大一上 高等数学1 教材",
@@ -473,7 +473,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== FIN 大一下 (grade1 term2) ====
+                // ==== FIN 大一下 (grade1 term2) ==== / ==== FIN Year 1 Term 2 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "FIN 大一下 爱尔兰文化 读本",
@@ -517,7 +517,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== FIN 大二上 (grade2 term1) ====
+                // ==== FIN 大二上 (grade2 term1) ==== / ==== FIN Year 2 Term 1 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "FIN 大二上 财务会计学导论 教材",
@@ -561,7 +561,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== FIN 大二下 (grade2 term2) ====
+                // ==== FIN 大二下 (grade2 term2) ==== / ==== FIN Year 2 Term 2 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "FIN 大二下 宏观经济学原理 教材",
@@ -605,7 +605,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== FIN 大三上 (grade3 term1) ====
+                // ==== FIN 大三上 (grade3 term1) ==== / ==== FIN Year 3 Term 1 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "FIN 大三上 博弈论 教材",
@@ -649,7 +649,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== FIN 大三下 (grade3 term2) ====
+                // ==== FIN 大三下 (grade3 term2) ==== / ==== FIN Year 3 Term 2 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "FIN 大三下 线性建模 教材",
@@ -693,7 +693,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== FIN 大四上 (grade4 term1) ====
+                // ==== FIN 大四上 (grade4 term1) ==== / ==== FIN Year 4 Term 1 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "FIN 大四上 国际金融管理 教材",
@@ -737,7 +737,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== FIN 大四下 (grade4 term2) ====
+                // ==== FIN 大四下 (grade4 term2) ==== / ==== FIN Year 4 Term 2 ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "FIN 大四下 发展经济学 教材",
@@ -781,7 +781,7 @@ object SampleItemSeeder {
                     updatedAt = now
                 ),
 
-                // ==== 四六级相关教材 / 资料 / 耳机 demo ====
+                // ==== 四六级相关教材 / 资料 / 耳机 demo ==== / ==== CET-4/6 related textbooks / materials / headset demo ====
                 ItemEntity(
                     id = UUID.randomUUID().toString(),
                     title = "英语四级真题合集 2020-2024 (CET-4)",

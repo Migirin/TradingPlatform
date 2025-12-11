@@ -115,4 +115,3 @@ fun AchievementType.getDescription(isEnglish: Boolean): String {
         AchievementType.LOYAL_USER -> if (isEnglish) "Use the app for 30 consecutive days" else "连续使用30天"
     }
 }
-

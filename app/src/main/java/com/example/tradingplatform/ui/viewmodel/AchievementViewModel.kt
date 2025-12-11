@@ -38,7 +38,7 @@ class AchievementViewModel(
     }
 
     /**
-     * 检查并授予成就
+     * 检查并授予成就 / Check and grant achievements
      */
     fun checkAchievements() {
         viewModelScope.launch {
@@ -51,14 +51,14 @@ class AchievementViewModel(
     }
 
     /**
-     * 获取已解锁的成就数量
+     * 获取已解锁的成就数量 / Get count of unlocked achievements
      */
     fun getUnlockedCount(): Int {
         return achievements.value.count { it.isUnlocked }
     }
 
     /**
-     * 获取总成就数量
+     * 获取总成就数量 / Get total achievement count
      */
     fun getTotalCount(): Int {
         return com.example.tradingplatform.data.achievement.AchievementType.values().size

@@ -49,12 +49,24 @@ import com.example.tradingplatform.ui.screens.ChangePasswordScreen
 import com.example.tradingplatform.ui.screens.RecognitionResultScreen
 import com.example.tradingplatform.data.vision.ApiConfig
 import com.example.tradingplatform.ui.i18n.LocalAppStrings
+import com.example.tradingplatform.ui.i18n.AppLanguage
+import com.example.tradingplatform.ui.i18n.LocalAppLanguage
 import android.graphics.Bitmap
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import com.example.tradingplatform.ui.viewmodel.ItemViewModel
 import com.example.tradingplatform.data.auth.AuthRepository
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.PathFillType
+import androidx.compose.ui.graphics.vector.path
+import androidx.compose.ui.unit.dp
+import com.example.tradingplatform.ui.theme.LowSaturationRed
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 object Routes {
     const val AUTH = "auth"
@@ -87,22 +99,41 @@ fun AppNavHost(
     startDestination: String = Routes.AUTH,
     modifier: Modifier = Modifier
 ) {
-    // 共享的 ViewModel 实例（在导航作用域外创建）
+    // 共享的 ViewModel 实例（在导航作用域外创建）/ Shared ViewModel instance (created outside navigation scope)
     val sharedViewModel: ItemViewModel = viewModel()
     val context = LocalContext.current
     val authRepo = AuthRepository(context)
+    val strings = LocalAppStrings.current
     
-    // 使用 LaunchedEffect 异步获取开发者模式状态
+    // 使用 LaunchedEffect 异步获取开发者模式状态 / Use LaunchedEffect to asynchronously get developer mode status
     var isDevMode by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         isDevMode = !authRepo.isLoggedIn()
     }
     
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
+    // 获取当前路由 / Get current route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route ?: startDestination
+    
+    // 判断是否应该显示底部导航栏（登录页面不显示）/ Determine if bottom navigation bar should be shown (not shown on login page)
+    val shouldShowBottomBar = currentRoute != Routes.AUTH
+    
+    Scaffold(
+        bottomBar = {
+            if (shouldShowBottomBar) {
+                BottomNavigationBar(
+                    currentRoute = currentRoute,
+                    navController = navController
+                )
+            }
+        },
         modifier = modifier
-    ) {
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = Modifier.padding(innerPadding)
+        ) {
         composable(Routes.AUTH) { 
             AuthScreen(onAuthenticated = { 
                 navController.navigate(Routes.ITEMS) { 
@@ -115,7 +146,7 @@ fun AppNavHost(
                 viewModel = sharedViewModel,
                 onItemClick = { item ->
                     Log.d("AppNav", "点击商品，准备导航: ${item.id} - ${item.title}")
-                    sharedViewModel.setSelectedItem(item) // 保存选中的商品
+                    sharedViewModel.setSelectedItem(item) // 保存选中的商品 / Save selected item
                     try {
                         val route = Routes.itemDetail(item.id)
                         Log.d("AppNav", "导航到: $route")
@@ -135,30 +166,30 @@ fun AppNavHost(
             PostItemScreen(
                 viewModel = sharedViewModel,
                 onDone = { 
-                    // 发布成功后，导航到"我的"界面的"我出售的"标签页
+                    // 发布成功后，导航到"我的"界面的"我出售的"标签页 / After successful post, navigate to "My" screen's "My Sold" tab
                     Log.d("AppNav", "发布成功，准备导航到 MY_SOLD")
-                    // 先刷新商品列表
+                    // 先刷新商品列表 / Refresh item list first
                     sharedViewModel.loadItems()
-                    // 在协程中执行导航，确保在正确的上下文中
+                    // 在协程中执行导航，确保在正确的上下文中 / Execute navigation in coroutine to ensure correct context
                     coroutineScope.launch {
-                        kotlinx.coroutines.delay(100) // 稍微延迟确保状态更新完成
+                        kotlinx.coroutines.delay(100) // 稍微延迟确保状态更新完成 / Slight delay to ensure state update completes
                         try {
                             navController.navigate(Routes.MY_SOLD) {
-                                // 清除返回栈直到主界面（不包括主界面）
+                                // 清除返回栈直到主界面（不包括主界面）/ Clear back stack until main screen (excluding main screen)
                                 popUpTo(Routes.ITEMS) { inclusive = false }
-                                // 避免重复添加相同的目标
+                                // 避免重复添加相同的目标 / Avoid duplicate addition of same destination
                                 launchSingleTop = true
                             }
                             Log.d("AppNav", "导航到 MY_SOLD 完成")
                         } catch (e: Exception) {
                             Log.e("AppNav", "导航失败", e)
-                            // 如果导航失败，至少返回到主界面
+                            // 如果导航失败，至少返回到主界面 / If navigation fails, at least return to main screen
                             navController.popBackStack(Routes.ITEMS, inclusive = false)
                         }
                     }
                 },
                 onCancel = {
-                    // 点击取消时，返回到首页
+                    // 点击取消时，返回到首页 / When cancel is clicked, return to home page
                     Log.d("AppNav", "取消发布，返回到首页")
                     navController.popBackStack(Routes.ITEMS, inclusive = false)
                 }
@@ -196,7 +227,7 @@ fun AppNavHost(
         composable(Routes.WISHLIST) {
             WishlistScreen(
                 onBack = { navController.popBackStack() },
-                onFindMatches = {}, // 已移除，不再使用
+                onFindMatches = {}, // 已移除，不再使用 / Removed, no longer used
                 onFindMatchesForItem = { wishlistItemId ->
                     navController.navigate("single_item_matches/$wishlistItemId")
                 },
@@ -225,7 +256,7 @@ fun AppNavHost(
                         recognitionType = recognitionType
                     )
                     
-                    // 识别模式选择（浮动在相机预览上方）
+                    // 识别模式选择（浮动在相机预览上方）/ Recognition mode selection (floating above camera preview)
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -262,7 +293,7 @@ fun AppNavHost(
                                 }
                             }
                             
-                            // 如果选择了未配置的选项，自动切换到设备端
+                            // 如果选择了未配置的选项，自动切换到设备端 / If unconfigured option is selected, automatically switch to device-side
                             LaunchedEffect(recognitionType) {
                                 when (recognitionType) {
                                     com.example.tradingplatform.ui.viewmodel.RecognitionType.THIRD_PARTY_BAIDU -> {
@@ -275,7 +306,7 @@ fun AppNavHost(
                                             recognitionType = com.example.tradingplatform.ui.viewmodel.RecognitionType.ML_KIT_DEVICE
                                         }
                                     }
-                                    else -> { /* 其他选项正常 */ }
+                                    else -> { /* 其他选项正常 / Other options are normal */ }
                                 }
                             }
                         }
@@ -374,18 +405,19 @@ fun AppNavHost(
                 LaunchedEffect(Unit) {
                     navController.popBackStack()
                 }
-                Text("商品不存在")
+                val isEnglish = LocalAppLanguage.current == AppLanguage.EN
+                Text(if (isEnglish) "Item not found" else "商品不存在")
             }
         }
         composable(
             route = Routes.ITEM_DETAIL,
             arguments = listOf(navArgument("itemId") { type = NavType.StringType })
         ) { backStackEntry ->
-            // 优先使用保存的选中商品
+            // 优先使用保存的选中商品 / Prefer using saved selected item
             var item = sharedViewModel.getSelectedItem()
             Log.d("AppNav", "详情页 - 保存的商品: ${item?.id} - ${item?.title}")
             
-            // 如果保存的商品不匹配，尝试通过ID查找
+            // 如果保存的商品不匹配，尝试通过ID查找 / If saved item doesn't match, try to find by ID
             val itemId = backStackEntry.arguments?.getString("itemId")
             Log.d("AppNav", "详情页 - 路由中的 itemId: $itemId")
             
@@ -399,15 +431,16 @@ fun AppNavHost(
             
             if (item == null) {
                 Log.w("AppNav", "找不到商品，返回列表页")
-                // 如果找不到商品，返回列表页
+                // 如果找不到商品，返回列表页 / If item not found, return to list page
                 LaunchedEffect(Unit) {
                     navController.popBackStack()
                 }
-                // 显示一个临时提示
-                Text("正在返回...")
+                // 显示一个临时提示 / Show a temporary message
+                val isEnglish = LocalAppLanguage.current == AppLanguage.EN
+                Text(if (isEnglish) "Returning..." else "正在返回...")
                     } else {
                         Log.d("AppNav", "显示商品详情: ${item.id} - ${item.title}")
-                        // 检查商品是否属于当前用户
+                        // 检查商品是否属于当前用户 / Check if item belongs to current user
                         var currentUid by remember { mutableStateOf<String?>(null) }
                         var currentEmail by remember { mutableStateOf<String?>(null) }
                         
@@ -428,14 +461,14 @@ fun AppNavHost(
                             item = item,
                             onBack = { navController.popBackStack() },
                             onContact = { 
-                                // 传递卖家信息到聊天界面
+                                // 传递卖家信息到聊天界面 / Pass seller information to chat screen
                                 val sellerUid = item.ownerUid.ifEmpty { "unknown" }
                                 val sellerEmail = item.ownerEmail.ifEmpty { "unknown@example.com" }
                                 navController.navigate(Routes.chatWithUser(sellerUid, sellerEmail, item.id, item.title))
                             },
                             onAddToWishlist = { navController.navigate(Routes.addItemToWishlist(item.id)) },
                             onDelete = {
-                                // 开发者模式可以删除
+                                // 开发者模式可以删除 / Developer mode can delete
                                 sharedViewModel.deleteItem(item.id)
                                 navController.popBackStack()
                             },
@@ -444,8 +477,154 @@ fun AppNavHost(
                         )
                     }
         }
+        }
     }
 }
+
+@Composable
+fun BottomNavigationBar(
+    currentRoute: String?,
+    navController: NavHostController
+) {
+    val strings = LocalAppStrings.current
+    
+    // 根据当前路由确定选中的标签 / Determine selected tab based on current route
+    val isHomeSelected = currentRoute == Routes.ITEMS
+    val isMessagesSelected = currentRoute == Routes.CHAT || (currentRoute?.startsWith("chat/") == true)
+    val isPostSelected = currentRoute == Routes.POST
+    val isMySelected = currentRoute == Routes.MY || currentRoute == Routes.MY_SOLD
+    val isCameraSelected = currentRoute == Routes.CAMERA || currentRoute == Routes.RECOGNITION_RESULT
+    
+    NavigationBar(
+        containerColor = LowSaturationRed
+    ) {
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Home, contentDescription = strings.bottomHomeLabel) },
+            label = { Text(strings.bottomHomeLabel) },
+            selected = isHomeSelected,
+            onClick = {
+                if (!isHomeSelected) {
+                    navController.navigate(Routes.ITEMS) {
+                        // 清除返回栈直到主界面（不包括主界面），避免重复 / Clear back stack until main screen (excluding main screen), avoid duplicates
+                        popUpTo(Routes.ITEMS) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                indicatorColor = Color.Transparent
+            )
+        )
+        NavigationBarItem(
+            icon = { Icon(MessageIcon, contentDescription = strings.bottomMessagesLabel) },
+            label = { Text(strings.bottomMessagesLabel) },
+            selected = isMessagesSelected,
+            onClick = {
+                if (!isMessagesSelected) {
+                    navController.navigate(Routes.CHAT) {
+                        // 如果已经在CHAT页面，不重复导航 / If already on CHAT page, don't navigate again
+                        launchSingleTop = true
+                    }
+                }
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                indicatorColor = Color.Transparent
+            )
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Add, contentDescription = strings.bottomPostLabel) },
+            label = { Text(strings.bottomPostLabel) },
+            selected = isPostSelected,
+            onClick = {
+                navController.navigate(Routes.POST) {
+                    // 如果已经在POST页面，不重复导航 / If already on POST page, don't navigate again
+                    launchSingleTop = true
+                }
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                indicatorColor = Color.Transparent
+            )
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Settings, contentDescription = strings.bottomCameraLabel) },
+            label = { Text(strings.bottomCameraLabel) },
+            selected = isCameraSelected,
+            onClick = {
+                navController.navigate(Routes.CAMERA) {
+                    // 如果已经在CAMERA页面，不重复导航 / If already on CAMERA page, don't navigate again
+                    launchSingleTop = true
+                }
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                indicatorColor = Color.Transparent
+            )
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Person, contentDescription = strings.bottomMyLabel) },
+            label = { Text(strings.bottomMyLabel) },
+            selected = isMySelected,
+            onClick = {
+                navController.navigate(Routes.MY) {
+                    // 如果已经在MY页面，不重复导航 / If already on MY page, don't navigate again
+                    launchSingleTop = true
+                }
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                indicatorColor = Color.Transparent
+            )
+        )
+    }
+}
+
+// 自定义消息图标（消息气泡）/ Custom message icon (message bubble)
+val MessageIcon: ImageVector = androidx.compose.ui.graphics.vector.ImageVector.Builder(
+    name = "Message",
+    defaultWidth = 24.0.dp,
+    defaultHeight = 24.0.dp,
+    viewportWidth = 24.0f,
+    viewportHeight = 24.0f
+).apply {
+    path(
+        fill = androidx.compose.ui.graphics.SolidColor(Color.Black),
+        fillAlpha = 1f,
+        stroke = null,
+        strokeAlpha = 1f,
+        strokeLineWidth = 1.0f,
+        strokeLineCap = androidx.compose.ui.graphics.StrokeCap.Round,
+        strokeLineJoin = androidx.compose.ui.graphics.StrokeJoin.Round,
+        strokeLineMiter = 1f,
+        pathFillType = PathFillType.NonZero
+    ) {
+        // 消息气泡图标路径 / Message bubble icon path
+        moveTo(20.0f, 2.0f)
+        horizontalLineTo(4.0f)
+        curveTo(2.9f, 2.0f, 2.0f, 2.9f, 2.0f, 4.0f)
+        verticalLineTo(22.0f)
+        lineTo(6.0f, 18.0f)
+        horizontalLineTo(20.0f)
+        curveTo(21.1f, 18.0f, 22.0f, 17.1f, 22.0f, 16.0f)
+        verticalLineTo(4.0f)
+        curveTo(22.0f, 2.9f, 21.1f, 2.0f, 20.0f, 2.0f)
+        close()
+        moveTo(20.0f, 16.0f)
+        horizontalLineTo(6.0f)
+        lineTo(4.0f, 18.0f)
+        verticalLineTo(4.0f)
+        horizontalLineTo(20.0f)
+        verticalLineTo(16.0f)
+        close()
+    }
+}.build()
 
 
 

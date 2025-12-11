@@ -112,6 +112,7 @@ class PriceAlertService(
             val authRepo = AuthRepository(context)
             val preferredLang = authRepo.getPreferredLanguage()
             val isEnglish = preferredLang == "EN"
+
             val currentPriceText = String.format("%.2f", item.price)
             val targetPriceText = String.format("%.2f", wish.targetPrice)
 

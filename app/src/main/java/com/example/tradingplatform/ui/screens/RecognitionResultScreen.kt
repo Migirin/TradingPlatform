@@ -46,7 +46,7 @@ fun RecognitionResultScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 顶部按钮
+        // 顶部按钮 / Top button
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -78,7 +78,7 @@ fun RecognitionResultScreen(
                 }
             }
             is com.example.tradingplatform.ui.viewmodel.RecognitionUiState.Success -> {
-                // 显示拍摄的图片
+                // 显示拍摄的图片 / Display captured image
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
@@ -93,7 +93,7 @@ fun RecognitionResultScreen(
                     )
                 }
 
-                // 识别结果
+                // 识别结果 / Recognition results
                 if (state.recognitionResults.isNotEmpty()) {
                     Card(
                         modifier = Modifier.fillMaxWidth()
@@ -113,7 +113,7 @@ fun RecognitionResultScreen(
                     }
                 }
 
-                // 推荐商品
+                // 推荐商品 / Recommended products
                 if (state.recommendedProducts.isNotEmpty()) {
                     Text(
                         text = strings.recognitionRecommendedTitle,
@@ -185,7 +185,7 @@ fun RecognitionItem(result: RecognitionResult) {
             )
             Text(
                 text = if (isEnglish) {
-                    // 英文界面显示英文类别映射
+                    // 英文界面显示英文类别映射 / English interface shows English category mapping
                     when {
                         result.label.lowercase().contains("headphone") || 
                         result.label.lowercase().contains("earphone") ||
@@ -250,7 +250,7 @@ fun RecommendedProductCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // 商品图片
+            // 商品图片 / Item image
             if (recommended.item.imageUrl.isNotEmpty()) {
                 Image(
                     painter = rememberAsyncImagePainter(recommended.item.imageUrl),
@@ -272,7 +272,7 @@ fun RecommendedProductCard(
                 }
             }
 
-            // 商品信息
+            // 商品信息 / Item information
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -287,7 +287,7 @@ fun RecommendedProductCard(
                     color = MaterialTheme.colorScheme.primary
                 )
                 
-                // 匹配原因
+                // 匹配原因 / Match reasons
                 if (recommended.matchReasons.isNotEmpty()) {
                     recommended.matchReasons.take(2).forEach { reason ->
                         Surface(
@@ -304,7 +304,7 @@ fun RecommendedProductCard(
                 }
             }
 
-            // 匹配分数
+            // 匹配分数 / Match score
             Column(
                 horizontalAlignment = Alignment.End
             ) {

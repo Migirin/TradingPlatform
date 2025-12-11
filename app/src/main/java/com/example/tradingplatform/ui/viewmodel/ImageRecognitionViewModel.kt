@@ -27,11 +27,11 @@ sealed interface RecognitionUiState {
 }
 
 enum class RecognitionType {
-    ML_KIT_DEVICE,      // ML Kit 设备端
-    ML_KIT_CLOUD,       // ML Kit 云端
-    THIRD_PARTY_ALIYUN, // 阿里云
-    THIRD_PARTY_TENCENT,// 腾讯云
-    THIRD_PARTY_BAIDU   // 百度 AI
+    ML_KIT_DEVICE,      // ML Kit 设备端 / ML Kit device-side
+    ML_KIT_CLOUD,       // ML Kit 云端 / ML Kit cloud
+    THIRD_PARTY_ALIYUN, // 阿里云 / Aliyun
+    THIRD_PARTY_TENCENT,// 腾讯云 / Tencent Cloud
+    THIRD_PARTY_BAIDU   // 百度 AI / Baidu AI
 }
 
 class ImageRecognitionViewModel(
@@ -41,7 +41,7 @@ class ImageRecognitionViewModel(
     private val recognitionService = when (recognitionType) {
         RecognitionType.ML_KIT_DEVICE -> ImageRecognitionService(application, false)
         RecognitionType.ML_KIT_CLOUD -> ImageRecognitionService(application, true)
-        RecognitionType.THIRD_PARTY_ALIYUN -> null // 使用第三方服务
+        RecognitionType.THIRD_PARTY_ALIYUN -> null // 使用第三方服务 / Use third-party service
         RecognitionType.THIRD_PARTY_TENCENT -> null
         RecognitionType.THIRD_PARTY_BAIDU -> null
     }
@@ -59,7 +59,7 @@ class ImageRecognitionViewModel(
     val state: StateFlow<RecognitionUiState> = _state
 
     /**
-     * 识别图片并推荐商品
+     * 识别图片并推荐商品 / Recognize image and recommend products
      */
     fun recognizeAndRecommend(bitmap: Bitmap) {
         _state.value = RecognitionUiState.Recognizing
@@ -67,13 +67,13 @@ class ImageRecognitionViewModel(
             try {
                 val recognitionResults: List<RecognitionResult>
                 
-                // 根据识别类型选择服务
+                // 根据识别类型选择服务 / Select service based on recognition type
                 if (thirdPartyService != null) {
-                    // 使用第三方 API
+                    // 使用第三方 API / Use third-party API
                     val thirdPartyResults = thirdPartyService.recognizeProduct(bitmap)
                     recognitionResults = thirdPartyResults.map { it.toRecognitionResult() }
                 } else if (recognitionService != null) {
-                    // 使用 ML Kit
+                    // 使用 ML Kit / Use ML Kit
                     recognitionResults = recognitionService.recognizeImage(bitmap)
                 } else {
                     _state.value = RecognitionUiState.Error("识别服务未配置")
@@ -85,7 +85,7 @@ class ImageRecognitionViewModel(
                     return@launch
                 }
 
-                // 推荐商品
+                // 推荐商品 / Recommend products
                 val recommendedProducts = recommendationService.recommendProducts(recognitionResults)
 
                 _state.value = RecognitionUiState.Success(recognitionResults, recommendedProducts)
@@ -97,7 +97,7 @@ class ImageRecognitionViewModel(
     }
 
     /**
-     * 重置状态
+     * 重置状态 / Reset state
      */
     fun reset() {
         _state.value = RecognitionUiState.Idle

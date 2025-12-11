@@ -50,17 +50,17 @@ class WishlistViewModel(
     private val _matches = MutableStateFlow<List<ExchangeMatch>>(emptyList())
     val matches: StateFlow<List<ExchangeMatch>> = _matches
     
-    // 单个愿望清单项的匹配结果
+    // 单个愿望清单项的匹配结果 / Match results for a single wishlist item
     private val _singleItemMatches = MutableStateFlow<List<ExchangeMatch>>(emptyList())
     val singleItemMatches: StateFlow<List<ExchangeMatch>> = _singleItemMatches
 
     init {
-        // 初始化时记录日志
+        // 初始化时记录日志 / Log on initialization
         Log.d("WishlistViewModel", "WishlistViewModel 初始化")
     }
 
     fun loadWishlist() {
-        // Flow会自动更新，无需手动加载
+        // Flow会自动更新，无需手动加载 / Flow will auto-update, no manual loading needed
     }
 
     fun addWishlistItem(
@@ -89,8 +89,8 @@ class WishlistViewModel(
                 val itemId = repo.addWishlistItem(item)
                 Log.d("WishlistViewModel", "愿望清单项添加成功: $itemId, title: ${item.title}")
                 _state.value = WishlistUiState.Success
-                // Flow会自动更新，无需手动刷新
-                // 检查成就
+                // Flow会自动更新，无需手动刷新 / Flow will auto-update, no manual refresh needed
+                // 检查成就 / Check achievements
                 achievementRepo.checkAndGrantAchievements()
             } catch (e: Exception) {
                 Log.e("WishlistViewModel", "添加愿望清单项失败", e)
@@ -100,7 +100,7 @@ class WishlistViewModel(
     }
 
     /**
-     * 检查价格变化并发送提醒
+     * 检查价格变化并发送提醒 / Check price changes and send alerts
      */
     fun checkPriceAlerts() {
         viewModelScope.launch {
@@ -118,8 +118,8 @@ class WishlistViewModel(
             try {
                 repo.deleteWishlistItem(itemId)
                 _state.value = WishlistUiState.Success
-                // Flow会自动更新，无需手动刷新
-            } catch (e: Exception) {
+                // Flow会自动更新，无需手动刷新 / Flow will auto-update, no manual refresh needed
+                } catch (e: Exception) {
                 Log.e("WishlistViewModel", "删除愿望清单项失败", e)
                 _state.value = WishlistUiState.Error("删除失败: ${e.message ?: "未知错误"}")
             }
@@ -142,7 +142,7 @@ class WishlistViewModel(
     }
 
     /**
-     * 查找单个愿望清单项的匹配结果
+     * 查找单个愿望清单项的匹配结果 / Find match results for a single wishlist item
      */
     fun findMatchesForItem(wishlistItemId: String, minScore: Double = 30.0, maxResults: Int = 20) {
         _state.value = WishlistUiState.Loading

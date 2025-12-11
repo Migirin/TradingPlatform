@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 /**
- * 应用数据库
+ * 应用数据库 / Application database
  */
 @Database(
     entities = [
@@ -17,7 +17,7 @@ import androidx.room.RoomDatabase
         UserAchievementEntity::class,
         TimetableCourseEntity::class
     ],
-    version = 9, // 版本升级：添加课表课程表
+    version = 9, // 版本升级：添加课表课程表 / Version upgrade: add timetable course table
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -39,7 +39,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "trading_platform_database"
                 )
-                    .fallbackToDestructiveMigration() // 开发期：数据库版本变更时重建
+                    .fallbackToDestructiveMigration() // 开发期：数据库版本变更时重建 / Development: rebuild on database version change
                     .build()
                 INSTANCE = instance
                 instance
